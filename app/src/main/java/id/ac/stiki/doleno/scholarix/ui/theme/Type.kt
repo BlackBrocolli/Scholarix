@@ -15,11 +15,11 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val robotoFontName = GoogleFont("Roboto")
+val poppinsFontName = GoogleFont("Poppins")
 val openSansFontName = GoogleFont("Open Sans")
 
-val robotoFontFamily = FontFamily(
-    Font(googleFont = robotoFontName, fontProvider = provider)
+val poppinsFontFamily = FontFamily(
+    Font(googleFont = poppinsFontName, fontProvider = provider)
 )
 
 val openSansFontFamily = FontFamily(
@@ -29,7 +29,7 @@ val openSansFontFamily = FontFamily(
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = robotoFontFamily,
+        fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
