@@ -57,7 +57,7 @@ fun OnBoardingScreen() {
         0 -> FirstOnboarding()
         1 -> SecondOnboarding()
         2 -> ThirdOnboarding()
-//        3 -> FourthOnBoarding()
+        3 -> FourthOnboarding()
     }
 }
 
@@ -136,7 +136,6 @@ fun SecondOnboarding() {
     val context = LocalContext.current
     var progress by remember { mutableFloatStateOf(0.33f) }
 
-
     Scaffold(
         topBar = {
             Row(
@@ -155,7 +154,7 @@ fun SecondOnboarding() {
                     modifier = Modifier.width(160.dp)
                 )
                 TextButton(onClick = {
-                    Toast.makeText(context, "Nanti saja!", Toast.LENGTH_SHORT).show()
+                    screenIndex++
                 }) {
                     Text(text = "Skip")
                 }
@@ -413,7 +412,7 @@ fun ThirdOnboarding() {
                     modifier = Modifier.width(160.dp)
                 )
                 TextButton(onClick = {
-                    Toast.makeText(context, "Nanti saja!", Toast.LENGTH_SHORT).show()
+                    screenIndex++
                 }) {
                     Text(text = "Skip")
                 }
@@ -443,14 +442,14 @@ fun ThirdOnboarding() {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // == PILIHAN LEVEL PENDIDIKAN ==
-                var selectedRows by remember { mutableStateOf(List(4) { false }) }
+                var selectedRows by remember { mutableStateOf(-1) }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[0]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows == 1) Color(0xFF405E90) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -458,15 +457,11 @@ fun ThirdOnboarding() {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
-                                .toMutableList()
-                                .also {
-                                    it[0] = !it[0]
-                                }
+                            selectedRows = 1
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[0]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows == 1) Color(0xFF405E90) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -476,10 +471,10 @@ fun ThirdOnboarding() {
                         Text(
                             text = "Didanai Sepenuhnya",
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedRows[0]) Color.White else Color.Black
+                            color = if (selectedRows == 1) Color.White else Color.Black
                         )
                     }
-                    if (selectedRows[0]) {
+                    if (selectedRows == 1) {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
@@ -496,7 +491,7 @@ fun ThirdOnboarding() {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[1]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows == 2) Color(0xFF405E90) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -504,15 +499,11 @@ fun ThirdOnboarding() {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
-                                .toMutableList()
-                                .also {
-                                    it[1] = !it[1]
-                                }
+                            selectedRows = 2
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[1]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows == 2) Color(0xFF405E90) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -522,10 +513,10 @@ fun ThirdOnboarding() {
                         Text(
                             text = "Didanai Sebagian",
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedRows[1]) Color.White else Color.Black
+                            color = if (selectedRows == 2) Color.White else Color.Black
                         )
                     }
-                    if (selectedRows[1]) {
+                    if (selectedRows == 2) {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
@@ -535,12 +526,11 @@ fun ThirdOnboarding() {
                         }
                     }
                 }
-
                 // == AKHIR PILIHAN LEVEL PENDIDIKAN ==
             }
             Button(
                 onClick = {
-                    Toast.makeText(context, "Ayo mulai!", Toast.LENGTH_SHORT).show()
+                    screenIndex++
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -548,6 +538,89 @@ fun ThirdOnboarding() {
             ) {
                 Text(
                     text = "Selanjutnya",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FourthOnboarding() {
+    val context = LocalContext.current
+    var progress by remember { mutableFloatStateOf(1f) }
+
+    Scaffold(
+        topBar = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = {
+                    screenIndex--
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Icon arrow back"
+                    )
+                }
+                LinearProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier.width(160.dp)
+                )
+                TextButton(onClick = {
+                    Toast.makeText(
+                        context,
+                        "Pindah ke halaman utama!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }) {
+                    Text(text = "Skip")
+                }
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "Preferensi Negara",
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Black
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // == PILIHAN PREFERENSI NEGARA ==
+                LazyColumn {
+
+                }
+                // == AKHIR PILIHAN PREFERENSI NEGARA ==
+            }
+            Button(
+                onClick = {
+                    Toast.makeText(context, "Pindah ke halaman utama!", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+            ) {
+                Text(
+                    text = "Selesai",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
