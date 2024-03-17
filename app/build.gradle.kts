@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -53,6 +54,21 @@ dependencies {
 
     // google fonts
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.3")
+
+    // Navigation compose
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+
+    // Compose ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    // Network calls
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // JSON to kotlin object mapping
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

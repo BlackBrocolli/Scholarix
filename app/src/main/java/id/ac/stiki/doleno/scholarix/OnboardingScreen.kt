@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.ui.theme.ScholarixTheme
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 
@@ -604,6 +606,17 @@ fun FourthOnboarding() {
                     fontWeight = FontWeight.Black
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+
+                // cuma buat cek gambar
+                // ini berhasil
+                // nanti taruh di item nya lazycolumn
+//                Image(
+//                    painter = rememberAsyncImagePainter(model = "https://flagcdn.com/w320/cy.png"),
+//                    contentDescription = "Category Thumbnail",
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .aspectRatio(1f)
+//                )
 
                 // == PILIHAN PREFERENSI NEGARA ==
                 LazyColumn {
