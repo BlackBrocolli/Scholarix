@@ -10,18 +10,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,13 +32,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.ui.theme.ScholarixTheme
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
@@ -55,11 +57,15 @@ var screenIndex by mutableStateOf(0)
 
 @Composable
 fun OnBoardingScreen() {
+    // fetch countries
+    val countryViewModel: CountryViewModel = viewModel()
+    val viewState by countryViewModel.countriesState
+
     when (screenIndex) {
         0 -> FirstOnboarding()
         1 -> SecondOnboarding()
         2 -> ThirdOnboarding()
-        3 -> FourthOnboarding()
+        3 -> FourthOnboarding(viewState.list)
     }
 }
 
@@ -135,8 +141,7 @@ fun FirstOnboarding() {
 
 @Composable
 fun SecondOnboarding() {
-    val context = LocalContext.current
-    var progress by remember { mutableFloatStateOf(0.33f) }
+    val progress by remember { mutableFloatStateOf(0.33f) }
 
     Scaffold(
         topBar = {
@@ -393,8 +398,7 @@ fun SecondOnboarding() {
 
 @Composable
 fun ThirdOnboarding() {
-    val context = LocalContext.current
-    var progress by remember { mutableFloatStateOf(0.66f) }
+    val progress by remember { mutableFloatStateOf(0.66f) }
 
     Scaffold(
         topBar = {
@@ -550,9 +554,12 @@ fun ThirdOnboarding() {
 }
 
 @Composable
-fun FourthOnboarding() {
+fun FourthOnboarding(countries: List<Country>) {
     val context = LocalContext.current
-    var progress by remember { mutableFloatStateOf(1f) }
+    val progress by remember { mutableFloatStateOf(1f) }
+
+    // State untuk melacak indeks item negara yang dipilih
+    val selectedItems = remember { mutableStateOf(setOf<Int>()) }
 
     Scaffold(
         topBar = {
@@ -607,20 +614,22 @@ fun FourthOnboarding() {
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // cuma buat cek gambar
-                // ini berhasil
-                // nanti taruh di item nya lazycolumn
-//                Image(
-//                    painter = rememberAsyncImagePainter(model = "https://flagcdn.com/w320/cy.png"),
-//                    contentDescription = "Category Thumbnail",
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .aspectRatio(1f)
-//                )
-
                 // == PILIHAN PREFERENSI NEGARA ==
                 LazyColumn {
-
+                    itemsIndexed(countries) { index, country ->
+                        CountryItem(
+                            country = country,
+                            isSelected = selectedItems.value.contains(index),
+                            onClick = {
+                                // Menambah atau menghapus indeks item yang dipilih
+                                selectedItems.value = if (selectedItems.value.contains(index)) {
+                                    selectedItems.value - index
+                                } else {
+                                    selectedItems.value + index
+                                }
+                            }
+                        )
+                    }
                 }
                 // == AKHIR PILIHAN PREFERENSI NEGARA ==
             }
@@ -641,6 +650,57 @@ fun FourthOnboarding() {
             }
         }
     }
+}
+
+@Composable
+fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .border(
+                border = BorderStroke(
+                    1.dp,
+                    color = if (isSelected) Color(0xFF405E90) else Color.Gray.copy(
+                        alpha = 0.5f
+                    )
+                ),
+                shape = RoundedCornerShape(20)
+            )
+            .clickable {
+                onClick()
+            }
+            .background(
+                shape = RoundedCornerShape(20),
+                color = if (isSelected) Color(0xFF405E90) else Color.Transparent
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.width(12.dp))
+            Image(
+                painter = rememberAsyncImagePainter(model = country.flags.png),
+                contentDescription = "Country Flag",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp)), // Mengatur ukuran gambar bendera
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(text = country.name.common, color = if (isSelected) Color.White else Color.Black)
+        }
+        if (isSelected) {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Icon Check",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Preview(showBackground = true)

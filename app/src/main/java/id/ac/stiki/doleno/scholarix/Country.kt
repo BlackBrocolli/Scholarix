@@ -2,7 +2,8 @@ package id.ac.stiki.doleno.scholarix
 
 data class Country(
     val name: Name,
-    val flags: Flags
+    val flags: Flags,
+    val cca3: String// kode negara
 )
 
 data class Name(
@@ -13,4 +14,4 @@ data class Flags(
     val png: String
 )
 
-data class CountriesResponse(val countries: List<Country>)
+//data class CountriesResponse(val countries: List<Country>)
