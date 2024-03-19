@@ -60,12 +60,13 @@ fun OnBoardingScreen() {
     // fetch countries
     val countryViewModel: CountryViewModel = viewModel()
     val viewState by countryViewModel.countriesState
+    val sortedCountries = viewState.list.sortedBy { it.name.common }
 
     when (screenIndex) {
         0 -> FirstOnboarding()
         1 -> SecondOnboarding()
         2 -> ThirdOnboarding()
-        3 -> FourthOnboarding(viewState.list)
+        3 -> FourthOnboarding(sortedCountries)
     }
 }
 
@@ -688,7 +689,14 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = country.name.common, color = if (isSelected) Color.White else Color.Black)
+            // nama negara
+            val maxLength = 22 // Panjang maksimal yang diinginkan
+            val text = if (country.name.common.length > maxLength) {
+                "${country.name.common.substring(0, maxLength)}..."
+            } else {
+                country.name.common
+            }
+            Text(text = text, color = if (isSelected) Color.White else Color.Black)
         }
         if (isSelected) {
             IconButton(onClick = { /*TODO*/ }) {
