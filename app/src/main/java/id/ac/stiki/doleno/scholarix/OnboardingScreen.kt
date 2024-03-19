@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -60,13 +62,12 @@ fun OnBoardingScreen() {
     // fetch countries
     val countryViewModel: CountryViewModel = viewModel()
     val viewState by countryViewModel.countriesState
-    val sortedCountries = viewState.list.sortedBy { it.name.common }
 
     when (screenIndex) {
         0 -> FirstOnboarding()
         1 -> SecondOnboarding()
         2 -> ThirdOnboarding()
-        3 -> FourthOnboarding(sortedCountries)
+        3 -> FourthOnboarding(viewState.loading, viewState.error, viewState.list)
     }
 }
 
@@ -555,9 +556,10 @@ fun ThirdOnboarding() {
 }
 
 @Composable
-fun FourthOnboarding(countries: List<Country>) {
+fun FourthOnboarding(loading: Boolean, error: String?, list: List<Country>) {
     val context = LocalContext.current
     val progress by remember { mutableFloatStateOf(1f) }
+    val countries = list.sortedBy { it.name.common }
 
     // State untuk melacak indeks item negara yang dipilih
     val selectedItems = remember { mutableStateOf(setOf<Int>()) }
@@ -616,20 +618,43 @@ fun FourthOnboarding(countries: List<Country>) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // == PILIHAN PREFERENSI NEGARA ==
-                LazyColumn {
-                    itemsIndexed(countries) { index, country ->
-                        CountryItem(
-                            country = country,
-                            isSelected = selectedItems.value.contains(index),
-                            onClick = {
-                                // Menambah atau menghapus indeks item yang dipilih
-                                selectedItems.value = if (selectedItems.value.contains(index)) {
-                                    selectedItems.value - index
-                                } else {
-                                    selectedItems.value + index
-                                }
+                when {
+                    loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    error != null -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "Tidak ada jaringan internet")
+                        }
+                    }
+
+                    else -> {
+                        LazyColumn {
+                            itemsIndexed(countries) { index, country ->
+                                CountryItem(
+                                    country = country,
+                                    isSelected = selectedItems.value.contains(index),
+                                    onClick = {
+                                        // Menambah atau menghapus indeks item yang dipilih
+                                        selectedItems.value =
+                                            if (selectedItems.value.contains(index)) {
+                                                selectedItems.value - index
+                                            } else {
+                                                selectedItems.value + index
+                                            }
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
                 }
                 // == AKHIR PILIHAN PREFERENSI NEGARA ==

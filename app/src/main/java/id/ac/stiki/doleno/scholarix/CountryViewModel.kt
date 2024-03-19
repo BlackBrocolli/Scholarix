@@ -21,10 +21,12 @@ class CountryViewModel : ViewModel() {
                 val response = countryService.getCountries()
                 _countriesState.value = _countriesState.value.copy(
                     list = response,
+                    loading = false,
                     error = null
                 )
             } catch (e: Exception) {
                 _countriesState.value = _countriesState.value.copy(
+                    loading = false,
                     error = "Error fetch country API ${e.message}"
                 )
             }
@@ -32,6 +34,7 @@ class CountryViewModel : ViewModel() {
     }
 
     data class CountryState(
+        val loading: Boolean = true,
         val error: String? = null,
         val list: List<Country> = emptyList()
     )
