@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix
+package id.ac.stiki.doleno.scholarix.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

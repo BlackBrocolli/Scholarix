@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix
+package id.ac.stiki.doleno.scholarix.view
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -52,6 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import id.ac.stiki.doleno.scholarix.viewmodel.CountryViewModel
+import id.ac.stiki.doleno.scholarix.R
+import id.ac.stiki.doleno.scholarix.model.Country
 import id.ac.stiki.doleno.scholarix.ui.theme.ScholarixTheme
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 

@@ -1,9 +1,11 @@
-package id.ac.stiki.doleno.scholarix
+package id.ac.stiki.doleno.scholarix.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.ac.stiki.doleno.scholarix.service.countryService
+import id.ac.stiki.doleno.scholarix.model.Country
 import kotlinx.coroutines.launch
 
 class CountryViewModel : ViewModel() {

@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix
+package id.ac.stiki.doleno.scholarix.model
 
 data class Country(
     val name: Name,
