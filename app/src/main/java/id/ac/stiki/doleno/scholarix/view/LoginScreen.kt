@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,6 +33,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun LoginScreen() {
@@ -40,22 +53,7 @@ fun LoginScreen() {
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(onClick = { }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Icon arrow back"
-                    )
-                }
-                Text(text = "Masuk", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                TextButton(onClick = {}) {
-                    Text(text = "")
-                }
-            }
+            MyTopAppBar(title = "Masuk")
         }
     ) { innerPadding ->
         Column(
@@ -90,7 +88,94 @@ fun LoginScreen() {
                     }
                 }
             )
+            Spacer(modifier = Modifier.height(2.dp))
+            /*TODO BUat agar tombol bisa diklik*/
+            Text(
+                text = "Lupa password?",
+                fontSize = 12.sp,
+                color = Color(android.graphics.Color.parseColor("#007FFF")),
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
+            FilledTonalButton(modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp), onClick = { /*TODO*/ }) {
+                Text(text = "Masuk")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Atau masuk dengan akun",
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    /* TODO: Ubah jadi iconnya Google */
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Google Icon",
+                        modifier = Modifier.size(24.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Spacer untuk jarak antara ikon dan teks
+                    Text(
+                        text = "Google",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Belum punya akun?",
+                    fontSize = 12.sp,
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(
+                    text = "Daftar",
+                    fontSize = 12.sp,
+                    color = Color(android.graphics.Color.parseColor("#007FFF")),
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyTopAppBar(title: String, onBackNavClicked: () -> Unit = {}) {
+
+    val navigationIcon: @Composable () -> Unit =
+        if (title.contains("Masuk")) {
+            {
+                IconButton(onClick = { onBackNavClicked() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Arrow Back Icon"
+                    )
+                }
+            }
+        } else {
+            {}
+        }
+
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        navigationIcon = navigationIcon
+    )
 }

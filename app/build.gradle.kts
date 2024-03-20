@@ -87,4 +87,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.compose.material:material-icons-core:1.6.3")
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
+    implementation("androidx.compose.material:material:1.6.0-alpha08")
 }
