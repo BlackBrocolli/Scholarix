@@ -99,7 +99,9 @@ fun LoginScreen(navController: NavController) {
             /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
             FilledTonalButton(modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp), onClick = { /*TODO*/ }) {
+                .height(48.dp),
+                /* TODO: Tambahkan fungsi login di AuthViewModel */
+                onClick = { navController.navigate(Screen.OnboardingScreen.route) }) {
                 Text(text = "Masuk")
             }
             Spacer(modifier = Modifier.height(8.dp))

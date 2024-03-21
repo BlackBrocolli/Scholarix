@@ -22,10 +22,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    OnBoardingScreen()
-//                    LoginScreen()
-//                    SignupScreen()
-//                    LupaPasswordScreen()
                     Navigation()
                 }
             }

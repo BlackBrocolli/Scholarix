@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.view.LoginScreen
 import id.ac.stiki.doleno.scholarix.view.LupaPasswordScreen
+import id.ac.stiki.doleno.scholarix.view.OnBoardingScreen
 import id.ac.stiki.doleno.scholarix.view.SignupScreen
 
 @Composable
@@ -26,6 +27,9 @@ fun Navigation(
         }
         composable(Screen.LupaPasswordScreen.route) {
             LupaPasswordScreen(navController = navController)
+        }
+        composable(Screen.OnboardingScreen.route) {
+            OnBoardingScreen(navController = navController)
         }
     }
 }

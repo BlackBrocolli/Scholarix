@@ -51,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.viewmodel.CountryViewModel
 import id.ac.stiki.doleno.scholarix.R
@@ -61,7 +62,7 @@ import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 var screenIndex by mutableStateOf(0)
 
 @Composable
-fun OnBoardingScreen() {
+fun OnBoardingScreen(navController: NavController) {
     // fetch countries
     val countryViewModel: CountryViewModel = viewModel()
     val viewState by countryViewModel.countriesState
@@ -739,10 +740,10 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
     Spacer(modifier = Modifier.height(8.dp))
 }
 
-@Preview(showBackground = true)
-@Composable
-fun OnboardingPreview() {
-    ScholarixTheme {
-        OnBoardingScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun OnboardingPreview() {
+//    ScholarixTheme {
+//        OnBoardingScreen()
+//    }
+//}
