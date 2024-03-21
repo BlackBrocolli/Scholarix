@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import id.ac.stiki.doleno.scholarix.ui.theme.ScholarixTheme
 import id.ac.stiki.doleno.scholarix.view.LoginScreen
+import id.ac.stiki.doleno.scholarix.view.LupaPasswordScreen
 import id.ac.stiki.doleno.scholarix.view.SignupScreen
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +24,8 @@ class MainActivity : ComponentActivity() {
                 ) {
 //                    OnBoardingScreen()
 //                    LoginScreen()
-                    SignupScreen()
+//                    SignupScreen()
+                    LupaPasswordScreen()
                 }
             }
         }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Scholarix</string>
+    <string name="lupa_password_text">Masukkan email dan ikuti instruksi selanjutnya untuk membuat password baru</string>
 </resources>
