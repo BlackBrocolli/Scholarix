@@ -25,7 +25,8 @@ class MainActivity : ComponentActivity() {
 //                    OnBoardingScreen()
 //                    LoginScreen()
 //                    SignupScreen()
-                    LupaPasswordScreen()
+//                    LupaPasswordScreen()
+                    Navigation()
                 }
             }
         }

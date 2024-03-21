@@ -1,5 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +37,11 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.NavController
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -87,7 +90,10 @@ fun LoginScreen() {
                 text = "Lupa password?",
                 fontSize = 12.sp,
                 color = Color(android.graphics.Color.parseColor("#007FFF")),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.LupaPasswordScreen.route)
+                }
             )
             Spacer(modifier = Modifier.height(2.dp))
             /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
@@ -135,7 +141,10 @@ fun LoginScreen() {
                     text = "Daftar",
                     fontSize = 12.sp,
                     color = Color(android.graphics.Color.parseColor("#007FFF")),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.SignupScreen.route)
+                    }
                 )
             }
 

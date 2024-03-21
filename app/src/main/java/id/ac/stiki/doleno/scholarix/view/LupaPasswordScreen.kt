@@ -21,15 +21,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.R
 
 @Composable
-fun LupaPasswordScreen() {
+fun LupaPasswordScreen(navController: NavController) {
     var inputEmail by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            MyTopAppBar(title = "Lupa Password")
+            MyTopAppBar(title = "Lupa Password") {
+                navController.navigateUp()
+            }
         }
     ) { innerPadding ->
         Column(

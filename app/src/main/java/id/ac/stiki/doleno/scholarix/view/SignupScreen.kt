@@ -1,5 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +37,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun SignupScreen() {
+fun SignupScreen(navController: NavController) {
     var inputNamaLengkap by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
     var inputNomorHP by remember { mutableStateOf("") }
@@ -49,7 +52,9 @@ fun SignupScreen() {
 
     Scaffold(
         topBar = {
-            MyTopAppBar(title = "Daftar Akun")
+            MyTopAppBar(title = "Daftar Akun") {
+                navController.navigateUp()
+            }
         }
     ) { innerPadding ->
         Column(
@@ -163,7 +168,10 @@ fun SignupScreen() {
                     text = "Masuk",
                     fontSize = 12.sp,
                     color = Color(android.graphics.Color.parseColor("#007FFF")),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.LoginScreen.route)
+                    }
                 )
             }
 
