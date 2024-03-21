@@ -11,15 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,33 +28,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun LoginScreen() {
+fun SignupScreen() {
+    var inputNamaLengkap by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
+    var inputNomorHP by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
+    var inputKonfirmasiPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var konfirmasiPasswordVisible by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            MyTopAppBar(title = "Masuk")
+            MyTopAppBar(title = "Daftar Akun")
         }
     ) { innerPadding ->
         Column(
@@ -65,11 +61,24 @@ fun LoginScreen() {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
+                value = inputNamaLengkap,
+                onValueChange = { inputNamaLengkap = it },
+                label = { Text(text = "Nama Lengkap") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
                 value = inputEmail,
                 onValueChange = { inputEmail = it },
                 label = { Text(text = "Email") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+            )
+            OutlinedTextField(
+                value = inputNomorHP,
+                onValueChange = { inputNomorHP = it },
+                label = { Text(text = "No Handphone") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
             )
             OutlinedTextField(
                 value = inputPassword,
@@ -89,24 +98,35 @@ fun LoginScreen() {
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(2.dp))
-            /*TODO BUat agar tombol bisa diklik*/
-            Text(
-                text = "Lupa password?",
-                fontSize = 12.sp,
-                color = Color(android.graphics.Color.parseColor("#007FFF")),
-                fontWeight = FontWeight.Bold
+            OutlinedTextField(
+                value = inputKonfirmasiPassword,
+                onValueChange = { inputKonfirmasiPassword = it },
+                label = { Text(text = "Konfirmasi Password") },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (konfirmasiPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(
+                        onClick = { konfirmasiPasswordVisible = !konfirmasiPasswordVisible }
+                    ) {
+                        Icon(
+                            imageVector = if (konfirmasiPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (konfirmasiPasswordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Spacer(modifier = Modifier.height(2.dp))
             /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
             FilledTonalButton(modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp), onClick = { /*TODO*/ }) {
-                Text(text = "Masuk")
+                Text(text = "Daftar")
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Atau masuk dengan akun",
+                text = "Atau daftar dengan akun",
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -135,12 +155,12 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
-                    text = "Belum punya akun?",
+                    text = "Sudah punya akun?",
                     fontSize = 12.sp,
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = "Daftar",
+                    text = "Masuk",
                     fontSize = 12.sp,
                     color = Color(android.graphics.Color.parseColor("#007FFF")),
                     fontWeight = FontWeight.Bold
