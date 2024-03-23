@@ -8,10 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.navigation.Screen
+import id.ac.stiki.doleno.scholarix.view.FourthOnboarding
 import id.ac.stiki.doleno.scholarix.view.LoginScreen
 import id.ac.stiki.doleno.scholarix.view.LupaPasswordScreen
 import id.ac.stiki.doleno.scholarix.view.OnBoardingScreen
+import id.ac.stiki.doleno.scholarix.view.SecondOnboarding
 import id.ac.stiki.doleno.scholarix.view.SignupScreen
+import id.ac.stiki.doleno.scholarix.view.ThirdOnboarding
 
 @Composable
 fun Navigation(
@@ -30,6 +33,15 @@ fun Navigation(
         }
         composable(Screen.OnboardingScreen.route) {
             OnBoardingScreen(navController = navController)
+        }
+        composable(Screen.SecondOnboarding.route) {
+            SecondOnboarding(navController = navController)
+        }
+        composable(Screen.ThirdOnboarding.route) {
+            ThirdOnboarding(navController = navController)
+        }
+        composable(Screen.FourthOnboarding.route) {
+            FourthOnboarding(navController = navController)
         }
     }
 }
