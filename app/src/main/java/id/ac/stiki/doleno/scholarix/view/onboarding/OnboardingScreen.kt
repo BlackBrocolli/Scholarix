@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.view
+package id.ac.stiki.doleno.scholarix.view.onboarding
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

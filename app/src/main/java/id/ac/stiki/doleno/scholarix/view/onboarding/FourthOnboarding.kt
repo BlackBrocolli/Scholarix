@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.view
+package id.ac.stiki.doleno.scholarix.view.onboarding
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -46,7 +46,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.model.Country
-import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 import id.ac.stiki.doleno.scholarix.viewmodel.CountryViewModel
 

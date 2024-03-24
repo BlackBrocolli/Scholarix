@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.view
+package id.ac.stiki.doleno.scholarix.view.onboarding
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

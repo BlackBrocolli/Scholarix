@@ -8,13 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.navigation.Screen
-import id.ac.stiki.doleno.scholarix.view.FourthOnboarding
-import id.ac.stiki.doleno.scholarix.view.LoginScreen
-import id.ac.stiki.doleno.scholarix.view.LupaPasswordScreen
-import id.ac.stiki.doleno.scholarix.view.OnBoardingScreen
-import id.ac.stiki.doleno.scholarix.view.SecondOnboarding
-import id.ac.stiki.doleno.scholarix.view.SignupScreen
-import id.ac.stiki.doleno.scholarix.view.ThirdOnboarding
+import id.ac.stiki.doleno.scholarix.view.onboarding.FourthOnboarding
+import id.ac.stiki.doleno.scholarix.view.auth.LoginScreen
+import id.ac.stiki.doleno.scholarix.view.auth.LupaPasswordScreen
+import id.ac.stiki.doleno.scholarix.view.onboarding.OnBoardingScreen
+import id.ac.stiki.doleno.scholarix.view.onboarding.SecondOnboarding
+import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
+import id.ac.stiki.doleno.scholarix.view.onboarding.ThirdOnboarding
 
 @Composable
 fun Navigation(

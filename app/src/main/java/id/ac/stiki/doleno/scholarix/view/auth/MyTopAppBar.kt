@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.view
+package id.ac.stiki.doleno.scholarix.view.auth
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
