@@ -18,22 +18,21 @@ data class Lokasi(
 object DummyBeasiswa {
     val beasiswaList = listOf(
         Beasiswa(
-            nama = "Beasiswa ABC",
-            pendanaan = "Pemerintah",
-            deadline = "May 12, 2024",
-            degree = listOf("S1"),
+            nama = "Beasiswa ABC INIlah beasiswa dengan nama panjang",
+            pendanaan = "Fully Funded",
+            degree = listOf("S1", "S2", "S3"),
             lokasi = Lokasi("Jakarta", "Indonesia")
         ),
         Beasiswa(
             nama = "Beasiswa XYZ",
-            pendanaan = "Swasta",
+            pendanaan = "Partial Funded",
             deadline = "May 15, 2024",
             degree = listOf("S2", "S3"),
             lokasi = Lokasi("Bandung", "Indonesia")
         ),
         Beasiswa(
             nama = "Beasiswa 123",
-            pendanaan = "Perusahaan",
+            pendanaan = "Fully Funded",
             deadline = "June 1, 2024",
             degree = listOf("S1", "S2"),
             lokasi = Lokasi("Surabaya", "Indonesia")
