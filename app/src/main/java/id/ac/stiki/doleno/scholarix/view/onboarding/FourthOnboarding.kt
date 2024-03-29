@@ -46,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.model.Country
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 import id.ac.stiki.doleno.scholarix.viewmodel.CountryViewModel
 
@@ -66,7 +67,13 @@ fun FourthOnboarding(navController: NavController) {
             OnboardingTopBar(
                 progress = 1f,
                 onBackNavClicked = { navController.navigateUp() },
-                onSkipButtonClicked = { /* TODO navigate ke halaman utama mungkin*/ }
+                onSkipButtonClicked = {
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -136,7 +143,11 @@ fun FourthOnboarding(navController: NavController) {
             }
             Button(
                 onClick = {
-                    Toast.makeText(context, "Pindah ke halaman utama!", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

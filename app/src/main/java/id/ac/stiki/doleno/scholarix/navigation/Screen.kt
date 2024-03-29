@@ -11,6 +11,7 @@ sealed class Screen(val route: String, val title: String = "") {
     object SecondOnboarding : Screen("second_onboarding")
     object ThirdOnboarding : Screen("third_onboarding")
     object FourthOnboarding : Screen("fourth_onboarding")
+    object MainView : Screen("main_view")
 
     sealed class BottomScreen(
         val bottomTitle: String,

@@ -14,6 +14,7 @@ import id.ac.stiki.doleno.scholarix.view.auth.LupaPasswordScreen
 import id.ac.stiki.doleno.scholarix.view.onboarding.OnBoardingScreen
 import id.ac.stiki.doleno.scholarix.view.onboarding.SecondOnboarding
 import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
+import id.ac.stiki.doleno.scholarix.view.main.MainView
 import id.ac.stiki.doleno.scholarix.view.onboarding.ThirdOnboarding
 
 @Composable
@@ -42,6 +43,9 @@ fun Navigation(
         }
         composable(Screen.FourthOnboarding.route) {
             FourthOnboarding(navController = navController)
+        }
+        composable(Screen.MainView.route) {
+            MainView()
         }
     }
 }
