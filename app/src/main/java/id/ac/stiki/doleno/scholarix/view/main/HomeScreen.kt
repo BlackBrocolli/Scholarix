@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +38,28 @@ fun HomeScreen() {
             .fillMaxSize()
 //            .padding(16.dp)
     ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Rekomendasi untuk Kamu",
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.1).sp
+            )
+            TextButton(onClick = { /*TODO halaman lihat semua + filter*/ }) {
+                Text(
+                    text = "Lihat Semua",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    letterSpacing = (-0.1).sp,
+                    color = Color.Blue
+                )
+            }
+        }
         LazyRow {
             items(DummyBeasiswa.beasiswaList) { beasiswa ->
                 BeasiswaItem(beasiswa = beasiswa)
@@ -46,9 +70,11 @@ fun HomeScreen() {
 
 @Composable
 fun BeasiswaItem(beasiswa: Beasiswa) {
+    val paddingValues = if (beasiswa.id == 0L) 16.dp else 8.dp
+
     OutlinedCard(
         modifier = Modifier
-            .padding(4.dp)
+            .padding(start = paddingValues, end = 8.dp)
             .widthIn(max = 260.dp)
             .height(175.dp),
         border = BorderStroke(1.dp, Color.LightGray),
