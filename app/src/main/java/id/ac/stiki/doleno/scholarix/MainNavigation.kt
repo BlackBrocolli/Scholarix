@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import id.ac.stiki.doleno.scholarix.navigation.Screen
+import id.ac.stiki.doleno.scholarix.view.main.FavoritScreen
 import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
 import id.ac.stiki.doleno.scholarix.view.main.ProfileScreen
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
@@ -24,7 +25,7 @@ fun MainNavigation(navController: NavController, viewModel: MainViewModel, pd: P
             HomeScreen()
         }
         composable(Screen.BottomScreen.Favorit.route) {
-
+            FavoritScreen()
         }
         composable(Screen.BottomScreen.Profil.route) {
             ProfileScreen()
