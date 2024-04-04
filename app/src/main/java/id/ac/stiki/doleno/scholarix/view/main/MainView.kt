@@ -70,13 +70,27 @@ fun MainView() {
         }
     }
 
-    Scaffold(
-        topBar = {
+    val topBar: @Composable () -> Unit = {
+        if (currentRoute == Screen.BottomScreen.Profil.route) {
+            TopAppBar(
+                title = { Text(text = "Profil") },
+                elevation = 4.dp
+            )
+        } else if (currentRoute == Screen.BottomScreen.Home.route) {
             TopAppBar(
                 title = { Text(text = "Judul ini ganti search bar") },
                 elevation = 4.dp
             )
-        },
+        } else if (currentRoute == Screen.BottomScreen.Favorit.route) {
+            TopAppBar(
+                title = { Text(text = "Favorit") },
+                elevation = 4.dp
+            )
+        }
+    }
+
+    Scaffold(
+        topBar = topBar,
         bottomBar = bottomBar
     ) {
         MainNavigation(navController = controller, viewModel = viewModel, pd = it)
