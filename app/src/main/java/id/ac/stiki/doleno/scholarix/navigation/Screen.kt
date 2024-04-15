@@ -12,6 +12,7 @@ sealed class Screen(val route: String, val title: String = "") {
     object ThirdOnboarding : Screen("third_onboarding")
     object FourthOnboarding : Screen("fourth_onboarding")
     object MainView : Screen("main_view")
+    object EditProfileScreen : Screen("edit_profile_screen")
 
     sealed class BottomScreen(
         val bottomTitle: String,

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,10 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.R
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val versionName = remember { getAppVersionName(context) }
 
@@ -64,7 +67,8 @@ fun ProfileScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp),
+                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp)
+                .clickable { navController.navigate(Screen.EditProfileScreen.route) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

@@ -31,11 +31,9 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun MainView() {
-
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
     val viewModel: MainViewModel = viewModel()
-    // allow us to find out which "View" we current are
     val controller: NavController = rememberNavController()
     val navBackStackEntry by controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -45,9 +43,13 @@ fun MainView() {
     val title = remember {
         mutableStateOf(currentScreen.title)
     }
+    val shouldShowBottomBar =
+        currentRoute == Screen.BottomScreen.Home.route ||
+                currentRoute == Screen.BottomScreen.Favorit.route ||
+                currentRoute == Screen.BottomScreen.Profil.route
 
     val bottomBar: @Composable () -> Unit = {
-        if (currentScreen == Screen.BottomScreen.Home) {
+        if (shouldShowBottomBar) {
             BottomNavigation(modifier = Modifier.wrapContentSize()) {
                 screensInBottomBar.forEach { item ->
                     BottomNavigationItem(
@@ -93,6 +95,11 @@ fun MainView() {
         topBar = topBar,
         bottomBar = bottomBar
     ) {
-        MainNavigation(navController = controller, viewModel = viewModel, pd = it)
+        MainNavigation(
+            navController = controller,
+            viewModel = viewModel,
+            pd = it,
+            shouldShowBottomBar
+        )
     }
 }
