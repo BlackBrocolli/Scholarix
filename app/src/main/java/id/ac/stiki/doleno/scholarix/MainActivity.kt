@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.ui.theme.ScholarixTheme
+import id.ac.stiki.doleno.scholarix.view.main.DetailBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.MainView
 
 class MainActivity : ComponentActivity() {

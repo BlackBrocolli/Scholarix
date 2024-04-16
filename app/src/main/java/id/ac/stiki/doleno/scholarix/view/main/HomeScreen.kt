@@ -1,6 +1,7 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,11 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.model.DummyBeasiswa
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,21 +65,22 @@ fun HomeScreen() {
         }
         LazyRow {
             items(DummyBeasiswa.beasiswaList) { beasiswa ->
-                BeasiswaItem(beasiswa = beasiswa)
+                BeasiswaItem(beasiswa = beasiswa, navController)
             }
         }
     }
 }
 
 @Composable
-fun BeasiswaItem(beasiswa: Beasiswa) {
+fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
     val paddingValues = if (beasiswa.id == 0L) 16.dp else 8.dp
 
     OutlinedCard(
         modifier = Modifier
             .padding(start = paddingValues, end = 8.dp)
             .widthIn(max = 260.dp)
-            .height(175.dp),
+            .height(175.dp)
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}") },
         border = BorderStroke(1.dp, Color.LightGray),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
