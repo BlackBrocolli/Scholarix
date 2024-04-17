@@ -8,7 +8,14 @@ data class Beasiswa(
     val pendanaan: String,
     val deadline: String = "N/A",
     val degree: List<String>,
-    val lokasi: Lokasi
+    val lokasi: Lokasi,
+    val institusi: String,
+    val jumlah: String = "N/A",
+    val umur: String = "Tidak ada batasan",
+    val documents: List<String>,
+    val benefits: List<String>,
+    val durasi: String = "N/A",
+    val bahasa: String = "N/A"
 )
 
 data class Lokasi(
@@ -23,7 +30,24 @@ object DummyBeasiswa {
             nama = "Beasiswa ABC INIlah beasiswa dengan nama panjang",
             pendanaan = "Fully Funded",
             degree = listOf("S1", "S2", "S3"),
-            lokasi = Lokasi("Jakarta", "Indonesia")
+            lokasi = Lokasi("Jakarta", "Indonesia"),
+            institusi = "Colombia Educational Institutes",
+            umur = "Anda harus lebih tua dari 50 tahun",
+            documents = listOf(
+                "Recommendation letter (Academic)",
+                "Curriculum Vitae (CV)",
+                "Spanish Proficiency proof",
+                "Copy of Passport"
+            ),
+            benefits = listOf(
+                "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
+                "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
+                "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
+                "Coverage of Medical Insurance during studies in Colombia."
+            ),
+            durasi = "2 years or more",
+            jumlah = "103 scholarships",
+            bahasa = "Varies"
         ),
         Beasiswa(
             id = 1L,
@@ -31,7 +55,22 @@ object DummyBeasiswa {
             pendanaan = "Partial Funded",
             deadline = "May 15, 2024",
             degree = listOf("S2", "S3"),
-            lokasi = Lokasi("Bandung", "Indonesia")
+            lokasi = Lokasi("Bandung", "Indonesia"),
+            institusi = "Colombia Educational Institutes",
+            jumlah = "120",
+            documents = listOf(
+                "Recommendation letter (Academic)",
+                "Curriculum Vitae (CV)",
+                "Spanish Proficiency proof",
+                "Copy of Passport"
+            ),
+            benefits = listOf(
+                "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
+                "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
+                "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
+                "Coverage of Medical Insurance during studies in Colombia."
+            ),
+            bahasa = "TOEFL, IELTS"
         ),
         Beasiswa(
             id = 2L,
@@ -39,7 +78,20 @@ object DummyBeasiswa {
             pendanaan = "Fully Funded",
             deadline = "June 1, 2024",
             degree = listOf("S1", "S2"),
-            lokasi = Lokasi("Surabaya", "Indonesia")
+            lokasi = Lokasi("Surabaya", "Indonesia"),
+            institusi = "Colombia Educational Institutes",
+            documents = listOf(
+                "Recommendation letter (Academic)",
+                "Curriculum Vitae (CV)",
+                "Spanish Proficiency proof",
+                "Copy of Passport"
+            ),
+            benefits = listOf(
+                "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
+                "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
+                "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
+                "Coverage of Medical Insurance during studies in Colombia."
+            )
         )
     )
 }
