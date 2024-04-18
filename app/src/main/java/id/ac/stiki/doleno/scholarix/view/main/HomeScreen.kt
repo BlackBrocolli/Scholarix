@@ -53,7 +53,7 @@ fun HomeScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.1).sp
             )
-            TextButton(onClick = { /*TODO halaman lihat semua + filter*/ }) {
+            TextButton(onClick = { navController.navigate(Screen.KalenderBeasiswaScreen.route) }) {
                 Text(
                     text = "Lihat Semua",
                     fontWeight = FontWeight.Bold,

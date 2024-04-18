@@ -15,6 +15,7 @@ import id.ac.stiki.doleno.scholarix.view.main.DetailBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.EditProfileScreen
 import id.ac.stiki.doleno.scholarix.view.main.FavoritScreen
 import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
+import id.ac.stiki.doleno.scholarix.view.main.KalenderBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.MainView
 import id.ac.stiki.doleno.scholarix.view.main.ProfileScreen
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
@@ -53,6 +54,9 @@ fun MainNavigation(
         ) { entry ->
             val id = if (entry.arguments != null) entry.arguments!!.getLong("id") else -1L
             DetailBeasiswaScreen(id = id, viewModel = viewModel, navController = navController)
+        }
+        composable(Screen.KalenderBeasiswaScreen.route) {
+            KalenderBeasiswaScreen(viewModel = viewModel, navController = navController)
         }
     }
 }

@@ -18,6 +18,15 @@ class MainViewModel : ViewModel() {
         _currentScreen.value = screen
     }
 
+    // Tambahkan properti inputUrutkanBerdasar
+    private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Deadline Terdekat")
+    val inputUrutkanBerdasar: MutableState<String>
+        get() = _inputUrutkanBerdasar
+
+    fun setInputUrutkanBerdasar(value: String) {
+        _inputUrutkanBerdasar.value = value
+    }
+
     fun getABeasiswaById(id: Long): Beasiswa? {
         return DummyBeasiswa.beasiswaList.find { it.id == id }
     }
