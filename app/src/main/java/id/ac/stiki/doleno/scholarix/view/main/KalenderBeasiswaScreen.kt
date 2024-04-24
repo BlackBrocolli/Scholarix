@@ -1,7 +1,7 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -34,15 +34,17 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,25 +55,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.model.DummyBeasiswa
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
-import id.ac.stiki.doleno.scholarix.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavController) {
-    // TODO: INI HARUSNYA DIAMBIL DARI MainViewModel
-//    var inputUrutkanBerdasar by remember { mutableStateOf("Deadline Terdekat") }
+    var dropdownExpanded by remember { mutableStateOf(false) }
+//    var borderColor by remember { mutableStateOf(Color.Gray) }
+    var borderColor by remember {
+        mutableStateOf(Color.Gray)
+    }
     val inputUrutkanBerdasar by viewModel.inputUrutkanBerdasar
 
     val scope: CoroutineScope = rememberCoroutineScope()
@@ -184,32 +190,83 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 Text(text = "Filter", color = Color.White)
                             }
                             Spacer(modifier = Modifier.width(16.dp))
-                            // TODO: KETIKA DITEKAN MAKA MUNCUL ITEM SEPERTI DROPDOWNMENU ITEM
+                            // DROPDOWN URUTKAN BERDASAR
                             // TODO: JIKA value dari inputUrutkanBerdasar terlalu panjang, maka ubah jadi ...
-                            OutlinedTextField(
-                                value = inputUrutkanBerdasar,
-                                onValueChange = {
-                                    viewModel.setInputUrutkanBerdasar(it)
-                                },
-                                label = {
-                                    androidx.compose.material3.Text(
-                                        text = "Urutkan Berdasarkan",
-                                        color = Color(0xFF8F79E8)
-                                    )
-                                },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                            Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(56.dp),
-                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = null
+                                    .height(56.dp)
+                                    .clickable {
+                                        dropdownExpanded = true
+                                        borderColor = Color(0xFF8F79E8)
+                                    },
+                            ) {
+                                OutlinedTextField(
+                                    enabled = false,
+                                    value = inputUrutkanBerdasar,
+                                    onValueChange = {
+                                        viewModel.setInputUrutkanBerdasar(it)
+                                    },
+                                    label = {
+                                        androidx.compose.material3.Text(
+                                            text = "Urutkan Berdasarkan",
+                                            color = Color(0xFF8F79E8)
+                                        )
+                                    },
+                                    textStyle = TextStyle(fontSize = 14.sp),
+                                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    readOnly = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.Black,  // Warna teks ketika aktif
+                                        disabledTextColor = Color.Black, // Warna teks tetap hitam ketika dinonaktifkan
+                                        disabledBorderColor = borderColor, // Warna border tetap cerah saat dinonaktifkan
+                                        disabledLabelColor = Color(0xFF8F79E8),
                                     )
-                                },
-                                readOnly = true
-                            )
+                                )
+                                DropdownMenu(
+                                    expanded = dropdownExpanded,
+                                    onDismissRequest = { dropdownExpanded = false },
+                                    modifier = Modifier
+                                        .verticalScroll(rememberScrollState())
+                                        .heightIn(max = 200.dp)
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Terpopuler") },
+                                        onClick = {
+                                            viewModel.setInputUrutkanBerdasar("Terpopuler")
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Open Terdekat") },
+                                        onClick = {
+                                            viewModel.setInputUrutkanBerdasar("Open Terdekat")
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Deadline Terdekat") },
+                                        onClick = {
+                                            viewModel.setInputUrutkanBerdasar("Deadline Terdekat")
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Deadline Terjauh") },
+                                        onClick = {
+                                            viewModel.setInputUrutkanBerdasar("Deadline Terjauh")
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                }
+
+                            }
                         }
                         // TODO: Jumlah beasiswa yang tampil berubah sesuai berapa banyak beasiswa yang tampil
                         Text(
@@ -492,4 +549,12 @@ fun MoreBottomSheet(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun KalenderPreview() {
+    val viewModel: MainViewModel = viewModel()
+    val controller: NavController = rememberNavController()
+    KalenderBeasiswaScreen(viewModel = viewModel, navController = controller)
 }
