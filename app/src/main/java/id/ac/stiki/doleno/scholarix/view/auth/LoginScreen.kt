@@ -1,5 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,16 +36,32 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import id.ac.stiki.doleno.scholarix.model.SignInState
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController,
+    state: SignInState,
+    onSignInGoogleClick: () -> Unit
+) {
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    // ERROR HANDLING
+    // Bisa dihapus saja nanti
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.signInErrorMessage) {
+        state.signInErrorMessage?.let { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -112,8 +129,9 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
+            // == SIGN IN WITH GOOGLE ==
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = { onSignInGoogleClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)

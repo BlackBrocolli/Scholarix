@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Scholarix</string>
     <string name="lupa_password_text">Masukkan email dan ikuti instruksi selanjutnya untuk membuat password baru</string>
+    <string name="default_web_client_id">255285051449-6fmipv0u91orrmd6hh6f67umsc7kh5sp.apps.googleusercontent.com</string>
 </resources>
