@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,11 +33,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import id.ac.stiki.doleno.scholarix.R
+import id.ac.stiki.doleno.scholarix.model.UserData
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(
+    navController: NavController,
+    userData: UserData?,
+    onSignOut: () -> Unit
+) {
     val context = LocalContext.current
     val versionName = remember { getAppVersionName(context) }
 
@@ -49,18 +56,33 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.avataaars),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape) // Membuat gambar menjadi lingkaran
-                    .border(1.dp, Color.Black, CircleShape)
-            )
+            val commonModifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape) // Membuat gambar menjadi lingkaran
+                .border(1.dp, Color.Black, CircleShape)
+
+            if (userData?.profilePictureUrl != null) {
+                AsyncImage(
+                    model = userData.profilePictureUrl,
+                    contentDescription = "Profile Picture",
+                    modifier = commonModifier,
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.avataaars),
+                    contentDescription = "Default Profile Picture",
+                    modifier = commonModifier
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Zain Malik", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            if (userData?.username != null) {
+                Text(text = userData.username, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "zainmalik02323@gmail.com")
+            if (userData?.email != null) {
+                Text(text = userData.email)
+            }
             Spacer(modifier = Modifier.height(24.dp))
         }
         Divider()
@@ -114,7 +136,7 @@ fun ProfileScreen(navController: NavController) {
                     .fillMaxWidth()
                     .height(48.dp),
                 border = BorderStroke(1.dp, Color.Red),
-                onClick = { /*TODO*/ }) {
+                onClick = { onSignOut() }) {
                 Text(
                     text = "Log Out",
                     fontWeight = FontWeight.Bold,

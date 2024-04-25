@@ -24,13 +24,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.MainNavigation
+import id.ac.stiki.doleno.scholarix.auth.sign_in.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.navigation.screensInBottomBar
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun MainView() {
+fun MainView(googleAuthUiClient: GoogleAuthUiClient) {
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
     val viewModel: MainViewModel = viewModel()
@@ -97,8 +98,9 @@ fun MainView() {
     ) {
         MainNavigation(
             navController = controller,
-            viewModel = viewModel,
+            mainViewModel = viewModel,
             pd = it,
+            googleAuthUiClient = googleAuthUiClient,
             shouldShowBottomBar
         )
     }
