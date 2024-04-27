@@ -140,5 +140,9 @@ fun MainNavigation(
                 }
             )
         }
+
+        composable(Screen.MainView.route) {
+            MainView(googleAuthUiClient)
+        }
     }
 }

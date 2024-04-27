@@ -33,13 +33,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun Navigation(
     viewModel: AuthViewModel = viewModel(),
-    navController: NavHostController = rememberNavController(),
-    googleAuthUiClient: GoogleAuthUiClient
+    navController: NavHostController,
+    googleAuthUiClient: GoogleAuthUiClient,
+    startDestination: String
 ) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = Screen.LoginScreen.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable(Screen.LoginScreen.route) {
             val state by viewModel.state.collectAsStateWithLifecycle()
 
