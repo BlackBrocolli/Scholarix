@@ -1,7 +1,6 @@
 package id.ac.stiki.doleno.scholarix
 
 import android.app.Activity.RESULT_OK
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,7 +16,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.auth.sign_in.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.view.onboarding.FourthOnboarding
@@ -38,7 +36,6 @@ fun Navigation(
     startDestination: String
 ) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
-    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Screen.LoginScreen.route) {
@@ -91,9 +88,50 @@ fun Navigation(
                 }
             )
         }
+
         composable(Screen.SignupScreen.route) {
-            SignupScreen(navController = navController)
+            val state by viewModel.state.collectAsStateWithLifecycle()
+
+            val launcher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                    onResult = { result ->
+                        if (result.resultCode == RESULT_OK) {
+                            lifecycleScope.launch {
+                                val signInResult = googleAuthUiClient.signInWithIntent(
+                                    intent = result.data ?: return@launch
+                                )
+                                viewModel.onSignInResult(signInResult)
+                            }
+                        }
+                    }
+                )
+
+            LaunchedEffect(key1 = state.isSignInSuccessful) {
+                if (state.isSignInSuccessful) {
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                    viewModel.resetState()
+                }
+            }
+
+            SignupScreen(navController = navController, state = state,
+                onSignInGoogleClick = {
+                    lifecycleScope.launch {
+                        val signInIntentSender = googleAuthUiClient.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                signInIntentSender ?: return@launch
+                            ).build()
+                        )
+                    }
+                }
+            )
         }
+
         composable(Screen.LupaPasswordScreen.route) {
             LupaPasswordScreen(navController = navController)
         }

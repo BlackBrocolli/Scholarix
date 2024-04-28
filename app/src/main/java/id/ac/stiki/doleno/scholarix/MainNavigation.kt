@@ -141,6 +141,50 @@ fun MainNavigation(
             )
         }
 
+        composable(Screen.SignupScreen.route) {
+            val authViewModel: AuthViewModel = viewModel()
+            val state by authViewModel.state.collectAsStateWithLifecycle()
+
+            val launcher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                    onResult = { result ->
+                        if (result.resultCode == Activity.RESULT_OK) {
+                            lifecycleScope.launch {
+                                val signInResult = googleAuthUiClient.signInWithIntent(
+                                    intent = result.data ?: return@launch
+                                )
+                                authViewModel.onSignInResult(signInResult)
+                            }
+                        }
+                    }
+                )
+
+            LaunchedEffect(key1 = state.isSignInSuccessful) {
+                if (state.isSignInSuccessful) {
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                    authViewModel.resetState()
+                }
+            }
+
+            SignupScreen(navController = navController, state = state,
+                onSignInGoogleClick = {
+                    lifecycleScope.launch {
+                        val signInIntentSender = googleAuthUiClient.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                signInIntentSender ?: return@launch
+                            ).build()
+                        )
+                    }
+                }
+            )
+        }
+
         composable(Screen.MainView.route) {
             MainView(googleAuthUiClient)
         }
