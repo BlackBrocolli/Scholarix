@@ -64,6 +64,7 @@ dependencies {
 
     // Navigation compose
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.2")
 
     // Compose lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")

@@ -127,6 +127,7 @@ fun MainNavigation(
 
             LoginScreen(
                 navController = navController,
+                authViewModel = authViewModel,
                 state = state,
                 onSignInGoogleClick = {
                     lifecycleScope.launch {

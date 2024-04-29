@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
 
-
     private val userRepository: UserRepository
 
     init {
@@ -33,6 +32,12 @@ class AuthViewModel : ViewModel() {
     fun signUp(email: String, password: String, namaLengkap: String, noHandphone: String) {
         viewModelScope.launch {
             _authResult.value = userRepository.signUp(email, password, namaLengkap, noHandphone)
+        }
+    }
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _authResult.value = userRepository.login(email, password)
         }
     }
 

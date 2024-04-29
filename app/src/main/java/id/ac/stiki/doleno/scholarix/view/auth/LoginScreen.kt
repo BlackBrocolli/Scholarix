@@ -1,5 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,24 +40,53 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import id.ac.stiki.doleno.scholarix.model.auth.Result
 import id.ac.stiki.doleno.scholarix.model.google.SignInState
 import id.ac.stiki.doleno.scholarix.navigation.Screen
+import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
     navController: NavController,
+    authViewModel: AuthViewModel,
     state: SignInState,
     onSignInGoogleClick: () -> Unit
 ) {
+    val context = LocalContext.current
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
+    val result by authViewModel.authResult.observeAsState()
+
+    LaunchedEffect(result) {
+        result?.let { authResult ->
+            when (authResult) {
+                is Result.Success -> {
+                    Toast.makeText(
+                        context,
+                        "Login berhasil!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                is Result.Error -> {
+                    Toast.makeText(context, "Gagal Login", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     fun validateEmail(email: String) {
         emailError = if (android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) ""
@@ -78,7 +108,6 @@ fun LoginScreen(
 
     // ERROR HANDLING
     // Bisa dihapus saja nanti
-    val context = LocalContext.current
     LaunchedEffect(key1 = state.signInErrorMessage) {
         state.signInErrorMessage?.let { error ->
             Toast.makeText(context, error, Toast.LENGTH_LONG).show()
@@ -173,16 +202,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    Toast.makeText(
-                        context,
-                        "Login berhasil!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    navController.navigate(Screen.MainView.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
-                    }
+                    authViewModel.login(inputEmail, inputPassword)
                 },
                 enabled = isFormValid() // Memeriksa apakah formulir valid
             ) {
