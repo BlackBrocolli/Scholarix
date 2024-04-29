@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -34,6 +35,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +56,26 @@ fun LoginScreen(
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+
+    fun validateEmail(email: String) {
+        emailError = if (android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) ""
+        else "Alamat email tidak valid"
+    }
+
+    fun validatePassword(password: String) {
+        passwordError = if (password.length < 6) {
+            "Password harus terdiri dari minimal 6 karakter"
+        } else {
+            ""
+        }
+    }
+
+    fun isFormValid(): Boolean {
+        return inputEmail.isNotBlank() && emailError.isEmpty() &&
+                inputPassword.length >= 6 && passwordError.isEmpty()
+    }
 
     // ERROR HANDLING
     // Bisa dihapus saja nanti
@@ -78,18 +101,43 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = inputEmail,
-                onValueChange = { inputEmail = it },
+                onValueChange = {
+                    inputEmail = it
+                    validateEmail(it)
+                },
                 label = { Text(text = "Email") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                isError = emailError.isNotEmpty(),
+                trailingIcon = {
+                    if (emailError.isNotEmpty()) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "Error",
+                            tint = Color.Red
+                        )
+                    }
+                }
             )
+            if (emailError.isNotEmpty()) {
+                Text(
+                    text = emailError,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
             OutlinedTextField(
                 value = inputPassword,
-                onValueChange = { inputPassword = it },
+                onValueChange = {
+                    inputPassword = it
+                    validatePassword(it)
+                },
                 label = { Text(text = "Password") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                isError = passwordError.isNotEmpty(),
                 trailingIcon = {
                     IconButton(
                         onClick = { passwordVisible = !passwordVisible }
@@ -101,6 +149,14 @@ fun LoginScreen(
                     }
                 }
             )
+            if (passwordError.isNotEmpty()) {
+                Text(
+                    text = passwordError,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(2.dp))
             /*TODO BUat agar tombol bisa diklik*/
             Text(
@@ -113,12 +169,24 @@ fun LoginScreen(
                 }
             )
             Spacer(modifier = Modifier.height(2.dp))
-            /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
-            FilledTonalButton(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-                /* TODO: Tambahkan fungsi login di AuthViewModel */
-                onClick = { navController.navigate(Screen.OnboardingScreen.route) }) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "Login berhasil!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                enabled = isFormValid() // Memeriksa apakah formulir valid
+            ) {
                 Text(text = "Masuk")
             }
             Spacer(modifier = Modifier.height(8.dp))

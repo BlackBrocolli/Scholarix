@@ -54,6 +54,7 @@ fun SignupScreen(
     state: SignInState,
     onSignInGoogleClick: () -> Unit
 ) {
+    // TODO: MEMINDAHKAN VARIABEL DAN FUNCTION KE VIEWMODEL: AUTH
     var inputNamaLengkap by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
     var inputNomorHP by remember { mutableStateOf("") }
@@ -289,7 +290,7 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.height(2.dp))
             Spacer(modifier = Modifier.height(2.dp))
-            /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
+
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -297,9 +298,14 @@ fun SignupScreen(
                 onClick = {
                     Toast.makeText(
                         context,
-                        "Tombol daftar ditekan",
+                        "Daftar berhasil!",
                         Toast.LENGTH_SHORT
                     ).show()
+                    navController.navigate(Screen.OnboardingScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 enabled = isFormValid() // Memeriksa apakah formulir valid
             ) {
