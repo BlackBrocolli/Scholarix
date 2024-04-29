@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import id.ac.stiki.doleno.scholarix.auth.sign_in.GoogleAuthUiClient
+import id.ac.stiki.doleno.scholarix.auth.google.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.view.onboarding.FourthOnboarding
 import id.ac.stiki.doleno.scholarix.view.auth.LoginScreen
@@ -118,7 +117,10 @@ fun Navigation(
                 }
             }
 
-            SignupScreen(navController = navController, state = state,
+            SignupScreen(
+                navController = navController,
+                authViewModel = viewModel,
+                state = state,
                 onSignInGoogleClick = {
                     lifecycleScope.launch {
                         val signInIntentSender = googleAuthUiClient.signIn()

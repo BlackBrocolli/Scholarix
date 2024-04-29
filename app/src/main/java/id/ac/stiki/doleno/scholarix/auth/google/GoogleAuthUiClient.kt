@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.auth.sign_in
+package id.ac.stiki.doleno.scholarix.auth.google
 
 import android.content.Context
 import android.content.Intent
@@ -10,8 +10,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import id.ac.stiki.doleno.scholarix.R
-import id.ac.stiki.doleno.scholarix.model.SignInResult
-import id.ac.stiki.doleno.scholarix.model.UserData
+import id.ac.stiki.doleno.scholarix.model.google.SignInResult
+import id.ac.stiki.doleno.scholarix.model.google.UserData
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
 

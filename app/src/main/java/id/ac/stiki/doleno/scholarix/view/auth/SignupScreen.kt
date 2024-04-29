@@ -45,12 +45,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import id.ac.stiki.doleno.scholarix.model.SignInState
+import id.ac.stiki.doleno.scholarix.model.google.SignInState
 import id.ac.stiki.doleno.scholarix.navigation.Screen
+import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
 
 @Composable
 fun SignupScreen(
     navController: NavController,
+    authViewModel: AuthViewModel,
     state: SignInState,
     onSignInGoogleClick: () -> Unit
 ) {
@@ -296,6 +298,11 @@ fun SignupScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
+                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP)
+//                    inputEmail = ""
+//                    inputPassword = ""
+//                    inputNamaLengkap = ""
+//                    inputNomorHP = ""
                     Toast.makeText(
                         context,
                         "Daftar berhasil!",
@@ -333,7 +340,7 @@ fun SignupScreen(
                         contentDescription = "Google Icon",
                         modifier = Modifier.size(24.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Spacer untuk jarak antara ikon dan teks
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Google",
                         fontWeight = FontWeight.Bold

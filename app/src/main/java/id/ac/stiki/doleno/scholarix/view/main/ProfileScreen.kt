@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import id.ac.stiki.doleno.scholarix.R
-import id.ac.stiki.doleno.scholarix.model.UserData
+import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable

@@ -1,4 +1,4 @@
-package id.ac.stiki.doleno.scholarix.model
+package id.ac.stiki.doleno.scholarix.model.google
 
 data class SignInResult(
     val data: UserData?,

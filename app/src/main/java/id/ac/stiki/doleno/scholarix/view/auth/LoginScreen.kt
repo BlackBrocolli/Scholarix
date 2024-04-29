@@ -37,14 +37,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
-import id.ac.stiki.doleno.scholarix.model.SignInState
+import id.ac.stiki.doleno.scholarix.model.google.SignInState
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 @Composable

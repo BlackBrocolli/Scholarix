@@ -20,7 +20,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import id.ac.stiki.doleno.scholarix.auth.sign_in.GoogleAuthUiClient
+import id.ac.stiki.doleno.scholarix.auth.google.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.view.auth.LoginScreen
 import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
@@ -171,7 +171,10 @@ fun MainNavigation(
                 }
             }
 
-            SignupScreen(navController = navController, state = state,
+            SignupScreen(
+                navController = navController,
+                authViewModel = authViewModel,
+                state = state,
                 onSignInGoogleClick = {
                     lifecycleScope.launch {
                         val signInIntentSender = googleAuthUiClient.signIn()

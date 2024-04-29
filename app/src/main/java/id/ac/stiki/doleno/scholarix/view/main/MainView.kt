@@ -1,6 +1,5 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -24,7 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import id.ac.stiki.doleno.scholarix.MainNavigation
-import id.ac.stiki.doleno.scholarix.auth.sign_in.GoogleAuthUiClient
+import id.ac.stiki.doleno.scholarix.auth.google.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.navigation.screensInBottomBar
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
