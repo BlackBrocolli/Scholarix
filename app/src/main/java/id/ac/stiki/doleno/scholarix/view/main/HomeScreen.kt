@@ -23,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,9 +34,16 @@ import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.model.DummyBeasiswa
 import id.ac.stiki.doleno.scholarix.navigation.Screen
+import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
+
+
+    LaunchedEffect(key1 = true) {
+        viewModel.fetchScholarshipDetails()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

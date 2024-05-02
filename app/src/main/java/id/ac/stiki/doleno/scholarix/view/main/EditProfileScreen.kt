@@ -1,8 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
-import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -54,8 +51,7 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
     var isInputValueChanged by remember { mutableStateOf(false) }
     var usernameOrNama by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<String?>(userData?.profilePictureUrl) }
+    var selectedImageUri by remember { mutableStateOf(userData?.profilePictureUrl) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()

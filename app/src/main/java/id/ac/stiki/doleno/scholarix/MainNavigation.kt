@@ -51,7 +51,7 @@ fun MainNavigation(
         modifier = Modifier.padding(pd)
     ) {
         composable(Screen.BottomScreen.Home.route) {
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.BottomScreen.Favorit.route) {
             FavoritScreen()

@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import id.ac.stiki.doleno.scholarix.R
 import id.ac.stiki.doleno.scholarix.model.google.UserData
