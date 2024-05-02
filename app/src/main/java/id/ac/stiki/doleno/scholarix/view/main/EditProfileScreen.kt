@@ -1,9 +1,13 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -39,13 +44,28 @@ import com.google.firebase.firestore.firestore
 import id.ac.stiki.doleno.scholarix.R
 import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.view.auth.MyTopAppBar
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 
 @Composable
 fun EditProfileScreen(navController: NavController, userData: UserData?) {
     var inputEmail by remember { mutableStateOf("") }
     var inputNamaLengkap by remember { mutableStateOf("") }
     var isInputValueChanged by remember { mutableStateOf(false) }
+    var usernameOrNama by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    var selectedImageUri by remember { mutableStateOf<String?>(userData?.profilePictureUrl) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it.toString()
+        }
+    }
+
+    // Get nama lengkap from firestore
     val db = Firebase.firestore
     val ref = userData?.email?.let { db.collection("users").document(it) }
     val namaLengkap = remember { mutableStateOf("") }
@@ -62,10 +82,12 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
         if (userData.email != null) {
             inputEmail = userData.email.toString()
         }
-        inputNamaLengkap = if (userData.username != null && userData.username != "") {
-            userData.username.toString()
+        if (userData.username != null && userData.username != "") {
+            inputNamaLengkap = userData.username.toString()
+            usernameOrNama = "Username"
         } else {
-            namaLengkap.value
+            inputNamaLengkap = namaLengkap.toString()
+            usernameOrNama = "Nama Lengkap"
         }
     }
 
@@ -87,15 +109,18 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
                 modifier = Modifier
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
+                    .clickable {
+                        launcher.launch("image/*") // This will now open the gallery and handle the result
+                    }
             ) {
                 val commonModifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape) // Membuat gambar menjadi lingkaran
                     .border(1.dp, Color.Black, CircleShape)
                     .align(Alignment.Center)
-                if (userData?.profilePictureUrl != null) {
+                if (selectedImageUri != null) {
                     AsyncImage(
-                        model = userData.profilePictureUrl,
+                        model = selectedImageUri,
                         contentDescription = "Profile Picture",
                         modifier = commonModifier,
                         contentScale = ContentScale.Crop
@@ -140,7 +165,7 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
                     inputNamaLengkap = it
                     isInputValueChanged = true
                 },
-                label = { Text(text = "Nama Lengkap") }, // Ubah label
+                label = { Text(text = usernameOrNama) }, // Ubah label
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text) // Ubah keyboardType
             )
