@@ -56,7 +56,7 @@ class MainViewModel : ViewModel() {
                 scholarships.forEach { element ->
                     val detailUrl = element.attr("abs:href")
                     Log.d("Link dari web", detailUrl)
-//                    fetchDetailPage(detailUrl)
+                    fetchDetailPage(detailUrl)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -64,7 +64,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun fetchDetailPage(url: String) {
+    private fun fetchDetailPage(url: String) {
         viewModelScope.launch {
             try {
                 // Menggunakan Dispatchers.IO untuk operasi I/O network
@@ -73,18 +73,44 @@ class MainViewModel : ViewModel() {
                 }
 
                 // Ekstraksi data seperti judul, deadline, dan deskripsi
-                val title =
-                    detailDoc.select("h1").text()  // Pastikan selektor sesuai dengan struktur HTML
-                val deadline =
-                    detailDoc.select("time[datetime]").last()?.text()  // Ambil elemen time terakhir
-                val description = detailDoc.select("div.description")
-                    .text()  // Asumsi ada div dengan class 'description'
+                val titleElement = detailDoc.selectFirst("figcaption h2")
+                val title = titleElement?.text()?.trim() ?: "Title not found"
+                val fundingStatus =
+                    detailDoc.select("figcaption span small a").first()?.text()?.trim()
+                val applyBeforeInfo =
+                    detailDoc.select("figcaption ul.jobsearch-jobdetail-options li:nth-child(3)")
+                        .text().trim()
+                // Menggunakan regex untuk mengekstrak tanggal
+                val dateRegex = Regex("""Apply Before : (.+)""")
+                val matchResult = dateRegex.find(applyBeforeInfo)
+                val deadline = matchResult?.groupValues?.get(1)
+                // Mengambil <div> yang mengandung teks 'Degree/Level'
+                val degreesDiv = detailDoc.select("ul.jobsearch-row li").find { li ->
+                    li.select("div.jobsearch-services-text span").text().contains("Degree/Level")
+                }
+                // Mengambil semua teks dari tag <small> di dalam div tersebut
+                val degrees = degreesDiv?.select("small")?.map { it.text().trim() }
+                // TODO ubah degrees ini menjadi S1, S2, S3, D3, D4 dsb
+                /*
+                * Bachelor -> S1
+                * Undergraduate -> D3, D4, S1
+                * Master -> S2
+                * Postgraduate -> S2
+                * Ph.D -> S3
+                * Doctoral -> S3
+                * */
 
                 // Logging atau update UI di sini jika diperlukan
                 Log.d(
                     "Scraping Result",
-                    "Title: $title, Deadline: $deadline, Description: $description"
+                    "Link: $url" +
+                            "\nTitle: $title, " +
+                            "\nPendanaan: $fundingStatus" +
+                            "\nDeadline: $deadline" +
+                            "\nDegrees: ${degrees?.joinToString(", ")}"
                 )
+
+                // TODO UBAH HASIL SCRAPING KE DALAM BENTUK JSON
             } catch (e: IOException) {
                 e.printStackTrace()
             }
