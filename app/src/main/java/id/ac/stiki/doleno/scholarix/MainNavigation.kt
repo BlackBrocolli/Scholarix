@@ -71,7 +71,10 @@ fun MainNavigation(
                 })
         }
         composable(Screen.EditProfileScreen.route) {
-            EditProfileScreen(navController = navController)
+            EditProfileScreen(
+                navController = navController,
+                userData = googleAuthUiClient.getSignInUser()
+            )
         }
         composable(
             route = "${Screen.DetailBeasiswaScreen.route}/{id}",

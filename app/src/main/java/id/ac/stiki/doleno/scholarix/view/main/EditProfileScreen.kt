@@ -1,12 +1,12 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,19 +28,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import id.ac.stiki.doleno.scholarix.R
+import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.view.auth.MyTopAppBar
 
 @Composable
-fun EditProfileScreen(navController: NavController) {
+fun EditProfileScreen(navController: NavController, userData: UserData?) {
     var inputEmail by remember { mutableStateOf("") }
     var inputNamaLengkap by remember { mutableStateOf("") }
+    var isInputValueChanged by remember { mutableStateOf(false) }
+
+    val db = Firebase.firestore
+    val ref = userData?.email?.let { db.collection("users").document(it) }
+    val namaLengkap = remember { mutableStateOf("") }
+    ref?.get()?.addOnSuccessListener {
+        if (it != null) {
+            val retrievedNamaLengkap = it.data?.get("namaLengkap").toString()
+            namaLengkap.value = retrievedNamaLengkap
+        } else {
+            Log.d("Nama Kosong", "Tidak berhasil")
+        }
+    }
+
+    if (userData != null) {
+        if (userData.email != null) {
+            inputEmail = userData.email.toString()
+        }
+        inputNamaLengkap = if (userData.username != null && userData.username != "") {
+            userData.username.toString()
+        } else {
+            namaLengkap.value
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -56,16 +83,30 @@ fun EditProfileScreen(navController: NavController) {
                 .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Box(modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally)) {
-                Image(
-                    painter = painterResource(id = R.drawable.avataaars),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .border(1.dp, Color.Black, CircleShape)
-                        .align(Alignment.Center)
-                )
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                val commonModifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape) // Membuat gambar menjadi lingkaran
+                    .border(1.dp, Color.Black, CircleShape)
+                    .align(Alignment.Center)
+                if (userData?.profilePictureUrl != null) {
+                    AsyncImage(
+                        model = userData.profilePictureUrl,
+                        contentDescription = "Profile Picture",
+                        modifier = commonModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.avataaars),
+                        contentDescription = null,
+                        modifier = commonModifier
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -77,7 +118,8 @@ fun EditProfileScreen(navController: NavController) {
                     Icon(
                         painter = painterResource(id = R.drawable.outline_camera_alt_24),
                         contentDescription = "Edit",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier
+                            .size(20.dp)
                             .align(Alignment.Center)
                     )
                 }
@@ -89,20 +131,29 @@ fun EditProfileScreen(navController: NavController) {
                 onValueChange = { inputEmail = it },
                 label = { Text(text = "Email") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                readOnly = true
             )
             OutlinedTextField(
                 value = inputNamaLengkap,
-                onValueChange = { inputNamaLengkap = it },
+                onValueChange = {
+                    inputNamaLengkap = it
+                    isInputValueChanged = true
+                },
                 label = { Text(text = "Nama Lengkap") }, // Ubah label
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text) // Ubah keyboardType
             )
             Spacer(modifier = Modifier.weight(1f))
-            /* TODO: ubah button jadi yang primary jika semua field sudah diisi*/
-            FilledTonalButton(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp), onClick = { /*TODO*/ }) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                onClick = {
+                    // TODO Update profil
+                },
+                enabled = isInputValueChanged
+            ) {
                 Text(text = "Simpan")
             }
         }
