@@ -2,6 +2,7 @@ package id.ac.stiki.doleno.scholarix.view.main
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -20,6 +21,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 import id.ac.stiki.doleno.scholarix.R
 import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.navigation.Screen
@@ -46,6 +51,18 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val versionName = remember { getAppVersionName(context) }
+
+    val db = Firebase.firestore
+    val ref = userData?.email?.let { db.collection("users").document(it) }
+    val namaLengkap = remember { mutableStateOf("") }
+    ref?.get()?.addOnSuccessListener {
+        if (it != null) {
+            val retrievedNamaLengkap = it.data?.get("namaLengkap").toString()
+            namaLengkap.value = retrievedNamaLengkap
+        } else {
+            Log.d("Nama Kosong", "Tidak berhasil")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -76,8 +93,10 @@ fun ProfileScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            if (userData?.username != null) {
+            if (userData?.username != null && userData.username != "") {
                 Text(text = userData.username, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            } else {
+                Text(text = namaLengkap.value, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(4.dp))
             if (userData?.email != null) {

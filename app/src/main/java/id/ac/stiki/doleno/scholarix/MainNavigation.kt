@@ -62,7 +62,6 @@ fun MainNavigation(
                 onSignOut = {
                     lifecycleScope.launch {
                         googleAuthUiClient.signOut()
-//                        navController.navigate(Screen.LoginScreen.route)
                         navController.navigate(Screen.LoginScreen.route) {
                             popUpTo(Screen.BottomScreen.Home.route) {
                                 inclusive = true
