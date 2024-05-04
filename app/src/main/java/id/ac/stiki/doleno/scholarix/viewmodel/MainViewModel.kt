@@ -84,14 +84,15 @@ class MainViewModel : ViewModel() {
                 val dateRegex = Regex("""Apply Before : (.+)""")
                 val matchResult = dateRegex.find(applyBeforeInfo)
                 val deadline = matchResult?.groupValues?.get(1)
+
                 // Mengambil <div> yang mengandung teks 'Degree/Level'
                 val degreesDiv = detailDoc.select("ul.jobsearch-row li").find { li ->
                     li.select("div.jobsearch-services-text span").text().contains("Degree/Level")
                 }
                 // Mengambil semua teks dari tag <small> di dalam div tersebut
                 val degrees = degreesDiv?.select("small")?.map { it.text().trim() }
-                // TODO ubah degrees ini menjadi S1, S2, S3, D3, D4 dsb
                 /*
+                    TODO ubah degrees ini menjadi S1, S2, S3, D3, D4 dsb
                 * Bachelor -> S1
                 * Undergraduate -> D3, D4, S1
                 * Master -> S2
@@ -100,6 +101,34 @@ class MainViewModel : ViewModel() {
                 * Doctoral -> S3
                 * */
 
+                val location =
+                    detailDoc.select("figcaption ul.jobsearch-jobdetail-options li").first()?.text()
+                        ?.trim()?.replace(" View on Map", "")
+
+                // Mengambil teks untuk "Host Institution" dari <li> yang spesifik
+                val hostInstitutionText = detailDoc.select("li:contains(Host Institution)").text()
+                // Menggunakan regex untuk mengambil hanya nama institusi sebelum tanda titik (jika ada)
+                val regex = Regex("Host Institution:\\s*([^\\.]+)")
+                val institutionName = regex.find(hostInstitutionText)?.groups?.get(1)?.value?.trim()
+                    ?: "Institution not found"
+
+                // Extracting the "No of Opportunities" information
+                val opportunitiesText =
+                    detailDoc.select("li:contains(No of Opportunities) small").text().trim()
+                // Determine how to handle the opportunitiesText
+                val totalOpportunities = parseOpportunitiesText(opportunitiesText)
+
+                // Extracting the duration from the "Duration" <li> tag
+                val durationText = detailDoc.select("li:contains(Duration) small").text().trim()
+                // Process the duration text to handle different cases
+                val formattedDuration = formatDuration(durationText)
+
+                // Extracting the required language certificate information
+                val requiredLanguageCertificate =
+                    detailDoc.select("ul li:contains(Required language certificate)").text()
+                // Process and extract the specific part of the text if necessary
+                val certificateInfo = processLanguageCertificateInfo(requiredLanguageCertificate)
+
                 // Logging atau update UI di sini jika diperlukan
                 Log.d(
                     "Scraping Result",
@@ -107,13 +136,61 @@ class MainViewModel : ViewModel() {
                             "\nTitle: $title, " +
                             "\nPendanaan: $fundingStatus" +
                             "\nDeadline: $deadline" +
-                            "\nDegrees: ${degrees?.joinToString(", ")}"
+                            "\nDegrees: ${degrees?.joinToString(", ")}" +
+                            "\nLocation: $location" +
+                            "\nInstitution: $institutionName" +
+                            "\nNo Of Opportunities: $totalOpportunities" +
+                            "\nDuration: $formattedDuration" +
+                            "\nLanguage Certificate: $certificateInfo"
                 )
+
+                // TODO Umur susah,apakah ganti dengan kriteria lain?
+
 
                 // TODO UBAH HASIL SCRAPING KE DALAM BENTUK JSON
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun parseOpportunitiesText(text: String): String {
+        return if (text.contains("N/A")) {
+            "N/A"
+        } else {
+            // Regex to find all numbers, assume they're separated by non-digit characters
+            val regex = "\\d+".toRegex()
+            val matches = regex.findAll(text)
+            val numbers = matches.map { it.value.toInt() }.toList()
+
+            if (numbers.isEmpty()) {
+                "N/A" // In case no numbers found and it's not marked as N/A
+            } else {
+                numbers.sum().toString() // Summing all extracted numbers
+            }
+        }
+    }
+
+    private fun formatDuration(durationText: String): String {
+        return when {
+            durationText.contains("N/A", ignoreCase = true) -> "N/A"
+            // Checking for both "various" and "varies" variations
+            durationText.contains("various", ignoreCase = true) ||
+                    durationText.contains("varies", ignoreCase = true) -> "Bervariasi"
+
+            "\\d+ years".toRegex(RegexOption.IGNORE_CASE).matches(durationText) ->
+                durationText.replace("years", "tahun", ignoreCase = true)
+
+            "(?i)\\d+ years or more".toRegex().matches(durationText) ->
+                durationText.replace("years or more", "tahun atau lebih", ignoreCase = true)
+
+            else -> durationText // Handle unexpected formats gracefully
+        }
+    }
+
+    private fun processLanguageCertificateInfo(text: String): String {
+        // Assuming the format is always followed by "Required language certificate:"
+        // You might want to adjust this logic depending on the actual format in the HTML
+        return text.substringAfter("Required language certificate:").trim()
     }
 }

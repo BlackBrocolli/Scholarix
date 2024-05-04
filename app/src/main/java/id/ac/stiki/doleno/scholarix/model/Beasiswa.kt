@@ -1,7 +1,5 @@
 package id.ac.stiki.doleno.scholarix.model
 
-import java.time.LocalDate
-
 data class Beasiswa(
     val id: Long = -1L,
     val nama: String,
@@ -12,10 +10,10 @@ data class Beasiswa(
     val institusi: String,
     val jumlah: String = "N/A",
     val umur: String = "Tidak ada batasan",
+    val durasi: String = "N/A",
+    val sertifikatBahasa: String = "N/A",
     val documents: List<String>,
     val benefits: List<String>,
-    val durasi: String = "N/A",
-    val bahasa: String = "N/A"
 )
 
 data class Lokasi(
@@ -47,7 +45,7 @@ object DummyBeasiswa {
             ),
             durasi = "2 years or more",
             jumlah = "103 scholarships",
-            bahasa = "Varies"
+            sertifikatBahasa = "Varies"
         ),
         Beasiswa(
             id = 1L,
@@ -70,7 +68,7 @@ object DummyBeasiswa {
                 "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
                 "Coverage of Medical Insurance during studies in Colombia."
             ),
-            bahasa = "TOEFL, IELTS"
+            sertifikatBahasa = "TOEFL, IELTS"
         ),
         Beasiswa(
             id = 2L,

@@ -265,7 +265,7 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(start = 8.dp, end = 4.dp)
                             )
-                            Text(text = beasiswa.bahasa, fontSize = 14.sp)
+                            Text(text = beasiswa.sertifikatBahasa, fontSize = 14.sp)
                         }
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
                         Text(
