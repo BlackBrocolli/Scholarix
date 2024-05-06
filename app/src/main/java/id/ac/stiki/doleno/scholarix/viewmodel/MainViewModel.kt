@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.IOException
 
 class MainViewModel : ViewModel() {
@@ -129,6 +130,16 @@ class MainViewModel : ViewModel() {
                 // Process and extract the specific part of the text if necessary
                 val certificateInfo = processLanguageCertificateInfo(requiredLanguageCertificate)
 
+                // Extract benefits section HTML
+                val benefitsHtmlList = extractBenefitsHtml(detailDoc)
+
+                // Extract documents section HTML
+                val documentsHtmlList = extractDocumentsHtml(detailDoc)
+
+                val (email, phone) = withContext(Dispatchers.IO) { extractContactDetails(detailDoc) }
+
+                Log.d("Scraping Result", "Email: $email, Phone: $phone")
+
                 // Logging atau update UI di sini jika diperlukan
                 Log.d(
                     "Scraping Result",
@@ -141,8 +152,18 @@ class MainViewModel : ViewModel() {
                             "\nInstitution: $institutionName" +
                             "\nNo Of Opportunities: $totalOpportunities" +
                             "\nDuration: $formattedDuration" +
-                            "\nLanguage Certificate: $certificateInfo"
+                            "\nLanguage Certificate: $certificateInfo" +
+                            "\nBenefits: $benefitsHtmlList" +
+                            "\nDocuments: $documentsHtmlList" +
+                            "\nEmail: $email" +
+                            "\nPhone: $phone"
                 )
+                benefitsHtmlList.forEach { html ->
+                    Log.d("Scraping result: benefits", html)
+                }
+                documentsHtmlList.forEach { html ->
+                    Log.d("Scraping result: documents", html)
+                }
 
                 // TODO Umur susah,apakah ganti dengan kriteria lain?
 
@@ -192,5 +213,66 @@ class MainViewModel : ViewModel() {
         // Assuming the format is always followed by "Required language certificate:"
         // You might want to adjust this logic depending on the actual format in the HTML
         return text.substringAfter("Required language certificate:").trim()
+    }
+
+    private fun extractBenefitsHtml(detailDoc: Document): List<String> {
+        val benefitsList = mutableListOf<String>()
+
+        // Find the <h2> tag that includes "Benefits Of" within any nested tags
+        val benefitsHeader = detailDoc.select("h2:contains(Benefits of)").first()
+
+        // Check if the header is found
+        if (benefitsHeader != null) {
+            var nextElem = benefitsHeader.nextElementSibling()
+
+            while (nextElem != null && !(nextElem.tagName() == "h2" || nextElem.tagName() == "h3")) {
+                // Add the outer HTML of the element to the list
+                benefitsList.add(nextElem.outerHtml())
+                nextElem = nextElem.nextElementSibling()
+            }
+        }
+
+        return benefitsList
+    }
+
+    private fun extractDocumentsHtml(detailDoc: Document): List<String> {
+        val documentsList = mutableListOf<String>()
+
+        // Using (?i) for case insensitivity
+        val documentsHeader = detailDoc.select("h2:matches((?i)documents)").first()
+
+        if (documentsHeader != null) {
+            var nextElem = documentsHeader.nextElementSibling()
+
+            while (nextElem != null && !(nextElem.tagName() == "h2" || nextElem.tagName() == "h3")) {
+                documentsList.add(nextElem.outerHtml())
+                nextElem = nextElem.nextElementSibling()
+            }
+        }
+
+        return documentsList
+    }
+
+    private fun extractContactDetails(detailDoc: Document): Pair<String?, String?> {
+        val contactHeader = detailDoc.select("h2:contains(Contacts)").firstOrNull()
+
+        // Initialize variables to hold email and phone details
+        var email: String? = null
+        var phone: String? = null
+
+        if (contactHeader != null) {
+            val possibleContacts =
+                contactHeader.nextElementSiblings().take(2)  // Taking only the next two siblings
+
+            possibleContacts.forEach { elem ->
+                if ("email" in elem.text().lowercase()) {
+                    email = elem.text().trim()
+                } else if ("phone" in elem.text().lowercase()) {
+                    phone = elem.text().trim()
+                }
+            }
+        }
+
+        return Pair(email, phone)
     }
 }

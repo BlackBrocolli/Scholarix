@@ -253,7 +253,7 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                         }
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
                         Text(
-                            text = "BAHASA",
+                            text = "SERTIFIKAT BAHASA",
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(top = 4.dp)

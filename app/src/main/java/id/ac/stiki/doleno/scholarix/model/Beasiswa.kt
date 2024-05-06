@@ -14,6 +14,8 @@ data class Beasiswa(
     val sertifikatBahasa: String = "N/A",
     val documents: List<String>,
     val benefits: List<String>,
+    val email: String = "",
+    val phone: String = ""
 )
 
 data class Lokasi(
