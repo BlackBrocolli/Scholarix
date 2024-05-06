@@ -317,7 +317,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                         // BARIS DEGREE & LOKASI
                                         Row {
                                             // Menampilkan setiap derajat dalam kartu terpisah
-                                            beasiswa.degree.forEach { degree ->
+                                            beasiswa.degrees.forEach { degree ->
                                                 val containerColor = when (degree) {
                                                     "S1" -> Color(0xFFD9FAE7)
                                                     "S2" -> Color(0x401B73B3)
@@ -355,16 +355,18 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                                     containerColor = Color(0x80D9D9D9),
                                                 )
                                             ) {
-                                                androidx.compose.material3.Text(
-                                                    text = beasiswa.lokasi.kota,
-                                                    modifier = Modifier.padding(
-                                                        horizontal = 8.dp,
-                                                        vertical = 4.dp
-                                                    ),
-                                                    fontSize = 12.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    // color = Color(0xCC17181A)
-                                                )
+                                                beasiswa.lokasi.kota?.let {
+                                                    androidx.compose.material3.Text(
+                                                        text = it,
+                                                        modifier = Modifier.padding(
+                                                            horizontal = 8.dp,
+                                                            vertical = 4.dp
+                                                        ),
+                                                        fontSize = 12.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        // color = Color(0xCC17181A)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -404,11 +406,13 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                             text = "Deadline",
                                             fontSize = 12.sp
                                         )
-                                        androidx.compose.material3.Text(
-                                            text = beasiswa.deadline,
-                                            fontSize = 12.sp,
-                                            color = Color.Red
-                                        )
+                                        beasiswa.deadline?.let {
+                                            androidx.compose.material3.Text(
+                                                text = it,
+                                                fontSize = 12.sp,
+                                                color = Color.Red
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -69,11 +69,11 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                     fontWeight = FontWeight.Black,
                     fontSize = 18.sp
                 )
-                Text(text = beasiswa.pendanaan, fontSize = 14.sp)
+                beasiswa.pendanaan?.let { Text(text = it, fontSize = 14.sp) }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
                     // Menampilkan setiap derajat dalam kartu terpisah
-                    beasiswa.degree.forEach { degree ->
+                    beasiswa.degrees.forEach { degree ->
                         val containerColor = when (degree) {
                             "S1" -> Color(0xFFD9FAE7)
                             "S2" -> Color(0x401B73B3)
@@ -107,13 +107,15 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                             containerColor = Color(0x80D9D9D9),
                         )
                     ) {
-                        Text(
-                            text = beasiswa.lokasi.kota,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-//                        color = Color(0xCC17181A)
-                        )
+                        beasiswa.lokasi.kota?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                    //                        color = Color(0xCC17181A)
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -131,11 +133,13 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = "Deadline", fontSize = 12.sp)
-                        Text(
-                            text = beasiswa.deadline,
-                            fontSize = 12.sp,
-                            color = Color.Red
-                        )
+                        beasiswa.deadline?.let {
+                            Text(
+                                text = it,
+                                fontSize = 12.sp,
+                                color = Color.Red
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -150,6 +154,22 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(text = "Tentang", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "LOKASI NEGARA",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "\u2022", // Unicode untuk simbol bullet
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            )
+                            Text(text = beasiswa.lokasi.negara, fontSize = 14.sp)
+                        }
+                        Divider(modifier = Modifier.padding(vertical = 16.dp))
                         Text(
                             text = "INSTITUSI ",
                             fontWeight = FontWeight.Bold,

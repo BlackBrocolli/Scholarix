@@ -82,6 +82,9 @@ dependencies {
     // Jsoup for web scraping
     implementation("org.jsoup:jsoup:1.13.1")
 
+    // JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
