@@ -3,6 +3,8 @@ package id.ac.stiki.doleno.scholarix.viewmodel
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -13,6 +15,8 @@ import id.ac.stiki.doleno.scholarix.navigation.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -42,9 +46,22 @@ class MainViewModel : ViewModel() {
     }
 
     // === WEB SCRAPING USING JSOUP ===
-    // Metode untuk mengambil detail beasiswa di background thread
+    // MutableLiveData to store the list of scholarships
+    private val _scholarships = MutableLiveData<List<Beasiswa>>(listOf())
+    val scholarships: LiveData<List<Beasiswa>> = _scholarships
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _isError = MutableLiveData(false)
+    val isError: LiveData<Boolean> = _isError
+
+    // Function to fetch scholarship details and update LiveData
     fun fetchScholarshipDetails() {
         viewModelScope.launch {
+            _isLoading.value = true
+            _isError.value = false
+            val fetchedScholarships = mutableListOf<Beasiswa>()
             val baseUrl = "https://scholarshipsdb.org/"
             try {
                 // Mengambil dokumen HTML dari halaman utama di IO Dispatcher
@@ -58,134 +75,93 @@ class MainViewModel : ViewModel() {
                 // Iterasi melalui setiap link dan akses halaman detail
                 scholarships.forEach { element ->
                     val detailUrl = element.attr("abs:href")
-                    fetchDetailPage(detailUrl)
+                    val scholarship =
+                        fetchDetailPage(detailUrl)  // Assume this function returns a Beasiswa object
+                    if (scholarship != null) {
+                        fetchedScholarships.add(scholarship)
+                    }
                 }
+                _scholarships.postValue(fetchedScholarships)
+                _isLoading.value = false
             } catch (e: Exception) {
+                _isError.value = true
+                _isLoading.value = false
                 e.printStackTrace()
             }
         }
     }
 
-    private fun fetchDetailPage(url: String) {
-        viewModelScope.launch {
-            try {
-                // Menggunakan Dispatchers.IO untuk operasi I/O network
-                val detailDoc = withContext(Dispatchers.IO) {
-                    Jsoup.connect(url).get()
-                }
+    // Making fetchDetailPage a suspend function that returns Beasiswa or null
+    private suspend fun fetchDetailPage(url: String): Beasiswa? {
+        return try {
+            // Use withContext to ensure we're on the IO dispatcher for network and IO operations
+            withContext(Dispatchers.IO) {
+                val detailDoc = Jsoup.connect(url).get()
 
-                // Ekstraksi data seperti judul, deadline, dan deskripsi
+                // Data extraction and parsing
                 val titleElement = detailDoc.selectFirst("figcaption h2")
                 val title = titleElement?.text()?.trim() ?: "Title not found"
                 val fundingStatus =
                     detailDoc.select("figcaption span small a").first()?.text()?.trim()
+
                 val applyBeforeInfo =
                     detailDoc.select("figcaption ul.jobsearch-jobdetail-options li:nth-child(3)")
                         .text().trim()
-                // Menggunakan regex untuk mengekstrak tanggal
                 val dateRegex = Regex("""Apply Before : (.+)""")
                 val matchResult = dateRegex.find(applyBeforeInfo)
                 val deadline = matchResult?.groupValues?.get(1)
 
-                // Mengambil <div> yang mengandung teks 'Degree/Level'
-                val degreesDiv = detailDoc.select("ul.jobsearch-row li").find { li ->
-                    li.select("div.jobsearch-services-text span").text().contains("Degree/Level")
+                val degreesDiv = detailDoc.select("ul.jobsearch-row li").find {
+                    it.select("div.jobsearch-services-text span").text().contains("Degree/Level")
                 }
-                // Mengambil semua teks dari tag <small> di dalam div tersebut
                 val degrees = degreesDiv?.select("small")?.map { it.text().trim() }
-                // Convert degrees on a computation thread
-                val convertedDegrees = withContext(Dispatchers.Default) {
-                    degrees?.map { degree ->
-                        when {
-                            degree.contains("Bachelor/Undergraduate") -> "S1"
-                            degree.contains("Master/Postgraduate") -> "S2"
-                            degree.contains("Ph.D./Doctoral") -> "S3"
-                            else -> degree // Default case if none of the conditions are met
-                        }
+                val convertedDegrees = degrees?.map { degree ->
+                    when {
+                        degree.contains("Bachelor/Undergraduate") -> "S1"
+                        degree.contains("Master/Postgraduate") -> "S2"
+                        degree.contains("Ph.D./Doctoral") -> "S3"
+                        else -> degree
                     }
                 }
 
                 val location =
                     detailDoc.select("figcaption ul.jobsearch-jobdetail-options li").first()?.text()
                         ?.trim()?.replace(" View on Map", "")
-
                 val parts = location?.split(",")?.map { it.trim() }
-
-                // Tentukan nilai default untuk city dan country
                 var city: String? = null
-                var country: String = ""
+                var country = ""
 
-                // Kemudian, periksa dan atur nilai berdasarkan jumlah bagian
                 if (parts != null) {
                     if (parts.size > 1) {
-                        city = parts[0] // Kota ada di elemen pertama
-                        country = parts[1] // Negara ada di elemen kedua
+                        city = parts[0]
+                        country = parts[1]
                     } else {
-                        country = parts[0] // Seluruh string dianggap sebagai nama negara
+                        country = parts[0]
                     }
                 }
 
-                // Mengambil teks untuk "Host Institution" dari <li> yang spesifik
                 val hostInstitutionText = detailDoc.select("li:contains(Host Institution)").text()
-                // Menggunakan regex untuk mengambil hanya nama institusi sebelum tanda titik (jika ada)
                 val regex = Regex("Host Institution:\\s*([^\\.]+)")
                 val institutionName = regex.find(hostInstitutionText)?.groups?.get(1)?.value?.trim()
                     ?: "Institution not found"
 
-                // Extracting the "No of Opportunities" information
                 val opportunitiesText =
                     detailDoc.select("li:contains(No of Opportunities) small").text().trim()
-                // Determine how to handle the opportunitiesText
                 val totalOpportunities = parseOpportunitiesText(opportunitiesText)
 
-                // Extracting the duration from the "Duration" <li> tag
                 val durationText = detailDoc.select("li:contains(Duration) small").text().trim()
-                // Process the duration text to handle different cases
                 val formattedDuration = formatDuration(durationText)
 
-                // Extracting the required language certificate information
                 val requiredLanguageCertificate =
                     detailDoc.select("ul li:contains(Required language certificate)").text()
-                // Process and extract the specific part of the text if necessary
                 val certificateInfo = processLanguageCertificateInfo(requiredLanguageCertificate)
 
-                // Extract benefits section HTML
                 val benefitsHtmlList = extractBenefitsHtml(detailDoc)
-
-                // Extract documents section HTML
                 val documentsHtmlList = extractDocumentsHtml(detailDoc)
+                val (email, phone) = extractContactDetails(detailDoc)
 
-                val (email, phone) = withContext(Dispatchers.IO) { extractContactDetails(detailDoc) }
-
-                // Logging atau update UI di sini jika diperlukan
-//                Log.d(
-//                    "Scraping Result",
-//                    "Link: $url" +
-//                            "\nTitle: $title, " +
-//                            "\nPendanaan: $fundingStatus" +
-//                            "\nDeadline: $deadline" +
-//                            "\nDegrees: ${degrees?.joinToString(", ")}" +
-//                            "\nLocation: $location" +
-//                            "\nInstitution: $institutionName" +
-//                            "\nNo Of Opportunities: $totalOpportunities" +
-//                            "\nDuration: $formattedDuration" +
-//                            "\nLanguage Certificate: $certificateInfo" +
-//                            "\nBenefits: $benefitsHtmlList" +
-//                            "\nDocuments: $documentsHtmlList" +
-//                            "\nEmail: $email" +
-//                            "\nPhone: $phone"
-//                )
-//                benefitsHtmlList.forEach { html ->
-//                    Log.d("Scraping result: benefits", html)
-//                }
-//                documentsHtmlList.forEach { html ->
-//                    Log.d("Scraping result: documents", html)
-//                }
-
-                // TODO Umur susah,apakah ganti dengan kriteria lain?
-
-                val scholarship = Beasiswa(
-                    // TODO id nya otomatis di firebase bisa??
+                // Construct the Beasiswa object
+                Beasiswa(
                     link = url,
                     nama = title,
                     pendanaan = fundingStatus,
@@ -201,16 +177,133 @@ class MainViewModel : ViewModel() {
                     email = email,
                     phone = phone
                 )
-
-                // Serialize to JSON
-                val json = Gson().toJson(scholarship)
-                Log.d("Scholarship JSON", json)
-
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null // Return null in case of an error
         }
     }
+
+//    private fun fetchDetailPage(url: String) {
+//        viewModelScope.launch {
+//            try {
+//                // Menggunakan Dispatchers.IO untuk operasi I/O network
+//                val detailDoc = withContext(Dispatchers.IO) {
+//                    Jsoup.connect(url).get()
+//                }
+//
+//                // Ekstraksi data seperti judul, deadline, dan deskripsi
+//                val titleElement = detailDoc.selectFirst("figcaption h2")
+//                val title = titleElement?.text()?.trim() ?: "Title not found"
+//                val fundingStatus =
+//                    detailDoc.select("figcaption span small a").first()?.text()?.trim()
+//                val applyBeforeInfo =
+//                    detailDoc.select("figcaption ul.jobsearch-jobdetail-options li:nth-child(3)")
+//                        .text().trim()
+//                // Menggunakan regex untuk mengekstrak tanggal
+//                val dateRegex = Regex("""Apply Before : (.+)""")
+//                val matchResult = dateRegex.find(applyBeforeInfo)
+//                val deadline = matchResult?.groupValues?.get(1)
+//
+//                // Mengambil <div> yang mengandung teks 'Degree/Level'
+//                val degreesDiv = detailDoc.select("ul.jobsearch-row li").find { li ->
+//                    li.select("div.jobsearch-services-text span").text().contains("Degree/Level")
+//                }
+//                // Mengambil semua teks dari tag <small> di dalam div tersebut
+//                val degrees = degreesDiv?.select("small")?.map { it.text().trim() }
+//                // Convert degrees on a computation thread
+//                val convertedDegrees = withContext(Dispatchers.Default) {
+//                    degrees?.map { degree ->
+//                        when {
+//                            degree.contains("Bachelor/Undergraduate") -> "S1"
+//                            degree.contains("Master/Postgraduate") -> "S2"
+//                            degree.contains("Ph.D./Doctoral") -> "S3"
+//                            else -> degree // Default case if none of the conditions are met
+//                        }
+//                    }
+//                }
+//
+//                val location =
+//                    detailDoc.select("figcaption ul.jobsearch-jobdetail-options li").first()?.text()
+//                        ?.trim()?.replace(" View on Map", "")
+//
+//                val parts = location?.split(",")?.map { it.trim() }
+//
+//                // Tentukan nilai default untuk city dan country
+//                var city: String? = null
+//                var country: String = ""
+//
+//                // Kemudian, periksa dan atur nilai berdasarkan jumlah bagian
+//                if (parts != null) {
+//                    if (parts.size > 1) {
+//                        city = parts[0] // Kota ada di elemen pertama
+//                        country = parts[1] // Negara ada di elemen kedua
+//                    } else {
+//                        country = parts[0] // Seluruh string dianggap sebagai nama negara
+//                    }
+//                }
+//
+//                // Mengambil teks untuk "Host Institution" dari <li> yang spesifik
+//                val hostInstitutionText = detailDoc.select("li:contains(Host Institution)").text()
+//                // Menggunakan regex untuk mengambil hanya nama institusi sebelum tanda titik (jika ada)
+//                val regex = Regex("Host Institution:\\s*([^\\.]+)")
+//                val institutionName = regex.find(hostInstitutionText)?.groups?.get(1)?.value?.trim()
+//                    ?: "Institution not found"
+//
+//                // Extracting the "No of Opportunities" information
+//                val opportunitiesText =
+//                    detailDoc.select("li:contains(No of Opportunities) small").text().trim()
+//                // Determine how to handle the opportunitiesText
+//                val totalOpportunities = parseOpportunitiesText(opportunitiesText)
+//
+//                // Extracting the duration from the "Duration" <li> tag
+//                val durationText = detailDoc.select("li:contains(Duration) small").text().trim()
+//                // Process the duration text to handle different cases
+//                val formattedDuration = formatDuration(durationText)
+//
+//                // Extracting the required language certificate information
+//                val requiredLanguageCertificate =
+//                    detailDoc.select("ul li:contains(Required language certificate)").text()
+//                // Process and extract the specific part of the text if necessary
+//                val certificateInfo = processLanguageCertificateInfo(requiredLanguageCertificate)
+//
+//                // Extract benefits section HTML
+//                val benefitsHtmlList = extractBenefitsHtml(detailDoc)
+//
+//                // Extract documents section HTML
+//                val documentsHtmlList = extractDocumentsHtml(detailDoc)
+//
+//                val (email, phone) = withContext(Dispatchers.IO) { extractContactDetails(detailDoc) }
+//
+//                // TODO Umur susah,apakah ganti dengan kriteria lain?
+//
+//                val scholarship = Beasiswa(
+//                    // TODO id nya otomatis di firebase bisa??
+//                    link = url,
+//                    nama = title,
+//                    pendanaan = fundingStatus,
+//                    deadline = deadline,
+//                    degrees = convertedDegrees ?: listOf(),
+//                    lokasi = Lokasi(city, country),
+//                    institusi = institutionName,
+//                    jumlah = totalOpportunities,
+//                    durasi = formattedDuration,
+//                    sertifikatBahasa = certificateInfo,
+//                    benefits = benefitsHtmlList,
+//                    documents = documentsHtmlList,
+//                    email = email,
+//                    phone = phone
+//                )
+//
+//                // Serialize to JSON
+//                val json = Gson().toJson(scholarship)
+//                Log.d("Scholarship JSON", json)
+//
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
     private fun parseOpportunitiesText(text: String): String {
         return if (text.contains("N/A")) {
@@ -325,5 +418,13 @@ class MainViewModel : ViewModel() {
         }
 
         return Pair(email, phone)
+    }
+
+    private fun parseScholarshipJson(jsonString: String): List<Beasiswa> {
+        return Json.decodeFromString(ListSerializer(Beasiswa.serializer()), jsonString)
+    }
+
+    fun loadScholarships(jsonString: String) {
+        _scholarships.value = parseScholarshipJson(jsonString)
     }
 }

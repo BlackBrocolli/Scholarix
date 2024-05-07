@@ -14,16 +14,19 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +42,14 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 @Composable
 fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
 
-
     LaunchedEffect(key1 = true) {
         viewModel.fetchScholarshipDetails()
     }
+
+    // Observing the LiveData for changes
+    val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
+    val isLoading = viewModel.isLoading.observeAsState(initial = false)
+    val isError = viewModel.isError.observeAsState(initial = false)
 
     Column(
         modifier = Modifier
@@ -76,8 +83,82 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
                 BeasiswaItem(beasiswa = beasiswa, navController)
             }
         }
+
+        // TODO AWAL
+        // TODO Tolong bantu saya untuk menampilkan nama dari scholarship yg diambil dari json
+        // disini saya sudah buat kodingannya namun belum tampil
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Tes JSON",
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.1).sp
+            )
+            TextButton(onClick = { navController.navigate(Screen.KalenderBeasiswaScreen.route) }) {
+                Text(
+                    text = "Lihat Semua",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    letterSpacing = (-0.1).sp,
+                    color = Color.Blue
+                )
+            }
+        }
+        Column {
+
+        }
+        Column(modifier = Modifier.fillMaxSize()) {
+            when {
+                isLoading.value -> {
+                    // Display a loading animation or indicator
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+
+                isError.value -> {
+                    // Show an error message and possibly a retry button
+                    Text("Failed to load scholarships. Tap to retry.",
+                        modifier = Modifier
+                            .clickable { viewModel.fetchScholarshipDetails() }
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally))
+                }
+
+                else -> {
+                    ScholarshipList(scholarships = scholarships.value)
+                }
+            }
+        }
     }
 }
+
+@Composable
+fun ScholarshipList(scholarships: List<Beasiswa>) {
+    LazyColumn {
+        items(scholarships) { scholarship ->
+            ScholarshipItem(scholarship = scholarship)
+        }
+    }
+}
+
+@Composable
+fun ScholarshipItem(scholarship: Beasiswa) {
+    Text(
+        text = scholarship.nama,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 18.sp,
+        modifier = Modifier
+            .heightIn(32.dp) // Set minimum height
+            .padding(8.dp) // Add some padding
+    )
+}
+
+// TODO AKHIR
 
 @Composable
 fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
@@ -144,7 +225,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                    //                        color = Color(0xCC17181A)
+                                //                        color = Color(0xCC17181A)
                             )
                         }
                     }

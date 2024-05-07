@@ -1,5 +1,8 @@
 package id.ac.stiki.doleno.scholarix.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Beasiswa(
     val id: Long = -1L,
     val link: String,
@@ -8,6 +11,9 @@ data class Beasiswa(
     val deadline: String? = "N/A",
     val degrees: List<String>,
     val lokasi: Lokasi,
+    // apa bisa setelah dapat link, nama, pendanaan, deadline, degrees, dan lokasi
+    // langsung tampilkan UI beasiswanya di homescreen
+    // sisanya dibawah ini discraping setelahnya di latar belakang
     val institusi: String,
     val jumlah: String = "N/A",
     val umur: String = "Tidak ada batasan",
@@ -19,6 +25,7 @@ data class Beasiswa(
     val phone: String?
 )
 
+@Serializable
 data class Lokasi(
     val kota: String?,
     val negara: String
