@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Card
@@ -104,17 +104,17 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
 @Composable
 fun ScholarshipList(scholarships: List<Beasiswa>, navController: NavController) {
     LazyRow {
-        items(scholarships) { scholarship ->
-            BeasiswaItem(beasiswa = scholarship, navController)
+        itemsIndexed(scholarships) { index, scholarship ->
+            BeasiswaItem(beasiswa = scholarship, isFirstChild = index == 0, navController)
         }
     }
 }
 
 @Composable
-fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
+fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavController) {
 
-    if (beasiswa.nama != "Title not found") {
-        val paddingValues = if (beasiswa.id == 0L) 16.dp else 8.dp
+    if (beasiswa.name != "Title not found") {
+        val paddingValues = if (isFirstChild) 16.dp else 8.dp
 
         OutlinedCard(
             modifier = Modifier
@@ -174,21 +174,19 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                 containerColor = Color(0x80D9D9D9),
                             )
                         ) {
-                            beasiswa.lokasi.kota?.let {
-                                Text(
-                                    text = it,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    //                        color = Color(0xCC17181A)
-                                )
-                            }
+                            Text(
+                                text = beasiswa.city,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                //                        color = Color(0xCC17181A)
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "Beasiswa ${beasiswa.pendanaan}", fontSize = 12.sp)
+                    Text(text = "Beasiswa ${beasiswa.fundingStatus}", fontSize = 12.sp)
                     Text(
-                        text = beasiswa.nama,
+                        text = beasiswa.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 18.sp,

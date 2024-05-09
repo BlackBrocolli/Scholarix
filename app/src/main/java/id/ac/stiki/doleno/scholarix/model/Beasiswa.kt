@@ -1,46 +1,46 @@
 package id.ac.stiki.doleno.scholarix.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
+//@Serializable
 data class Beasiswa(
-    val id: Long = -1L,
-    val link: String,
-    val nama: String,
-    val pendanaan: String?,
+    var id: String = "",
+    val link: String = "",
+    val name: String = "",
+    val fundingStatus: String? = null,
     val deadline: String? = "N/A",
-    val degrees: List<String>,
-    val lokasi: Lokasi,
+    val degrees: List<String> = listOf(""),
+    val city: String = "",
+    val country: String = "",
     // apa bisa setelah dapat link, nama, pendanaan, deadline, degrees, dan lokasi
     // langsung tampilkan UI beasiswanya di homescreen
     // sisanya dibawah ini discraping setelahnya di latar belakang
-    val institusi: String,
+    val institution: String = "",
     val jumlah: String = "N/A",
     val umur: String = "Tidak ada batasan",
     val durasi: String = "N/A",
     val sertifikatBahasa: String = "N/A",
-    val documents: List<String>,
-    val benefits: List<String>,
-    val email: String?,
-    val phone: String?
+    val documents: List<String> = listOf(""),
+    val benefits: List<String> = listOf(""),
+    val email: String? = null,
+    val phone: String? = null
 )
 
-@Serializable
-data class Lokasi(
-    val kota: String?,
-    val negara: String
-)
+//@Serializable
+//data class Lokasi(
+//    val kota: String? = null,
+//    val negara: String = ""
+//)
 
 object DummyBeasiswa {
     val beasiswaList = listOf(
         Beasiswa(
-            id = 0L,
+            id = "0",
             link = "",
-            nama = "Beasiswa ABC INIlah beasiswa dengan nama panjang",
-            pendanaan = "Fully Funded",
+            name = "Beasiswa ABC INIlah beasiswa dengan nama panjang",
+            fundingStatus = "Fully Funded",
             degrees = listOf("S1", "S2", "S3"),
-            lokasi = Lokasi("Jakarta", "Indonesia"),
-            institusi = "Colombia Educational Institutes",
+            city = "Jakata",
+            country = "Indonesia",
+            institution = "Colombia Educational Institutes",
             umur = "Anda harus lebih tua dari 50 tahun",
             documents = listOf(
                 "Recommendation letter (Academic)",
@@ -61,14 +61,15 @@ object DummyBeasiswa {
             phone = ""
         ),
         Beasiswa(
-            id = 1L,
+            id = "1",
             link = "",
-            nama = "Beasiswa XYZ",
-            pendanaan = "Partial Funded",
+            name = "Beasiswa XYZ",
+            fundingStatus = "Partial Funded",
             deadline = "May 15, 2024",
             degrees = listOf("S2", "S3"),
-            lokasi = Lokasi("Bandung", "Indonesia"),
-            institusi = "Colombia Educational Institutes",
+            city = "Jakata",
+            country = "Indonesia",
+            institution = "Colombia Educational Institutes",
             jumlah = "120",
             documents = listOf(
                 "Recommendation letter (Academic)",
@@ -87,13 +88,14 @@ object DummyBeasiswa {
             phone = ""
         ),
         Beasiswa(
-            id = 2L,
-            nama = "Beasiswa 123",
-            pendanaan = "Fully Funded",
+            id = "2",
+            name = "Beasiswa 123",
+            fundingStatus = "Fully Funded",
             deadline = "June 1, 2024",
             degrees = listOf("S1", "S2"),
-            lokasi = Lokasi("Surabaya", "Indonesia"),
-            institusi = "Colombia Educational Institutes",
+            city = "Jakata",
+            country = "Indonesia",
+            institution = "Colombia Educational Institutes",
             documents = listOf(
                 "Recommendation letter (Academic)",
                 "Curriculum Vitae (CV)",

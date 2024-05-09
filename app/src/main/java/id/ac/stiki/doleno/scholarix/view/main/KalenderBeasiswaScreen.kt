@@ -355,7 +355,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                                     containerColor = Color(0x80D9D9D9),
                                                 )
                                             ) {
-                                                beasiswa.lokasi.kota?.let {
+                                                beasiswa.city.let {
                                                     androidx.compose.material3.Text(
                                                         text = it,
                                                         modifier = Modifier.padding(
@@ -374,13 +374,13 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                     Spacer(modifier = Modifier.height(16.dp))
                                     // TIPE PENDANAAN
                                     androidx.compose.material3.Text(
-                                        text = "Beasiswa ${beasiswa.pendanaan}",
+                                        text = "Beasiswa ${beasiswa.fundingStatus}",
                                         fontSize = 12.sp
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     // NAMA BEASISWA
                                     androidx.compose.material3.Text(
-                                        text = beasiswa.nama,
+                                        text = beasiswa.name,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         lineHeight = 24.sp

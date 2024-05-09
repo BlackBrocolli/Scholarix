@@ -84,8 +84,10 @@ fun MainNavigation(
                 nullable = false
             })
         ) { entry ->
-            val id = if (entry.arguments != null) entry.arguments!!.getLong("id") else -1L
-            DetailBeasiswaScreen(id = id, viewModel = mainViewModel, navController = navController)
+            val id = if (entry.arguments != null) entry.arguments!!.getString("id") else "-1"
+            if (id != null) {
+                DetailBeasiswaScreen(id = id, viewModel = mainViewModel, navController = navController)
+            }
         }
         composable(Screen.KalenderBeasiswaScreen.route) {
             KalenderBeasiswaScreen(viewModel = mainViewModel, navController = navController)

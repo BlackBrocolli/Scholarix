@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavController) {
+fun DetailBeasiswaScreen(id: String, viewModel: MainViewModel, navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,11 +65,11 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
             val beasiswa = viewModel.getABeasiswaById(id)
             if (beasiswa != null) {
                 Text(
-                    text = beasiswa.nama,
+                    text = beasiswa.name,
                     fontWeight = FontWeight.Black,
                     fontSize = 18.sp
                 )
-                beasiswa.pendanaan?.let { Text(text = it, fontSize = 14.sp) }
+                beasiswa.fundingStatus?.let { Text(text = it, fontSize = 14.sp) }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
                     // Menampilkan setiap derajat dalam kartu terpisah
@@ -107,7 +107,7 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                             containerColor = Color(0x80D9D9D9),
                         )
                     ) {
-                        beasiswa.lokasi.kota?.let {
+                        beasiswa.city.let {
                             Text(
                                 text = it,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -167,7 +167,7 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(start = 8.dp, end = 4.dp)
                             )
-                            Text(text = beasiswa.lokasi.negara, fontSize = 14.sp)
+                            Text(text = beasiswa.country, fontSize = 14.sp)
                         }
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
                         Text(
@@ -183,7 +183,7 @@ fun DetailBeasiswaScreen(id: Long, viewModel: MainViewModel, navController: NavC
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(start = 8.dp, end = 4.dp)
                             )
-                            Text(text = beasiswa.institusi, fontSize = 14.sp)
+                            Text(text = beasiswa.institution, fontSize = 14.sp)
                         }
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
                         Text(

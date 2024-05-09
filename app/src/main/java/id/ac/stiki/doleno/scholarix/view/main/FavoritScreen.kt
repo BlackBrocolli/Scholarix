@@ -3,7 +3,6 @@ package id.ac.stiki.doleno.scholarix.view.main
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -106,18 +104,16 @@ fun FavoritScreen() {
                                         containerColor = Color(0x80D9D9D9),
                                     )
                                 ) {
-                                    beasiswa.lokasi.kota?.let {
-                                        Text(
-                                            text = it,
-                                            modifier = Modifier.padding(
-                                                horizontal = 8.dp,
-                                                vertical = 4.dp
-                                            ),
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold,
-                                //                        color = Color(0xCC17181A)
-                                        )
-                                    }
+                                    Text(
+                                        text = beasiswa.city,
+                                        modifier = Modifier.padding(
+                                            horizontal = 8.dp,
+                                            vertical = 4.dp
+                                        ),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        //                        color = Color(0xCC17181A)
+                                    )
                                 }
 
 
@@ -143,11 +139,11 @@ fun FavoritScreen() {
 
                         Spacer(modifier = Modifier.height(16.dp))
                         // TIPE PENDANAAN
-                        Text(text = "Beasiswa ${beasiswa.pendanaan}", fontSize = 12.sp)
+                        Text(text = "Beasiswa ${beasiswa.fundingStatus}", fontSize = 12.sp)
                         Spacer(modifier = Modifier.height(4.dp))
                         // NAMA BEASISWA
                         Text(
-                            text = beasiswa.nama,
+                            text = beasiswa.name,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             lineHeight = 24.sp
