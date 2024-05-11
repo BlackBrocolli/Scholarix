@@ -175,8 +175,11 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                             )
                         ) {
                             Text(
-                                text = beasiswa.city,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                text = beasiswa.city ?: beasiswa.country,
+                                modifier = Modifier.padding(
+                                    horizontal = 8.dp,
+                                    vertical = 4.dp
+                                ),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 //                        color = Color(0xCC17181A)

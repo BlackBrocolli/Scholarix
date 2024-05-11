@@ -8,18 +8,18 @@ data class Beasiswa(
     val fundingStatus: String? = null,
     val deadline: String? = "N/A",
     val degrees: List<String> = listOf(""),
-    val city: String = "",
+    val city: String? = null,
     val country: String = "",
     // apa bisa setelah dapat link, nama, pendanaan, deadline, degrees, dan lokasi
     // langsung tampilkan UI beasiswanya di homescreen
     // sisanya dibawah ini discraping setelahnya di latar belakang
     val institution: String = "",
-    val jumlah: String = "N/A",
-    val umur: String = "Tidak ada batasan",
-    val durasi: String = "N/A",
-    val sertifikatBahasa: String = "N/A",
-    val documents: List<String> = listOf(""),
-    val benefits: List<String> = listOf(""),
+    val opportunities: String = "N/A",
+    val eligibleNationals: String = "Tidak ada keterangan",
+    val duration: String = "N/A",
+    val languageRequirements: String = "N/A",
+    val documentsHtml: List<String> = listOf(""),
+    val benefitsHtml: List<String> = listOf(""),
     val email: String? = null,
     val phone: String? = null
 )
@@ -41,22 +41,22 @@ object DummyBeasiswa {
             city = "Jakata",
             country = "Indonesia",
             institution = "Colombia Educational Institutes",
-            umur = "Anda harus lebih tua dari 50 tahun",
-            documents = listOf(
+            eligibleNationals = "Anda harus lebih tua dari 50 tahun",
+            documentsHtml = listOf(
                 "Recommendation letter (Academic)",
                 "Curriculum Vitae (CV)",
                 "Spanish Proficiency proof",
                 "Copy of Passport"
             ),
-            benefits = listOf(
+            benefitsHtml = listOf(
                 "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
                 "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
                 "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
                 "Coverage of Medical Insurance during studies in Colombia."
             ),
-            durasi = "2 years or more",
-            jumlah = "103 scholarships",
-            sertifikatBahasa = "Varies",
+            duration = "2 years or more",
+            opportunities = "103 scholarships",
+            languageRequirements = "Varies",
             email = null,
             phone = ""
         ),
@@ -70,20 +70,20 @@ object DummyBeasiswa {
             city = "Jakata",
             country = "Indonesia",
             institution = "Colombia Educational Institutes",
-            jumlah = "120",
-            documents = listOf(
+            opportunities = "120",
+            documentsHtml = listOf(
                 "Recommendation letter (Academic)",
                 "Curriculum Vitae (CV)",
                 "Spanish Proficiency proof",
                 "Copy of Passport"
             ),
-            benefits = listOf(
+            benefitsHtml = listOf(
                 "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
                 "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
                 "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",
                 "Coverage of Medical Insurance during studies in Colombia."
             ),
-            sertifikatBahasa = "TOEFL, IELTS",
+            languageRequirements = "TOEFL, IELTS",
             email = null,
             phone = ""
         ),
@@ -96,13 +96,13 @@ object DummyBeasiswa {
             city = "Jakata",
             country = "Indonesia",
             institution = "Colombia Educational Institutes",
-            documents = listOf(
+            documentsHtml = listOf(
                 "Recommendation letter (Academic)",
                 "Curriculum Vitae (CV)",
                 "Spanish Proficiency proof",
                 "Copy of Passport"
             ),
-            benefits = listOf(
+            benefitsHtml = listOf(
                 "Full tuition fee coverage (only for academic programs found in the catalog of this call)",
                 "Grant of the sum equivalent to 3 Minimum Monthly Legal salaries. \$ 2,484,348 Colombian pesos.",
                 "A one-time stipend for books and materials at the first of the programs: \$401.321 COP",

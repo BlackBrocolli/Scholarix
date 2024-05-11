@@ -105,7 +105,7 @@ fun FavoritScreen() {
                                     )
                                 ) {
                                     Text(
-                                        text = beasiswa.city,
+                                        text = beasiswa.city ?: beasiswa.country,
                                         modifier = Modifier.padding(
                                             horizontal = 8.dp,
                                             vertical = 4.dp

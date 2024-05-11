@@ -355,18 +355,16 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                                     containerColor = Color(0x80D9D9D9),
                                                 )
                                             ) {
-                                                beasiswa.city.let {
-                                                    androidx.compose.material3.Text(
-                                                        text = it,
-                                                        modifier = Modifier.padding(
-                                                            horizontal = 8.dp,
-                                                            vertical = 4.dp
-                                                        ),
-                                                        fontSize = 12.sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        // color = Color(0xCC17181A)
-                                                    )
-                                                }
+                                                androidx.compose.material3.Text(
+                                                    text = beasiswa.city ?: beasiswa.country,
+                                                    modifier = Modifier.padding(
+                                                        horizontal = 8.dp,
+                                                        vertical = 4.dp
+                                                    ),
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    //                        color = Color(0xCC17181A)
+                                                )
                                             }
                                         }
                                     }

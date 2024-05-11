@@ -1,6 +1,7 @@
 package id.ac.stiki.doleno.scholarix
 
 import android.app.Activity
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -79,14 +80,13 @@ fun MainNavigation(
         composable(
             route = "${Screen.DetailBeasiswaScreen.route}/{id}",
             arguments = listOf(navArgument("id") {
-                type = NavType.LongType
-                defaultValue = -1L
-                nullable = false
+                type = NavType.StringType
             })
-        ) { entry ->
-            val id = if (entry.arguments != null) entry.arguments!!.getString("id") else "-1"
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
             if (id != null) {
-                DetailBeasiswaScreen(id = id, viewModel = mainViewModel, navController = navController)
+                val encodedId = Uri.encode(id) // Melakukan encoding terhadap ID dengan spasi
+                DetailBeasiswaScreen(id = encodedId, viewModel = mainViewModel, navController = navController)
             }
         }
         composable(Screen.KalenderBeasiswaScreen.route) {
