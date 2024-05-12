@@ -353,14 +353,18 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                Row(verticalAlignment = Alignment.Top) {
-                    Text(
-                        text = "\u2022", // Unicode untuk simbol bullet
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
-                    )
-                    Text(text = beasiswa.languageRequirements, fontSize = 14.sp)
+                if (beasiswa.languageRequirements.isNotEmpty()) {
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(
+                            text = "\u2022", // Unicode untuk simbol bullet
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        )
+                        Text(text = beasiswa.languageRequirements, fontSize = 14.sp)
+                    }
+                } else {
+                    Text(text = "-")
                 }
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
                 Text(
@@ -369,16 +373,20 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                beasiswa.documentsHtml.forEach { document ->
-                    Row(verticalAlignment = Alignment.Top) {
-                        Text(
-                            text = "\u2022", // Unicode untuk simbol bullet
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
-                        )
-                        Text(text = document, fontSize = 14.sp)
+                if (beasiswa.documentsHtml.isNotEmpty()) {
+                    beasiswa.documentsHtml.forEach { document ->
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text(
+                                text = "\u2022", // Unicode untuk simbol bullet
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            )
+                            Text(text = document, fontSize = 14.sp)
+                        }
                     }
+                } else {
+                    Text(text = "-")
                 }
             }
         }
