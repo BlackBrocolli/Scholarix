@@ -22,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,6 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
+import android.content.Intent
+import android.net.Uri
 
 @Composable
 fun DetailBeasiswaScreen(id: String, viewModel: MainViewModel, navController: NavController) {
@@ -66,6 +70,32 @@ fun DetailBeasiswaScreen(id: String, viewModel: MainViewModel, navController: Na
                     }
                 }
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    val url = scholarship.value.link
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(url)
+                    navController.context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Kunjungi Website")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null
+                    )
+                }
+            }
         }
 
     ) { innerPadding ->
