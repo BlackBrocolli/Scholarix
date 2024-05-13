@@ -54,6 +54,36 @@ class MainViewModel : ViewModel() {
     private val _isErrorScholarship = MutableLiveData<Boolean>()
     val isErrorScholarship: LiveData<Boolean> = _isErrorScholarship
 
+    // Jumlah beasiswa di firebase
+    private val _totalScholarshipsCount = MutableLiveData<Int>()
+    val totalScholarshipsCount: LiveData<Int> = _totalScholarshipsCount
+
+    // == Start of Searching variables
+    // Variabel yang menyimpan hasil pencarian
+    private val _filteredScholarships = MutableLiveData<List<Beasiswa>>()
+    val filteredScholarships: LiveData<List<Beasiswa>> = _filteredScholarships
+
+    // Jumlah beasiswa hasil pencarian
+    private var _totalFilteredScholarshipsCount = MutableLiveData<Int>()
+    val totalFilteredScholarshipsCount: LiveData<Int> = _totalFilteredScholarshipsCount
+
+    private val _isSearching = MutableLiveData<Boolean>()
+    val isSearching: LiveData<Boolean> = _isSearching
+
+    fun resetSearching() {
+        _isSearching.value = false
+        _searchText.value = ""
+    }
+
+    private val _searchText = MutableLiveData("")
+    val searchText: LiveData<String> = _searchText
+
+    fun setSearchText(text: String) {
+        _searchText.value = text
+    }
+    // == End of Searching variables
+
+    // Get ALL scholarships from firebase
     fun fetchScholarshipDetails() {
         _isLoadingAllScholarships.value = true
         _isErrorAllScholarships.value = false
@@ -65,6 +95,7 @@ class MainViewModel : ViewModel() {
                     doc.toObject(Beasiswa::class.java).apply { id = doc.id }
                 }
                 _scholarships.value = scholarshipList
+                _totalScholarshipsCount.value = documents.size()
             }
             .addOnFailureListener {
                 _isLoadingAllScholarships.value = false
@@ -94,5 +125,15 @@ class MainViewModel : ViewModel() {
                 _isLoadingScholarship.value = false
                 _isErrorScholarship.value = true
             }
+    }
+
+    // Search Scholarships
+    fun searchScholarshipsByName(name: String) {
+        _isSearching.value = true
+        _filteredScholarships.value = _scholarships.value?.filter { scholarship ->
+            scholarship.name.contains(name, ignoreCase = true)
+        } ?: emptyList()
+
+        _totalFilteredScholarshipsCount.value = _filteredScholarships.value!!.size
     }
 }

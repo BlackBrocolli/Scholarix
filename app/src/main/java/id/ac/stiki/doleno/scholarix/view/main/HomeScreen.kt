@@ -45,6 +45,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
     val isError = viewModel.isError.observeAsState(initial = false)
 
+    viewModel.resetSearching()
+
     LaunchedEffect(key1 = true) {
         if (scholarships.value.isEmpty()) {
             viewModel.fetchScholarshipDetails()

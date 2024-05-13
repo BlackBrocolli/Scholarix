@@ -80,8 +80,14 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
     // Observing the LiveData for changes
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
+    val filteredScholarships = viewModel.filteredScholarships.observeAsState(initial = emptyList())
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
     val isError = viewModel.isError.observeAsState(initial = false)
+    val totalScholarshipsCount = viewModel.totalScholarshipsCount.observeAsState(initial = 0)
+    val totalFilteredScholarshipsCount =
+        viewModel.totalFilteredScholarshipsCount.observeAsState(initial = 0)
+    val isSearching = viewModel.isSearching.observeAsState(initial = false)
+    val searchText by viewModel.searchText.observeAsState("")
 
     LaunchedEffect(key1 = true) {
         if (scholarships.value.isEmpty()) {
@@ -146,12 +152,12 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 .padding(start = 16.dp, bottom = 8.dp, end = 16.dp)
                         ) {
                             // Search Bar
-                            var searchText by remember { mutableStateOf("") }
                             OutlinedTextField(
                                 value = searchText,
                                 onValueChange = {
                                     //TODO: lakukan operasi pencarian beasiswa
-                                    searchText = it
+                                    viewModel.setSearchText(it)
+                                    viewModel.searchScholarshipsByName(searchText)
                                 },
                                 placeholder = { Text("Cari beasiswa") },
                                 textStyle = TextStyle(fontSize = 14.sp),
@@ -167,7 +173,9 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 },
                                 trailingIcon = {
                                     if (searchText.isNotEmpty()) {
-                                        IconButton(onClick = { searchText = "" }) {
+                                        IconButton(onClick = {
+                                            viewModel.resetSearching()
+                                        }) {
                                             Icon(
                                                 imageVector = Icons.Default.Clear,
                                                 contentDescription = "Clear Icon"
@@ -285,12 +293,21 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             }
                         }
                         // TODO: Jumlah beasiswa yang tampil berubah sesuai berapa banyak beasiswa yang tampil
-                        Text(
-                            text = "Menampilkan 1002 Beasiswa",
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        if (isSearching.value) {
+                            Text(
+                                text = "Menampilkan ${totalFilteredScholarshipsCount.value} Beasiswa",
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            Text(
+                                text = "Menampilkan ${totalScholarshipsCount.value} Beasiswa",
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                         Spacer(modifier = Modifier.weight(1f))
                     }
 
@@ -324,8 +341,14 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         LazyColumn(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            items(scholarships.value) { beasiswa ->
-                                BeasiswaItem(beasiswa = beasiswa, navController = navController)
+                            if (isSearching.value) {
+                                items(filteredScholarships.value) { beasiswa ->
+                                    BeasiswaItem(beasiswa = beasiswa, navController = navController)
+                                }
+                            } else {
+                                items(scholarships.value) { beasiswa ->
+                                    BeasiswaItem(beasiswa = beasiswa, navController = navController)
+                                }
                             }
                         }
                     }
