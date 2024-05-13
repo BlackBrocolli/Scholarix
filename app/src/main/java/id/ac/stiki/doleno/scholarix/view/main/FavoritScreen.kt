@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import id.ac.stiki.doleno.scholarix.model.DummyBeasiswa
 import androidx.compose.material.IconButton
 import androidx.compose.material.Icon
-import androidx.compose.material3.MaterialTheme
 import id.ac.stiki.doleno.scholarix.R
 import androidx.compose.ui.res.painterResource
 
@@ -121,8 +120,10 @@ fun FavoritScreen() {
 
                             // ICON FAVORITE
                             IconButton(modifier = Modifier
+//                                .background(
+//                                    MaterialTheme.colorScheme.primary,
                                 .background(
-                                    MaterialTheme.colorScheme.primary,
+                                    color = Color(0xFF00AFEA),
                                     RoundedCornerShape(percent = 15)
                                 )
                                 .size(32.dp),

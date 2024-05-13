@@ -40,14 +40,16 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 @Composable
 fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
 
-    LaunchedEffect(key1 = true) {
-        viewModel.fetchScholarshipDetails()
-    }
-
     // Observing the LiveData for changes
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
     val isError = viewModel.isError.observeAsState(initial = false)
+
+    LaunchedEffect(key1 = true) {
+        if (scholarships.value.isEmpty()) {
+            viewModel.fetchScholarshipDetails()
+        }
+    }
 
     Column(
         modifier = Modifier

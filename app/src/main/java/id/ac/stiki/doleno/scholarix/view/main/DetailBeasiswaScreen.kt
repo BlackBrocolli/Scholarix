@@ -306,15 +306,50 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Manfaat", fontWeight = FontWeight.Bold, color = Color.Blue)
-                beasiswa.benefitsHtml.forEach { document ->
-                    Row(verticalAlignment = Alignment.Top) {
-                        Text(
-                            text = "\u2022", // Unicode untuk simbol bullet
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
-                        )
-                        Text(text = document, fontSize = 14.sp)
+                // Regex pattern untuk menghilangkan semua tag HTML kecuali <hr>, <p>, <ul>, <li>, </li>, <strong>
+                val cleanHtmlPattern = Regex("<(?!hr|p|ul|li|/li|/strong).*?>")
+
+                // Fungsi untuk membersihkan teks dari tag HTML dan mengkonversi tag <ul> dan <li> menjadi teks daftar
+                fun cleanAndFormatText(html: String): String {
+                    return html.replace(cleanHtmlPattern, "")
+                        .replace("<ul>", "\n") // Ganti <ul> dengan newline
+                        .replace("</ul>", "")
+                        .replace("<li>", "") // Hapus <li>
+                        .replace("</li>", "")
+                        .replace("</strong>", "")
+                        .replace("&nbsp;", " ")
+                }
+
+                beasiswa.benefitsHtml.forEach { benefit ->
+                    val cleanText = when {
+                        benefit.startsWith("<hr>") -> {
+                            // Skip <hr> tag
+                            null
+                        }
+
+                        benefit.startsWith("<p>") -> {
+                            // Display text inside <p> tag
+                            cleanAndFormatText(benefit.removePrefix("<p>"))
+                        }
+
+                        benefit.startsWith("<ul>") -> {
+                            // Extract list items from <ul> tag
+                            val listItems = benefit
+                                .removePrefix("<ul>").removeSuffix("</ul>")
+                                .split("<li>").filter { it.isNotEmpty() }
+                                .map { cleanAndFormatText(it) }
+                            listItems.joinToString("\u2022 ", prefix = "\u2022 ")
+                        }
+
+                        else -> {
+                            // Default case, display text
+                            cleanAndFormatText(benefit)
+                        }
+                    }
+
+                    // Display the clean text
+                    cleanText?.let {
+                        Text(text = it, fontSize = 14.sp)
                     }
                 }
             }
