@@ -1,6 +1,7 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
@@ -283,7 +285,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
         },
         scaffoldState = scaffoldState,
         drawerContent = {
-            Text(text = "Halo, saya drawer")
+            DrawerFilterOptions()
         }
     ) { innerPadding ->
         Column(
@@ -292,11 +294,9 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 16.dp)
-//                .verticalScroll(rememberScrollState()),
         ) {
             when {
                 isLoading.value -> {
-                    // Display a loading animation or indicator
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
 
@@ -330,6 +330,57 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DrawerFilterOptions() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            Text(text = "Halo, saya drawer")
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(
+                modifier = Modifier
+                    .height(48.dp)
+                    .weight(1f)
+                    .padding(end = 4.dp),
+                border = BorderStroke(1.dp, Color(0xFF8F79E8)),
+                onClick = { /*TODO*/ }
+            ) {
+                Text(
+                    text = "Atur Ulang",
+                    color = Color(0xFF8F79E8)
+                )
+            }
+            Button(
+                modifier = Modifier
+                    .height(48.dp)
+                    .weight(1f)
+                    .padding(start = 4.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(
+                        0xFF8F79E8
+                    )
+                ),
+                onClick = { /*TODO*/ }
+            ) {
+                Text(text = "Terapkan", color = Color.White)
             }
         }
     }
@@ -461,11 +512,3 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun KalenderPreview() {
-//    val viewModel: MainViewModel = viewModel()
-//    val controller: NavController = rememberNavController()
-//    KalenderBeasiswaScreen(viewModel = viewModel, navController = controller)
-//}
