@@ -2,6 +2,7 @@ package id.ac.stiki.doleno.scholarix.view.main
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,6 +46,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,6 +62,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -343,10 +347,56 @@ fun DrawerFilterOptions() {
     ) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Filter", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        }
+        Column(
+            modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Halo, saya drawer")
+            Text(text = "Jenjang", fontSize = 16.sp, modifier = Modifier.padding(bottom = 12.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            ) {
+                SelectableCard(
+                    text = "S1",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
+                )
+                SelectableCard(
+                    text = "S2",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                SelectableCard(
+                    text = "S3",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
+                )
+                SelectableCard(
+                    text = "Lainnya",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp)
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -381,6 +431,53 @@ fun DrawerFilterOptions() {
                 onClick = { /*TODO*/ }
             ) {
                 Text(text = "Terapkan", color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectableCard(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    var isSelected by remember { mutableStateOf(false) }
+    val backgroundColor = if (isSelected) Color.White else Color(0xFFE0E0E0)
+    val borderColor = if (isSelected) Color(0xFF8F79E8) else Color.Transparent
+    val textColor = if (isSelected) Color(0xFF8F79E8) else Color.Black
+
+    Card(
+        modifier = modifier
+            .clickable { isSelected = !isSelected },
+        shape = RoundedCornerShape(2.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor)
+                .border(1.dp, borderColor, RoundedCornerShape(4.dp))
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Selected",
+                        tint = Color(0xFF8F79E8),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .size(16.dp)
+                    )
+                }
+                Text(
+                    text = text,
+                    color = textColor,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -511,4 +608,10 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DrawerPreview() {
+    DrawerFilterOptions()
 }
