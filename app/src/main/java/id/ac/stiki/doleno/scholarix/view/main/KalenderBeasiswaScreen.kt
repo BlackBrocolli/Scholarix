@@ -47,6 +47,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,7 +63,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -77,12 +77,12 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
     // Observing the LiveData for changes
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
-    val filteredScholarships = viewModel.filteredScholarships.observeAsState(initial = emptyList())
+    val searchedScholarships = viewModel.searchedScholarships.observeAsState(initial = emptyList())
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
     val isError = viewModel.isError.observeAsState(initial = false)
     val totalScholarshipsCount = viewModel.totalScholarshipsCount.observeAsState(initial = 0)
-    val totalFilteredScholarshipsCount =
-        viewModel.totalFilteredScholarshipsCount.observeAsState(initial = 0)
+    val totalSearchedScholarshipsCount =
+        viewModel.totalSearchedScholarshipsCount.observeAsState(initial = 0)
     val isSearching = viewModel.isSearching.observeAsState(initial = false)
     val searchText by viewModel.searchText.observeAsState("")
 
@@ -269,7 +269,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                     }
                     if (isSearching.value) {
                         Text(
-                            text = "Menampilkan ${totalFilteredScholarshipsCount.value} Beasiswa",
+                            text = "Menampilkan ${totalSearchedScholarshipsCount.value} Beasiswa",
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -314,25 +314,19 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                 }
 
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        if (isSearching.value) {
-                            items(filteredScholarships.value) { beasiswa ->
-                                BeasiswaItem(
-                                    beasiswa = beasiswa,
-                                    navController = navController
-                                )
-                            }
-                        } else {
-                            items(scholarships.value) { beasiswa ->
-                                BeasiswaItem(
-                                    beasiswa = beasiswa,
-                                    navController = navController
-                                )
-                            }
-                        }
+
+                    if (isSearching.value) {
+                        KalenderScholarshipList(
+                            scholarships = searchedScholarships.value,
+                            navController = navController
+                        )
+                    } else {
+                        KalenderScholarshipList(
+                            scholarships = scholarships.value,
+                            navController = navController
+                        )
                     }
+
                 }
             }
         }
@@ -341,6 +335,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
 @Composable
 fun DrawerFilterOptions() {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -371,13 +366,13 @@ fun DrawerFilterOptions() {
                     text = "S1",
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 4.dp)
+                        .padding(end = 4.dp),
                 )
                 SelectableCard(
                     text = "S2",
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 4.dp)
+                        .padding(end = 4.dp),
                 )
             }
             Row(
@@ -388,15 +383,38 @@ fun DrawerFilterOptions() {
                     text = "S3",
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 4.dp)
+                        .padding(end = 4.dp),
                 )
                 SelectableCard(
                     text = "Lainnya",
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 4.dp)
+                        .padding(end = 4.dp),
                 )
             }
+            Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
+            Text(
+                text = "Tipe Beasiswa",
+                fontSize = 16.sp,
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SelectableCard(
+                    text = "Fully Funded",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp),
+                )
+                SelectableCard(
+                    text = "Partial Funded",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp),
+                )
+            }
+            Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
         }
         Row(
             modifier = Modifier
@@ -411,7 +429,9 @@ fun DrawerFilterOptions() {
                     .weight(1f)
                     .padding(end = 4.dp),
                 border = BorderStroke(1.dp, Color(0xFF8F79E8)),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    // TODO: Reset all filtering value
+                }
             ) {
                 Text(
                     text = "Atur Ulang",
@@ -428,7 +448,9 @@ fun DrawerFilterOptions() {
                         0xFF8F79E8
                     )
                 ),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    // TODO: Lakukan filtering
+                }
             ) {
                 Text(text = "Terapkan", color = Color.White)
             }
@@ -438,8 +460,8 @@ fun DrawerFilterOptions() {
 
 @Composable
 fun SelectableCard(
+    modifier: Modifier = Modifier,
     text: String,
-    modifier: Modifier = Modifier
 ) {
     var isSelected by remember { mutableStateOf(false) }
     val backgroundColor = if (isSelected) Color.White else Color(0xFFE0E0E0)
@@ -448,7 +470,9 @@ fun SelectableCard(
 
     Card(
         modifier = modifier
-            .clickable { isSelected = !isSelected },
+            .clickable {
+                isSelected = !isSelected
+            },
         shape = RoundedCornerShape(2.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
@@ -479,6 +503,21 @@ fun SelectableCard(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun KalenderScholarshipList(scholarships: List<Beasiswa>, navController: NavController) {
+    // Tampilkan daftar beasiswa
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(scholarships) { beasiswa ->
+            BeasiswaItem(
+                beasiswa = beasiswa,
+                navController = navController
+            )
         }
     }
 }
@@ -608,10 +647,4 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DrawerPreview() {
-    DrawerFilterOptions()
 }

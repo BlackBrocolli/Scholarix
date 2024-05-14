@@ -1,6 +1,7 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -60,12 +61,12 @@ class MainViewModel : ViewModel() {
 
     // == Start of Searching variables
     // Variabel yang menyimpan hasil pencarian
-    private val _filteredScholarships = MutableLiveData<List<Beasiswa>>()
-    val filteredScholarships: LiveData<List<Beasiswa>> = _filteredScholarships
+    private val _searchedScholarships = MutableLiveData<List<Beasiswa>>()
+    val searchedScholarships: LiveData<List<Beasiswa>> = _searchedScholarships
 
     // Jumlah beasiswa hasil pencarian
-    private var _totalFilteredScholarshipsCount = MutableLiveData<Int>()
-    val totalFilteredScholarshipsCount: LiveData<Int> = _totalFilteredScholarshipsCount
+    private var _totalSearchedScholarshipsCount = MutableLiveData<Int>()
+    val totalSearchedScholarshipsCount: LiveData<Int> = _totalSearchedScholarshipsCount
 
     private val _isSearching = MutableLiveData<Boolean>()
     val isSearching: LiveData<Boolean> = _isSearching
@@ -82,6 +83,10 @@ class MainViewModel : ViewModel() {
         _searchText.value = text
     }
     // == End of Searching variables
+
+    // == Start of FILTERING ==
+    // TODO: add variables and functions for filtering
+    // == End of FILTERING ==
 
     // Get ALL scholarships from firebase
     fun fetchScholarshipDetails() {
@@ -130,10 +135,10 @@ class MainViewModel : ViewModel() {
     // Search Scholarships
     fun searchScholarshipsByName(name: String) {
         _isSearching.value = true
-        _filteredScholarships.value = _scholarships.value?.filter { scholarship ->
+        _searchedScholarships.value = _scholarships.value?.filter { scholarship ->
             scholarship.name.contains(name, ignoreCase = true)
         } ?: emptyList()
 
-        _totalFilteredScholarshipsCount.value = _filteredScholarships.value!!.size
+        _totalSearchedScholarshipsCount.value = _searchedScholarships.value!!.size
     }
 }
