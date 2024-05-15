@@ -1,7 +1,6 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -110,6 +109,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun resetCardSelections() {
+        _selectedDegrees.value = emptyList()
+        _selectedFundingStatus.value = emptyList()
         _selectedCards.value = _selectedCards.value?.mapValues { false }
     }
 
@@ -118,6 +119,93 @@ class MainViewModel : ViewModel() {
 
     fun setFiltering(boolean: Boolean) {
         _isFiltering.value = boolean
+    }
+
+    private val _selectedDegrees = MutableLiveData<List<String>>(emptyList())
+    private val _selectedFundingStatus = MutableLiveData<List<String>>(emptyList())
+
+    private val _filteredScholarships = MutableLiveData<List<Beasiswa>>()
+    val filteredScholarships: LiveData<List<Beasiswa>> = _filteredScholarships
+
+    private var _totalFilteredScholarshipsCount = MutableLiveData<Int>()
+    val totalFilteredScholarshipsCount: LiveData<Int> = _totalFilteredScholarshipsCount
+
+    private fun addSelectedDegree(degree: String) {
+        val currentDegrees = _selectedDegrees.value?.toMutableList() ?: mutableListOf()
+        if (!currentDegrees.contains(degree)) {
+            currentDegrees.add(degree)
+            _selectedDegrees.value = currentDegrees
+        }
+    }
+
+    private fun removeSelectedDegree(degree: String) {
+        val currentDegrees = _selectedDegrees.value?.toMutableList() ?: mutableListOf()
+        if (currentDegrees.contains(degree)) {
+            currentDegrees.remove(degree)
+            _selectedDegrees.value = currentDegrees
+        }
+    }
+
+    private fun addSelectedFundingStatus(fundingStatus: String) {
+        val currentFundingStatus = _selectedFundingStatus.value?.toMutableList() ?: mutableListOf()
+        if (!currentFundingStatus.contains(fundingStatus)) {
+            currentFundingStatus.add(fundingStatus)
+            _selectedFundingStatus.value = currentFundingStatus
+        }
+    }
+
+    private fun removeSelectedFundingStatus(fundingStatus: String) {
+        val currentFundingStatus = _selectedFundingStatus.value?.toMutableList() ?: mutableListOf()
+        if (currentFundingStatus.contains(fundingStatus)) {
+            currentFundingStatus.remove(fundingStatus)
+            _selectedFundingStatus.value = currentFundingStatus
+        }
+    }
+
+    fun toggleDegreeSelection(degree: String) {
+        if (_selectedDegrees.value?.contains(degree) == true) {
+            removeSelectedDegree(degree)
+        } else {
+            addSelectedDegree(degree)
+        }
+        toggleCardSelection(degree)  // Toggle the card selection state
+    }
+
+    fun toggleFundingStatusSelection(status: String) {
+        if (_selectedFundingStatus.value?.contains(status) == true) {
+            removeSelectedFundingStatus(status)
+        } else {
+            addSelectedFundingStatus(status)
+        }
+        toggleCardSelection(status)  // Toggle the card selection state
+    }
+
+    fun checkAndSetFiltering() {
+        val hasSelectedDegrees = _selectedDegrees.value?.isNotEmpty() == true
+        val hasSelectedFundingStatus = _selectedFundingStatus.value?.isNotEmpty() == true
+        val isFilteringNow = hasSelectedDegrees || hasSelectedFundingStatus
+        _isFiltering.value = isFilteringNow
+
+        if (isFilteringNow) {
+            performFiltering()
+        }
+    }
+
+    fun performFiltering() {
+        val degrees = _selectedDegrees.value ?: emptyList()
+        val fundingStatus = _selectedFundingStatus.value ?: emptyList()
+        val scholarshipsToFilter = if (_isSearching.value == true) _searchedScholarships.value else _scholarships.value
+
+        if (scholarshipsToFilter != null) {
+            val filteredList = scholarshipsToFilter.filter { scholarship ->
+                val matchesDegrees = degrees.isEmpty() || degrees.any { it in scholarship.degrees }
+                val matchesFundingStatus = fundingStatus.isEmpty() || fundingStatus.contains(scholarship.fundingStatus)
+                matchesDegrees && matchesFundingStatus
+            }
+
+            _filteredScholarships.value = filteredList
+            _totalFilteredScholarshipsCount.value = filteredList.size
+        }
     }
     // == End of FILTERING ==
 

@@ -1,6 +1,5 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,7 +37,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -79,18 +77,19 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
     // Observing the LiveData for changes
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
     val searchedScholarships = viewModel.searchedScholarships.observeAsState(initial = emptyList())
-    val isLoading = viewModel.isLoading.observeAsState(initial = false)
-    val isError = viewModel.isError.observeAsState(initial = false)
     val totalScholarshipsCount = viewModel.totalScholarshipsCount.observeAsState(initial = 0)
     val totalSearchedScholarshipsCount =
         viewModel.totalSearchedScholarshipsCount.observeAsState(initial = 0)
     val isSearching = viewModel.isSearching.observeAsState(initial = false)
     val searchText by viewModel.searchText.observeAsState("")
     val isFiltering = viewModel.isFiltering.observeAsState(initial = false)
+    val filteredScholarships = viewModel.filteredScholarships.observeAsState(initial = emptyList())
+    val totalFilteredScholarshipsCount =
+        viewModel.totalFilteredScholarshipsCount.observeAsState(initial = 0)
 
-    LaunchedEffect(key1 = true) {
-        if (scholarships.value.isEmpty()) {
-            viewModel.fetchScholarshipDetails()
+    LaunchedEffect(isFiltering) {
+        if (isFiltering.value) {
+            viewModel.performFiltering()
         }
     }
 
@@ -269,7 +268,14 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
                         }
                     }
-                    if (isSearching.value) {
+                    if (isFiltering.value) {
+                        Text(
+                            text = "Menampilkan ${totalFilteredScholarshipsCount.value} Beasiswa",
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else if (isSearching.value) {
                         Text(
                             text = "Menampilkan ${totalSearchedScholarshipsCount.value} Beasiswa",
                             fontSize = 12.sp,
@@ -291,7 +297,11 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
         },
         scaffoldState = scaffoldState,
         drawerContent = {
-            DrawerFilterOptions(isFiltering.value, viewModel = viewModel)
+            DrawerFilterOptions(
+                viewModel = viewModel,
+                scope = scope,
+                scaffoldState = scaffoldState,
+            )
         }
     ) { innerPadding ->
         Column(
@@ -301,42 +311,32 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 16.dp)
         ) {
-            when {
-                isLoading.value -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                }
-
-                isError.value -> {
-                    // Show an error message and possibly a retry button
-                    Text("Failed to load scholarships. Tap to retry.",
-                        modifier = Modifier
-                            .clickable { viewModel.fetchScholarshipDetails() }
-                            .padding(16.dp)
-                            .align(Alignment.CenterHorizontally))
-                }
-
-                else -> {
-
-                    if (isSearching.value) {
-                        KalenderScholarshipList(
-                            scholarships = searchedScholarships.value,
-                            navController = navController
-                        )
-                    } else {
-                        KalenderScholarshipList(
-                            scholarships = scholarships.value,
-                            navController = navController
-                        )
-                    }
-                }
+            if (isFiltering.value) {
+                KalenderScholarshipList(
+                    scholarships = filteredScholarships.value,
+                    navController = navController
+                )
+            } else if (isSearching.value) {
+                KalenderScholarshipList(
+                    scholarships = searchedScholarships.value,
+                    navController = navController
+                )
+            } else {
+                KalenderScholarshipList(
+                    scholarships = scholarships.value,
+                    navController = navController
+                )
             }
         }
     }
 }
 
 @Composable
-fun DrawerFilterOptions(isFiltering: Boolean, viewModel: MainViewModel) {
-    Log.d("Kalender Beasiswa", "isFiltering = $isFiltering")
+fun DrawerFilterOptions(
+    viewModel: MainViewModel,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -439,7 +439,7 @@ fun DrawerFilterOptions(isFiltering: Boolean, viewModel: MainViewModel) {
                 onClick = {
                     // Reset all filtering value
                     viewModel.resetCardSelections()
-                    viewModel.setFiltering(false)
+//                    viewModel.setFiltering(false)
                 }
             ) {
                 Text(
@@ -459,6 +459,11 @@ fun DrawerFilterOptions(isFiltering: Boolean, viewModel: MainViewModel) {
                 ),
                 onClick = {
                     // TODO: Lakukan filtering
+                    viewModel.checkAndSetFiltering()
+
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
                 }
             ) {
                 Text(text = "Terapkan", color = Color.White)
@@ -483,7 +488,19 @@ fun SelectableCard(
     Card(
         modifier = modifier
             .clickable {
-                viewModel.toggleCardSelection(text)
+                when (text) {
+                    "S1", "S2", "S3", "Lainnya" -> {
+                        viewModel.toggleDegreeSelection(text)
+                    }
+
+                    "Fully Funded", "Partial Funded" -> {
+                        viewModel.toggleFundingStatusSelection(text)
+                    }
+
+                    else -> {
+                        viewModel.toggleCardSelection(text)
+                    }
+                }
             },
         shape = RoundedCornerShape(2.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
