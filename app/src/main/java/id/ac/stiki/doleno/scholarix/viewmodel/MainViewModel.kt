@@ -86,6 +86,39 @@ class MainViewModel : ViewModel() {
 
     // == Start of FILTERING ==
     // TODO: add variables and functions for filtering
+
+    // State to track the selected status of each card
+    private val _selectedCards = MutableLiveData<Map<String, Boolean>>()
+    val selectedCards: LiveData<Map<String, Boolean>> = _selectedCards
+
+    init {
+        // Initialize with default values (all cards unselected)
+        _selectedCards.value = mapOf(
+            "S1" to false,
+            "S2" to false,
+            "S3" to false,
+            "Lainnya" to false,
+            "Fully Funded" to false,
+            "Partial Funded" to false,
+        )
+    }
+
+    fun toggleCardSelection(card: String) {
+        _selectedCards.value = _selectedCards.value?.mapValues { entry ->
+            if (entry.key == card) !entry.value else entry.value
+        }
+    }
+
+    fun resetCardSelections() {
+        _selectedCards.value = _selectedCards.value?.mapValues { false }
+    }
+
+    private val _isFiltering = MutableLiveData<Boolean>()
+    val isFiltering: LiveData<Boolean> = _isFiltering
+
+    fun setFiltering(boolean: Boolean) {
+        _isFiltering.value = boolean
+    }
     // == End of FILTERING ==
 
     // Get ALL scholarships from firebase

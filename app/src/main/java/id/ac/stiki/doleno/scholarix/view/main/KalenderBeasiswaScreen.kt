@@ -1,5 +1,6 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -85,6 +86,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
         viewModel.totalSearchedScholarshipsCount.observeAsState(initial = 0)
     val isSearching = viewModel.isSearching.observeAsState(initial = false)
     val searchText by viewModel.searchText.observeAsState("")
+    val isFiltering = viewModel.isFiltering.observeAsState(initial = false)
 
     LaunchedEffect(key1 = true) {
         if (scholarships.value.isEmpty()) {
@@ -289,7 +291,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
         },
         scaffoldState = scaffoldState,
         drawerContent = {
-            DrawerFilterOptions()
+            DrawerFilterOptions(isFiltering.value, viewModel = viewModel)
         }
     ) { innerPadding ->
         Column(
@@ -306,7 +308,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
                 isError.value -> {
                     // Show an error message and possibly a retry button
-                    androidx.compose.material3.Text("Failed to load scholarships. Tap to retry.",
+                    Text("Failed to load scholarships. Tap to retry.",
                         modifier = Modifier
                             .clickable { viewModel.fetchScholarshipDetails() }
                             .padding(16.dp)
@@ -326,7 +328,6 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             navController = navController
                         )
                     }
-
                 }
             }
         }
@@ -334,8 +335,8 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 }
 
 @Composable
-fun DrawerFilterOptions() {
-
+fun DrawerFilterOptions(isFiltering: Boolean, viewModel: MainViewModel) {
+    Log.d("Kalender Beasiswa", "isFiltering = $isFiltering")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -367,12 +368,14 @@ fun DrawerFilterOptions() {
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
+                    viewModel = viewModel
                 )
                 SelectableCard(
                     text = "S2",
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
+                    viewModel = viewModel
                 )
             }
             Row(
@@ -384,12 +387,14 @@ fun DrawerFilterOptions() {
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
+                    viewModel = viewModel
                 )
                 SelectableCard(
                     text = "Lainnya",
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
+                    viewModel = viewModel
                 )
             }
             Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
@@ -406,12 +411,14 @@ fun DrawerFilterOptions() {
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
+                    viewModel = viewModel
                 )
                 SelectableCard(
                     text = "Partial Funded",
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 4.dp),
+                    viewModel = viewModel
                 )
             }
             Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
@@ -430,7 +437,9 @@ fun DrawerFilterOptions() {
                     .padding(end = 4.dp),
                 border = BorderStroke(1.dp, Color(0xFF8F79E8)),
                 onClick = {
-                    // TODO: Reset all filtering value
+                    // Reset all filtering value
+                    viewModel.resetCardSelections()
+                    viewModel.setFiltering(false)
                 }
             ) {
                 Text(
@@ -462,8 +471,11 @@ fun DrawerFilterOptions() {
 fun SelectableCard(
     modifier: Modifier = Modifier,
     text: String,
+    viewModel: MainViewModel,
 ) {
-    var isSelected by remember { mutableStateOf(false) }
+    val selectedCards by viewModel.selectedCards.observeAsState(initial = emptyMap())
+    val isSelected = selectedCards[text] ?: false
+
     val backgroundColor = if (isSelected) Color.White else Color(0xFFE0E0E0)
     val borderColor = if (isSelected) Color(0xFF8F79E8) else Color.Transparent
     val textColor = if (isSelected) Color(0xFF8F79E8) else Color.Black
@@ -471,7 +483,7 @@ fun SelectableCard(
     Card(
         modifier = modifier
             .clickable {
-                isSelected = !isSelected
+                viewModel.toggleCardSelection(text)
             },
         shape = RoundedCornerShape(2.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
