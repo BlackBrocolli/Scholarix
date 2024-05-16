@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
     }
 
     // == Start of SORTING ==
-    private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Nama Beasiswa")
+    private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Nama A-Z")
     val inputUrutkanBerdasar: MutableState<String>
         get() = _inputUrutkanBerdasar
 
@@ -32,28 +32,35 @@ class MainViewModel : ViewModel() {
     }
 
     private fun sortScholarships() {
-        val sortFunction: (Beasiswa) -> String? = { it.deadline }
+        val sortByDeadline: (Beasiswa) -> String? = { it.deadline }
+        val sortByName: (Beasiswa) -> String = { it.name }
 
         _scholarships.value = _scholarships.value?.let { list ->
             when (_inputUrutkanBerdasar.value) {
-                "Deadline Terdekat" -> list.sortedBy(sortFunction)
-                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                "Nama A-Z" -> list.sortedBy(sortByName)
+                "Nama Z-A" -> list.sortedByDescending(sortByName)
                 else -> list
             }
         }
 
         _searchedScholarships.value = _searchedScholarships.value?.let { list ->
             when (_inputUrutkanBerdasar.value) {
-                "Deadline Terdekat" -> list.sortedBy(sortFunction)
-                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                "Nama A-Z" -> list.sortedBy(sortByName)
+                "Nama Z-A" -> list.sortedByDescending(sortByName)
                 else -> list
             }
         }
 
         _filteredScholarships.value = _filteredScholarships.value?.let { list ->
             when (_inputUrutkanBerdasar.value) {
-                "Deadline Terdekat" -> list.sortedBy(sortFunction)
-                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                "Nama A-Z" -> list.sortedBy(sortByName)
+                "Nama Z-A" -> list.sortedByDescending(sortByName)
                 else -> list
             }
         }

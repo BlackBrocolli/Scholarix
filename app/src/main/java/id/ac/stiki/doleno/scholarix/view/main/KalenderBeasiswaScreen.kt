@@ -234,12 +234,19 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 onDismissRequest = { dropdownExpanded = false },
                                 modifier = Modifier
                                     .verticalScroll(rememberScrollState())
-                                    .heightIn(max = 200.dp)
+                                    .heightIn(max = 250.dp)
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Nama Beasiswa") },
+                                    text = { Text("Nama A-Z") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Nama Beasiswa")
+                                        viewModel.updateSortingPreference("Nama A-Z")
+                                        dropdownExpanded = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Nama Z-A") },
+                                    onClick = {
+                                        viewModel.updateSortingPreference("Nama Z-A")
                                         dropdownExpanded = false
                                     }
                                 )
