@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -87,6 +88,10 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
     val totalFilteredScholarshipsCount =
         viewModel.totalFilteredScholarshipsCount.observeAsState(initial = 0)
 
+    // State for pagination
+    val itemsPerPage = 10
+    var currentPage by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(isFiltering) {
         if (isFiltering.value) {
             viewModel.performFiltering()
@@ -94,9 +99,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
     }
 
     var dropdownExpanded by remember { mutableStateOf(false) }
-    var borderColor by remember {
-        mutableStateOf(Color.Gray)
-    }
+    var borderColor by remember { mutableStateOf(Color.Gray) }
     val inputUrutkanBerdasar by viewModel.inputUrutkanBerdasar
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -316,23 +319,182 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
-                .padding(vertical = 16.dp)
         ) {
-            if (isFiltering.value) {
-                KalenderScholarshipList(
-                    scholarships = filteredScholarships.value,
-                    navController = navController
+            val scholarshipsToShow = when {
+                isFiltering.value -> filteredScholarships.value
+                isSearching.value -> searchedScholarships.value
+                else -> scholarships.value
+            }
+
+            // Calculate the start and end indices for the current page
+            val startIndex = currentPage * itemsPerPage
+            val endIndex = minOf(startIndex + itemsPerPage, scholarshipsToShow.size)
+
+            // Display the scholarships for the current page
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                itemsIndexed(scholarshipsToShow.subList(startIndex, endIndex)) { index, beasiswa ->
+                    if (index == 0) {
+                        Spacer(modifier = Modifier.height(16.dp)) // Tambahkan padding jika ini adalah item pertama
+                    }
+                    BeasiswaItem(
+                        beasiswa = beasiswa,
+                        navController = navController,
+                    )
+                }
+
+                item {
+                    // Pagination controls
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = { if (currentPage > 0) currentPage-- },
+                            enabled = currentPage > 0
+                        ) {
+                            Text("Previous")
+                        }
+                        Text("Page ${currentPage + 1}")
+                        Button(
+                            onClick = { if (startIndex + itemsPerPage < scholarshipsToShow.size) currentPage++ },
+                            enabled = startIndex + itemsPerPage < scholarshipsToShow.size
+                        ) {
+                            Text("Next")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}") },
+        border = BorderStroke(1.dp, Color.LightGray),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // BARIS DEGREE & LOKASI
+                    Row {
+                        // Menampilkan setiap derajat dalam kartu terpisah
+                        beasiswa.degrees.forEach { degree ->
+                            val containerColor = when (degree) {
+                                "S1" -> Color(0xFFD9FAE7)
+                                "S2" -> Color(0x401B73B3)
+                                "S3" -> Color(0x40C77738)
+                                else -> Color.Gray // Warna default jika derajat tidak dikenali
+                            }
+                            val textColor = when (degree) {
+                                "S1" -> Color(0xFF21764C) // Warna teks untuk S1
+                                "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
+                                "S3" -> Color(0xFFC77738) // Warna teks untuk S3
+                                else -> Color.Black // Warna teks default jika derajat tidak dikenali
+                            }
+
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = containerColor,
+                                )
+                            ) {
+                                androidx.compose.material3.Text(
+                                    text = degree,
+                                    modifier = Modifier.padding(
+                                        horizontal = 12.dp,
+                                        vertical = 4.dp
+                                    ),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = textColor
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+//                Spacer(modifier = Modifier.width(2.dp))
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0x80D9D9D9),
+                            )
+                        ) {
+                            androidx.compose.material3.Text(
+                                text = beasiswa.city ?: beasiswa.country,
+                                modifier = Modifier.padding(
+                                    horizontal = 8.dp,
+                                    vertical = 4.dp
+                                ),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                //                        color = Color(0xCC17181A)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                // TIPE PENDANAAN
+                androidx.compose.material3.Text(
+                    text = "Beasiswa ${beasiswa.fundingStatus}",
+                    fontSize = 12.sp
                 )
-            } else if (isSearching.value) {
-                KalenderScholarshipList(
-                    scholarships = searchedScholarships.value,
-                    navController = navController
+                Spacer(modifier = Modifier.height(4.dp))
+                // NAMA BEASISWA
+                androidx.compose.material3.Text(
+                    text = beasiswa.name,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
                 )
-            } else {
-                KalenderScholarshipList(
-                    scholarships = scholarships.value,
-                    navController = navController
+            }
+
+            // DEADLINE CARD
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0x80D9D9D9),
                 )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 6.dp, horizontal = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    androidx.compose.material3.Text(
+                        text = "Deadline",
+                        fontSize = 12.sp
+                    )
+                    beasiswa.deadline?.let {
+                        androidx.compose.material3.Text(
+                            text = it,
+                            fontSize = 12.sp,
+                            color = Color.Red
+                        )
+                    }
+                }
             }
         }
     }
@@ -538,148 +700,6 @@ fun SelectableCard(
                     color = textColor,
                     modifier = Modifier.align(Alignment.Center)
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun KalenderScholarshipList(scholarships: List<Beasiswa>, navController: NavController) {
-    // Tampilkan daftar beasiswa
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(scholarships) { beasiswa ->
-            BeasiswaItem(
-                beasiswa = beasiswa,
-                navController = navController
-            )
-        }
-    }
-}
-
-@Composable
-fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}") },
-        border = BorderStroke(1.dp, Color.LightGray),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // BARIS DEGREE & LOKASI
-                    Row {
-                        // Menampilkan setiap derajat dalam kartu terpisah
-                        beasiswa.degrees.forEach { degree ->
-                            val containerColor = when (degree) {
-                                "S1" -> Color(0xFFD9FAE7)
-                                "S2" -> Color(0x401B73B3)
-                                "S3" -> Color(0x40C77738)
-                                else -> Color.Gray // Warna default jika derajat tidak dikenali
-                            }
-                            val textColor = when (degree) {
-                                "S1" -> Color(0xFF21764C) // Warna teks untuk S1
-                                "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
-                                "S3" -> Color(0xFFC77738) // Warna teks untuk S3
-                                else -> Color.Black // Warna teks default jika derajat tidak dikenali
-                            }
-
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = containerColor,
-                                )
-                            ) {
-                                androidx.compose.material3.Text(
-                                    text = degree,
-                                    modifier = Modifier.padding(
-                                        horizontal = 12.dp,
-                                        vertical = 4.dp
-                                    ),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = textColor
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                        }
-//                Spacer(modifier = Modifier.width(2.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0x80D9D9D9),
-                            )
-                        ) {
-                            androidx.compose.material3.Text(
-                                text = beasiswa.city ?: beasiswa.country,
-                                modifier = Modifier.padding(
-                                    horizontal = 8.dp,
-                                    vertical = 4.dp
-                                ),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                //                        color = Color(0xCC17181A)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-                // TIPE PENDANAAN
-                androidx.compose.material3.Text(
-                    text = "Beasiswa ${beasiswa.fundingStatus}",
-                    fontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                // NAMA BEASISWA
-                androidx.compose.material3.Text(
-                    text = beasiswa.name,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
-                )
-            }
-
-            // DEADLINE CARD
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0x80D9D9D9),
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 6.dp, horizontal = 12.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    androidx.compose.material3.Text(
-                        text = "Deadline",
-                        fontSize = 12.sp
-                    )
-                    beasiswa.deadline?.let {
-                        androidx.compose.material3.Text(
-                            text = it,
-                            fontSize = 12.sp,
-                            color = Color.Red
-                        )
-                    }
-                }
             }
         }
     }
