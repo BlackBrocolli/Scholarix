@@ -21,20 +21,50 @@ class MainViewModel : ViewModel() {
         _currentScreen.value = screen
     }
 
-    // Tambahkan properti inputUrutkanBerdasar
-    private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Deadline Terdekat")
+    // == Start of SORTING ==
+    private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Nama Beasiswa")
     val inputUrutkanBerdasar: MutableState<String>
         get() = _inputUrutkanBerdasar
 
-    fun setInputUrutkanBerdasar(value: String) {
+    fun updateSortingPreference(value: String) {
         _inputUrutkanBerdasar.value = value
+        sortScholarships()
     }
+
+    private fun sortScholarships() {
+        val sortFunction: (Beasiswa) -> String? = { it.deadline }
+
+        _scholarships.value = _scholarships.value?.let { list ->
+            when (_inputUrutkanBerdasar.value) {
+                "Deadline Terdekat" -> list.sortedBy(sortFunction)
+                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                else -> list
+            }
+        }
+
+        _searchedScholarships.value = _searchedScholarships.value?.let { list ->
+            when (_inputUrutkanBerdasar.value) {
+                "Deadline Terdekat" -> list.sortedBy(sortFunction)
+                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                else -> list
+            }
+        }
+
+        _filteredScholarships.value = _filteredScholarships.value?.let { list ->
+            when (_inputUrutkanBerdasar.value) {
+                "Deadline Terdekat" -> list.sortedBy(sortFunction)
+                "Deadline Terjauh" -> list.sortedByDescending(sortFunction)
+                else -> list
+            }
+        }
+    }
+    // == End of SORTING ==
 
     // == GET SCHOLARSHIPS FROM DB ==
     private val db = FirebaseFirestore.getInstance()
 
     private val _scholarships = MutableLiveData<List<Beasiswa>>()
-    val scholarships: LiveData<List<Beasiswa>> = _scholarships
+    val scholarships: MutableLiveData<List<Beasiswa>> = _scholarships
 
     // Variabel untuk menyimpan satu beasiswa saja
     private val _scholarship = MutableLiveData<Beasiswa>()
@@ -194,12 +224,14 @@ class MainViewModel : ViewModel() {
     fun performFiltering() {
         val degrees = _selectedDegrees.value ?: emptyList()
         val fundingStatus = _selectedFundingStatus.value ?: emptyList()
-        val scholarshipsToFilter = if (_isSearching.value == true) _searchedScholarships.value else _scholarships.value
+        val scholarshipsToFilter =
+            if (_isSearching.value == true) _searchedScholarships.value else _scholarships.value
 
         if (scholarshipsToFilter != null) {
             val filteredList = scholarshipsToFilter.filter { scholarship ->
                 val matchesDegrees = degrees.isEmpty() || degrees.any { it in scholarship.degrees }
-                val matchesFundingStatus = fundingStatus.isEmpty() || fundingStatus.contains(scholarship.fundingStatus)
+                val matchesFundingStatus =
+                    fundingStatus.isEmpty() || fundingStatus.contains(scholarship.fundingStatus)
                 matchesDegrees && matchesFundingStatus
             }
 

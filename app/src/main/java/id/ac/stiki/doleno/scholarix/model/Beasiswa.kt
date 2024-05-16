@@ -1,6 +1,5 @@
 package id.ac.stiki.doleno.scholarix.model
 
-//@Serializable
 data class Beasiswa(
     var id: String = "",
     val link: String = "",
@@ -10,9 +9,6 @@ data class Beasiswa(
     val degrees: List<String> = listOf(""),
     val city: String? = null,
     val country: String = "",
-    // apa bisa setelah dapat link, nama, pendanaan, deadline, degrees, dan lokasi
-    // langsung tampilkan UI beasiswanya di homescreen
-    // sisanya dibawah ini discraping setelahnya di latar belakang
     val institution: String = "",
     val opportunities: String = "N/A",
     val eligibleNationals: String = "Tidak ada keterangan",
@@ -23,12 +19,6 @@ data class Beasiswa(
     val email: String? = null,
     val phone: String? = null
 )
-
-//@Serializable
-//data class Lokasi(
-//    val kota: String? = null,
-//    val negara: String = ""
-//)
 
 object DummyBeasiswa {
     val beasiswaList = listOf(

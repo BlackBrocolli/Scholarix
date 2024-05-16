@@ -205,7 +205,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 enabled = false,
                                 value = inputUrutkanBerdasar,
                                 onValueChange = {
-                                    viewModel.setInputUrutkanBerdasar(it)
+                                    viewModel.updateSortingPreference(it)
                                 },
                                 label = {
                                     androidx.compose.material3.Text(
@@ -237,30 +237,30 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                     .heightIn(max = 200.dp)
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Terpopuler") },
+                                    text = { Text("Nama Beasiswa") },
                                     onClick = {
-                                        viewModel.setInputUrutkanBerdasar("Terpopuler")
+                                        viewModel.updateSortingPreference("Nama Beasiswa")
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Open Terdekat") },
+                                    text = { Text("Terpopuler") },
                                     onClick = {
-                                        viewModel.setInputUrutkanBerdasar("Open Terdekat")
+                                        viewModel.updateSortingPreference("Terpopuler")
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Deadline Terdekat") },
                                     onClick = {
-                                        viewModel.setInputUrutkanBerdasar("Deadline Terdekat")
+                                        viewModel.updateSortingPreference("Deadline Terdekat")
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Deadline Terjauh") },
                                     onClick = {
-                                        viewModel.setInputUrutkanBerdasar("Deadline Terjauh")
+                                        viewModel.updateSortingPreference("Deadline Terjauh")
                                         dropdownExpanded = false
                                     }
                                 )
