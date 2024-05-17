@@ -17,9 +17,9 @@ class MainViewModel : ViewModel() {
     val currentScreen: MutableState<Screen>
         get() = _currentScreen
 
-    fun setCurrentScreen(screen: Screen) {
-        _currentScreen.value = screen
-    }
+//    fun setCurrentScreen(screen: Screen) {
+//        _currentScreen.value = screen
+//    }
 
     // == Start of SORTING ==
     private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Nama A-Z")
@@ -301,4 +301,10 @@ class MainViewModel : ViewModel() {
 
         _totalSearchedScholarshipsCount.value = _searchedScholarships.value!!.size
     }
+
+    // ------ Start of FAVORITE SCHOLARSHIPS ------
+
+
+
+    // ------ End of FAVORITE SCHOLARSHIPS ------
 }

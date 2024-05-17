@@ -4,5 +4,6 @@ data class User(
     val namaLengkap: String = "",
     val email: String = "",
     val noHandphone: String = "",
-    val profilePictureUrl: String = ""
+    val profilePictureUrl: String = "",
+    val favorites: List<String> = listOf()
 )

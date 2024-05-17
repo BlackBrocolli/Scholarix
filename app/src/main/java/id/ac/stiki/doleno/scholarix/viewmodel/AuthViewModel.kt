@@ -1,9 +1,11 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import id.ac.stiki.doleno.scholarix.model.auth.Injection
 import id.ac.stiki.doleno.scholarix.model.auth.UserRepository
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import id.ac.stiki.doleno.scholarix.model.auth.Result
+import id.ac.stiki.doleno.scholarix.navigation.Screen
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
@@ -29,9 +32,26 @@ class AuthViewModel : ViewModel() {
     private val _authResult = MutableLiveData<Result<Boolean>>()
     val authResult: LiveData<Result<Boolean>> get() = _authResult
 
-    fun signUp(email: String, password: String, namaLengkap: String, noHandphone: String) {
+    fun signUp(email: String, password: String, namaLengkap: String, noHandphone: String, navController: NavController) {
         viewModelScope.launch {
-            _authResult.value = userRepository.signUp(email, password, namaLengkap, noHandphone)
+//            _authResult.value = userRepository.signUp(email, password, namaLengkap, noHandphone)
+            try {
+                val result = userRepository.signUp(email, password, namaLengkap, noHandphone)
+                _authResult.postValue(result)
+                if (result is Result.Success) {
+                    Log.d("AuthViewModel", "Sign up successful")
+                    navController.navigate(Screen.OnboardingScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                } else {
+                    Log.e("AuthViewModel", "Sign up failed: ${(result as Result.Error).exception}")
+                }
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Exception in sign up", e)
+                _authResult.postValue(Result.Error(e))
+            }
         }
     }
 

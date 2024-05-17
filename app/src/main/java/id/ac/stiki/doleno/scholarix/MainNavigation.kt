@@ -32,6 +32,10 @@ import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
 import id.ac.stiki.doleno.scholarix.view.main.KalenderBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.MainView
 import id.ac.stiki.doleno.scholarix.view.main.ProfileScreen
+import id.ac.stiki.doleno.scholarix.view.onboarding.FourthOnboarding
+import id.ac.stiki.doleno.scholarix.view.onboarding.OnBoardingScreen
+import id.ac.stiki.doleno.scholarix.view.onboarding.SecondOnboarding
+import id.ac.stiki.doleno.scholarix.view.onboarding.ThirdOnboarding
 import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
@@ -195,6 +199,18 @@ fun MainNavigation(
 
         composable(Screen.MainView.route) {
             MainView(googleAuthUiClient)
+        }
+        composable(Screen.OnboardingScreen.route) {
+            OnBoardingScreen(navController = navController)
+        }
+        composable(Screen.SecondOnboarding.route) {
+            SecondOnboarding(navController = navController)
+        }
+        composable(Screen.ThirdOnboarding.route) {
+            ThirdOnboarding(navController = navController)
+        }
+        composable(Screen.FourthOnboarding.route) {
+            FourthOnboarding(navController = navController)
         }
     }
 }

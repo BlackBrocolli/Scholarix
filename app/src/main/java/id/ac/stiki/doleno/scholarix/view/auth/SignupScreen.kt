@@ -298,7 +298,7 @@ fun SignupScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP)
+                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP, navController)
 //                    inputEmail = ""
 //                    inputPassword = ""
 //                    inputNamaLengkap = ""
@@ -308,11 +308,6 @@ fun SignupScreen(
                         "Daftar berhasil!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navController.navigate(Screen.OnboardingScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
-                    }
                 },
                 enabled = isFormValid() // Memeriksa apakah formulir valid
             ) {

@@ -82,7 +82,7 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
             inputNamaLengkap = userData.username.toString()
             usernameOrNama = "Username"
         } else {
-            inputNamaLengkap = namaLengkap.toString()
+            inputNamaLengkap = namaLengkap.value
             usernameOrNama = "Nama Lengkap"
         }
     }
