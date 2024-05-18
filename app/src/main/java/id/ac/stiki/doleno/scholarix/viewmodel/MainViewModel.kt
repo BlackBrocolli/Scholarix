@@ -6,8 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
+import id.ac.stiki.doleno.scholarix.model.auth.User
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 class MainViewModel : ViewModel() {
@@ -303,8 +305,53 @@ class MainViewModel : ViewModel() {
     }
 
     // ------ Start of FAVORITE SCHOLARSHIPS ------
+    private val _favorites = MutableLiveData<List<String>>()
+    val favorites: LiveData<List<String>> get() = _favorites
 
+    fun loadUserFavorites(userEmail: String) {
+        db.collection("users").document(userEmail).get()
+            .addOnSuccessListener { document ->
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    _favorites.value = it.favorites
+                }
+            }
+    }
 
+    // Function to toggle favorite status
+    fun toggleFavorite(email: String, scholarshipName: String) {
+        val currentFavorites = _favorites.value ?: emptyList()
+        if (currentFavorites.contains(scholarshipName)) {
+            removeFavorite(email, scholarshipName)
+        } else {
+            addFavorite(email, scholarshipName)
+        }
+    }
 
+    private fun addFavorite(email: String, scholarshipName: String) {
+        val userDocRef = db.collection("users").document(email)
+        userDocRef.update("favorites", FieldValue.arrayUnion(scholarshipName))
+            .addOnSuccessListener {
+                // Update LiveData
+                val updatedFavorites = (_favorites.value ?: emptyList()) + scholarshipName
+                _favorites.value = updatedFavorites
+            }
+            .addOnFailureListener {
+                // Handle failure
+            }
+    }
+
+    private fun removeFavorite(email: String, scholarshipName: String) {
+        val userDocRef = db.collection("users").document(email)
+        userDocRef.update("favorites", FieldValue.arrayRemove(scholarshipName))
+            .addOnSuccessListener {
+                // Update LiveData
+                val updatedFavorites = (_favorites.value ?: emptyList()) - scholarshipName
+                _favorites.value = updatedFavorites
+            }
+            .addOnFailureListener {
+                // Handle failure
+            }
+    }
     // ------ End of FAVORITE SCHOLARSHIPS ------
 }

@@ -43,17 +43,34 @@ import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.runtime.getValue
+import id.ac.stiki.doleno.scholarix.model.google.UserData
 
 @Composable
-fun DetailBeasiswaScreen(id: String, viewModel: MainViewModel, navController: NavController) {
+fun DetailBeasiswaScreen(
+    id: String,
+    viewModel: MainViewModel,
+    navController: NavController,
+    userData: UserData
+) {
 
     val scholarship = viewModel.scholarship.observeAsState(initial = Beasiswa())
     val isLoading = viewModel.isLoadingScholarship.observeAsState(initial = false)
     val isError = viewModel.isErrorScholarship.observeAsState(initial = false)
+    val favorites by viewModel.favorites.observeAsState(initial = emptyList())
+
+    val userEmail = userData.email
 
     LaunchedEffect(Unit) {
         viewModel.fetchScholarshipById(id)
+        userEmail?.let {
+            viewModel.loadUserFavorites(it)
+        }
     }
+
+    val isFavorite = scholarship.value.name in favorites
 
     Scaffold(
         topBar = {
@@ -66,6 +83,20 @@ fun DetailBeasiswaScreen(id: String, viewModel: MainViewModel, navController: Na
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Arrow Back Icon"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            userEmail?.let { email ->
+                                viewModel.toggleFavorite(email, scholarship.value.name)
+                            }
+                        }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Favorite Icon",
+                            tint = if (isFavorite) Color.Red else Color.Black
                         )
                     }
                 }

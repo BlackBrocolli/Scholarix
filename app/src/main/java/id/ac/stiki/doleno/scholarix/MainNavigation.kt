@@ -59,10 +59,18 @@ fun MainNavigation(
             HomeScreen(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.BottomScreen.Favorit.route) {
-            FavoritScreen()
+            googleAuthUiClient.getSignInUser()
+                ?.let { it1 ->
+                    FavoritScreen(
+                        viewModel = mainViewModel,
+                        userData = it1,
+                        navController = navController
+                    )
+                }
         }
         composable(Screen.BottomScreen.Profil.route) {
-            ProfileScreen(navController = navController,
+            ProfileScreen(
+                navController = navController,
                 userData = googleAuthUiClient.getSignInUser(),
                 onSignOut = {
                     lifecycleScope.launch {
@@ -73,7 +81,8 @@ fun MainNavigation(
                             }
                         }
                     }
-                })
+                }
+            )
         }
         composable(Screen.EditProfileScreen.route) {
             EditProfileScreen(
@@ -90,7 +99,14 @@ fun MainNavigation(
             val id = backStackEntry.arguments?.getString("id")
             if (id != null) {
                 val encodedId = Uri.encode(id) // Melakukan encoding terhadap ID dengan spasi
-                DetailBeasiswaScreen(id = encodedId, viewModel = mainViewModel, navController = navController)
+                googleAuthUiClient.getSignInUser()?.let {
+                    DetailBeasiswaScreen(
+                        id = encodedId,
+                        viewModel = mainViewModel,
+                        navController = navController,
+                        userData = it
+                    )
+                }
             }
         }
         composable(Screen.KalenderBeasiswaScreen.route) {
@@ -196,10 +212,6 @@ fun MainNavigation(
                 }
             )
         }
-
-        composable(Screen.MainView.route) {
-            MainView(googleAuthUiClient)
-        }
         composable(Screen.OnboardingScreen.route) {
             OnBoardingScreen(navController = navController)
         }
@@ -211,6 +223,9 @@ fun MainNavigation(
         }
         composable(Screen.FourthOnboarding.route) {
             FourthOnboarding(navController = navController)
+        }
+        composable(Screen.MainView.route) {
+            MainView(googleAuthUiClient)
         }
     }
 }

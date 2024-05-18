@@ -144,7 +144,7 @@ fun FourthOnboarding(navController: NavController) {
             Button(
                 onClick = {
                     navController.navigate(Screen.MainView.route) {
-                        popUpTo(Screen.LoginScreen.route) {
+                        popUpTo(Screen.OnboardingScreen.route) {
                             inclusive = true
                         }
                     }
