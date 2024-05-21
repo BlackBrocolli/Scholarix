@@ -1,7 +1,8 @@
 package id.ac.stiki.doleno.scholarix.view.auth
 
-import android.util.Log
+import id.ac.stiki.doleno.scholarix.R
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.auth.Result
@@ -224,11 +225,10 @@ fun LoginScreen(
                     .height(48.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    /* TODO: Ubah jadi iconnya Google */
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
                         contentDescription = "Google Icon",
-                        modifier = Modifier.size(24.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
+                        modifier = Modifier.size(20.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
                     )
                     Spacer(modifier = Modifier.width(8.dp)) // Spacer untuk jarak antara ikon dan teks
                     Text(

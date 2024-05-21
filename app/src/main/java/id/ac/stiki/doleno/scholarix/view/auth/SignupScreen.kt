@@ -1,6 +1,7 @@
 package id.ac.stiki.doleno.scholarix.view.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import id.ac.stiki.doleno.scholarix.R
 import id.ac.stiki.doleno.scholarix.model.google.SignInState
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
@@ -329,11 +331,10 @@ fun SignupScreen(
                     .height(48.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    /* TODO: Ubah jadi iconnya Google */
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
                         contentDescription = "Google Icon",
-                        modifier = Modifier.size(24.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
+                        modifier = Modifier.size(20.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
