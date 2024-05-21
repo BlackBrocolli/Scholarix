@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.stiki.doleno.scholarix.R
 import id.ac.stiki.doleno.scholarix.model.google.SignInResult
 import id.ac.stiki.doleno.scholarix.model.google.UserData
@@ -38,17 +39,43 @@ class GoogleAuthUiClient(
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
+//        return try {
+//            val user = _auth.signInWithCredential(googleCredentials).await().user
+//            SignInResult(
+//                data = user?.run {
+//                    UserData(
+//                        userId = uid,
+//                        username = displayName,
+//                        profilePictureUrl = photoUrl?.toString(),
+//                        email = email
+//                    )
+//                }, errorMessage = null
+//            )
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            if (e is CancellationException) throw e
+//            SignInResult(
+//                data = null,
+//                errorMessage = e.message
+//
+//            )
+//        }
         return try {
             val user = _auth.signInWithCredential(googleCredentials).await().user
+            val userData = user?.run {
+                UserData(
+                    userId = uid,
+                    username = displayName,
+                    profilePictureUrl = photoUrl?.toString(),
+                    email = email
+                )
+            }
+            userData?.let {
+                saveUserToFirestore(it) // Save user data to Firestore
+            }
             SignInResult(
-                data = user?.run {
-                    UserData(
-                        userId = uid,
-                        username = displayName,
-                        profilePictureUrl = photoUrl?.toString(),
-                        email = email
-                    )
-                }, errorMessage = null
+                data = userData,
+                errorMessage = null
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -56,7 +83,6 @@ class GoogleAuthUiClient(
             SignInResult(
                 data = null,
                 errorMessage = e.message
-
             )
         }
     }
@@ -90,5 +116,26 @@ class GoogleAuthUiClient(
             )
             .setAutoSelectEnabled(true)
             .build()
+    }
+
+    private val firestore = FirebaseFirestore.getInstance()
+
+    private suspend fun saveUserToFirestore(user: UserData) {
+        val userMap = mapOf(
+            "namaLengkap" to user.username,
+            "email" to user.email,
+            "noHandphone" to "",
+            "profilePictureUrl" to user.profilePictureUrl,
+            "favorites" to emptyList<String>()
+        )
+
+        try {
+            firestore.collection("users").document(user.email!!).set(userMap).await()
+            // User data saved successfully
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (e is CancellationException) throw e
+            // Handle failure to save user data
+        }
     }
 }

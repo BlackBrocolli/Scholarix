@@ -139,6 +139,7 @@ class MainViewModel : ViewModel() {
     // ----------- Start of PAGINATION ----------
     private var _currentPage = MutableLiveData(0)
     val currentPage: LiveData<Int> = _currentPage
+
     fun setCurrentPage(value: Int) {
         _currentPage.value = _currentPage.value?.plus(value)
     }
