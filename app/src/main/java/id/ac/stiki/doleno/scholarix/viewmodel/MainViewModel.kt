@@ -2,7 +2,11 @@ package id.ac.stiki.doleno.scholarix.viewmodel
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -97,7 +101,8 @@ class MainViewModel : ViewModel() {
     private val _totalScholarshipsCount = MutableLiveData<Int>()
     val totalScholarshipsCount: LiveData<Int> = _totalScholarshipsCount
 
-    // == Start of Searching variables
+
+    // -------- Start of SEARCHING ----------
     // Variabel yang menyimpan hasil pencarian
     private val _searchedScholarships = MutableLiveData<List<Beasiswa>>()
     val searchedScholarships: LiveData<List<Beasiswa>> = _searchedScholarships
@@ -109,18 +114,39 @@ class MainViewModel : ViewModel() {
     private val _isSearching = MutableLiveData<Boolean>()
     val isSearching: LiveData<Boolean> = _isSearching
 
+    private val _searchText = MutableLiveData("")
+    val searchText: LiveData<String> = _searchText
+
     fun resetSearching() {
         _isSearching.value = false
         _searchText.value = ""
     }
 
-    private val _searchText = MutableLiveData("")
-    val searchText: LiveData<String> = _searchText
-
     fun setSearchText(text: String) {
         _searchText.value = text
     }
-    // == End of Searching variables
+    fun searchScholarshipsByName(name: String) {
+        _isSearching.value = true
+        _searchedScholarships.value = _scholarships.value?.filter { scholarship ->
+            scholarship.name.contains(name, ignoreCase = true)
+        } ?: emptyList()
+
+        _totalSearchedScholarshipsCount.value = _searchedScholarships.value!!.size
+        resetCurrentPage()
+    }
+    // ------- End of Searching ---------
+
+    // ----------- Start of PAGINATION ----------
+    private var _currentPage = MutableLiveData(0)
+    val currentPage: LiveData<Int> = _currentPage
+    fun setCurrentPage(value: Int) {
+        _currentPage.value = _currentPage.value?.plus(value)
+    }
+
+    private fun resetCurrentPage() {
+        _currentPage.value = 0
+    }
+    // ----------- End of PAGINATION ---------
 
     // == Start of FILTERING ==
     // TODO: add variables and functions for filtering
@@ -292,16 +318,6 @@ class MainViewModel : ViewModel() {
                 _isLoadingScholarship.value = false
                 _isErrorScholarship.value = true
             }
-    }
-
-    // Search Scholarships
-    fun searchScholarshipsByName(name: String) {
-        _isSearching.value = true
-        _searchedScholarships.value = _scholarships.value?.filter { scholarship ->
-            scholarship.name.contains(name, ignoreCase = true)
-        } ?: emptyList()
-
-        _totalSearchedScholarshipsCount.value = _searchedScholarships.value!!.size
     }
 
     // ------ Start of FAVORITE SCHOLARSHIPS ------

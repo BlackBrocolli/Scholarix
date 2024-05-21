@@ -90,7 +90,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
     // State for pagination
     val itemsPerPage = 10
-    var currentPage by remember { mutableIntStateOf(0) }
+    val currentPage = viewModel.currentPage.observeAsState(initial = 0)
 
     LaunchedEffect(isFiltering) {
         if (isFiltering.value) {
@@ -327,7 +327,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
             }
 
             // Calculate the start and end indices for the current page
-            val startIndex = currentPage * itemsPerPage
+            val startIndex = currentPage.value * itemsPerPage
             val endIndex = minOf(startIndex + itemsPerPage, scholarshipsToShow.size)
 
             // Display the scholarships for the current page
@@ -354,14 +354,18 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = { if (currentPage > 0) currentPage-- },
-                            enabled = currentPage > 0
+                            onClick = { if (currentPage.value > 0) viewModel.setCurrentPage(-1) },
+                            enabled = currentPage.value > 0
                         ) {
                             Text("Previous")
                         }
-                        Text("Page ${currentPage + 1}")
+                        Text("Page ${currentPage.value + 1}")
                         Button(
-                            onClick = { if (startIndex + itemsPerPage < scholarshipsToShow.size) currentPage++ },
+                            onClick = {
+                                if (startIndex + itemsPerPage < scholarshipsToShow.size) viewModel.setCurrentPage(
+                                    1
+                                )
+                            },
                             enabled = startIndex + itemsPerPage < scholarshipsToShow.size
                         ) {
                             Text("Next")
