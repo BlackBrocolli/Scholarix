@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import id.ac.stiki.doleno.scholarix.auth.google.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.view.auth.LoginScreen
+import id.ac.stiki.doleno.scholarix.view.auth.LupaPasswordScreen
 import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
 import id.ac.stiki.doleno.scholarix.view.main.DetailBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.EditProfileScreen
@@ -226,6 +227,9 @@ fun MainNavigation(
         }
         composable(Screen.MainView.route) {
             MainView(googleAuthUiClient)
+        }
+        composable(Screen.LupaPasswordScreen.route) {
+            LupaPasswordScreen(navController = navController)
         }
     }
 }
