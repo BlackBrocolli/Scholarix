@@ -300,16 +300,16 @@ fun SignupScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP, navController)
+                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP, navController, context)
 //                    inputEmail = ""
 //                    inputPassword = ""
 //                    inputNamaLengkap = ""
 //                    inputNomorHP = ""
-                    Toast.makeText(
-                        context,
-                        "Daftar berhasil!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        context,
+//                        "Daftar berhasil!",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 },
                 enabled = isFormValid() // Memeriksa apakah formulir valid
             ) {

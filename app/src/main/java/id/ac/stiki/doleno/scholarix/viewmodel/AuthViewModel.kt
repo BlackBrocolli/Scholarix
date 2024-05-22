@@ -1,12 +1,15 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import id.ac.stiki.doleno.scholarix.model.auth.Injection
 import id.ac.stiki.doleno.scholarix.model.auth.UserRepository
 import id.ac.stiki.doleno.scholarix.model.google.SignInResult
@@ -32,7 +35,14 @@ class AuthViewModel : ViewModel() {
     private val _authResult = MutableLiveData<Result<Boolean>>()
     val authResult: LiveData<Result<Boolean>> get() = _authResult
 
-    fun signUp(email: String, password: String, namaLengkap: String, noHandphone: String, navController: NavController) {
+    fun signUp(
+        email: String,
+        password: String,
+        namaLengkap: String,
+        noHandphone: String,
+        navController: NavController,
+        context: Context
+    ) {
         viewModelScope.launch {
 //            _authResult.value = userRepository.signUp(email, password, namaLengkap, noHandphone)
             try {
@@ -45,8 +55,19 @@ class AuthViewModel : ViewModel() {
                             inclusive = true
                         }
                     }
+                    Toast.makeText(
+                        context,
+                        "Daftar Berhasil.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     Log.e("AuthViewModel", "Sign up failed: ${(result as Result.Error).exception}")
+                    Toast.makeText(
+                        context,
+                        (result.exception as? FirebaseAuthUserCollisionException)?.message
+                            ?: "Sign up failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Exception in sign up", e)
