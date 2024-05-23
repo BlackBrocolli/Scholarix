@@ -21,8 +21,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,10 +56,12 @@ fun ProfileScreen(
     val db = Firebase.firestore
     val ref = userData?.email?.let { db.collection("users").document(it) }
     val namaLengkap = remember { mutableStateOf("") }
+    var profilePictureUrl by remember { mutableStateOf<String?>(null) }
     ref?.get()?.addOnSuccessListener {
         if (it != null) {
             val retrievedNamaLengkap = it.data?.get("namaLengkap").toString()
             namaLengkap.value = retrievedNamaLengkap
+            profilePictureUrl = it.data?.get("profilePictureUrl") as String?
         } else {
             Log.d("Nama Kosong", "Tidak berhasil")
         }
@@ -77,9 +81,10 @@ fun ProfileScreen(
                 .clip(CircleShape) // Membuat gambar menjadi lingkaran
                 .border(1.dp, Color.Black, CircleShape)
 
-            if (userData?.profilePictureUrl != null) {
+//            if (userData?.profilePictureUrl != null) {
+            if (profilePictureUrl != null) {
                 AsyncImage(
-                    model = userData.profilePictureUrl,
+                    model = profilePictureUrl,
                     contentDescription = "Profile Picture",
                     modifier = commonModifier,
                     contentScale = ContentScale.Crop

@@ -86,7 +86,9 @@ fun MainNavigation(
             )
         }
         composable(Screen.EditProfileScreen.route) {
+            val authViewModel: AuthViewModel = viewModel()
             EditProfileScreen(
+                viewModel = authViewModel,
                 navController = navController,
                 userData = googleAuthUiClient.getSignInUser()
             )

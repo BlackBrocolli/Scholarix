@@ -43,25 +43,32 @@ import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.view.auth.MyTopAppBar
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.livedata.observeAsState
+import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
 
 @Composable
-fun EditProfileScreen(navController: NavController, userData: UserData?) {
+fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, userData: UserData?) {
     var inputEmail by remember { mutableStateOf("") }
-    var inputNamaLengkap by remember { mutableStateOf("") }
+    val inputNamaLengkap by viewModel.inputNamaLengkap.observeAsState(initial = "")
     var isInputValueChanged by remember { mutableStateOf(false) }
     var usernameOrNama by remember { mutableStateOf("") }
 
-    var selectedImageUri by remember { mutableStateOf(userData?.profilePictureUrl) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var profilePictureUrl by remember { mutableStateOf<String?>(null) }
+    val isLoading by viewModel.isLoading.observeAsState(initial = false)
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            selectedImageUri = it.toString()
+            selectedImageUri = it
+            isInputValueChanged = true
         }
     }
 
-    // Get nama lengkap from firestore
+    // Get data from Firestore
     val db = Firebase.firestore
     val ref = userData?.email?.let { db.collection("users").document(it) }
     val namaLengkap = remember { mutableStateOf("") }
@@ -69,6 +76,7 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
         if (it != null) {
             val retrievedNamaLengkap = it.data?.get("namaLengkap").toString()
             namaLengkap.value = retrievedNamaLengkap
+            profilePictureUrl = it.data?.get("profilePictureUrl") as String?
         } else {
             Log.d("Nama Kosong", "Tidak berhasil")
         }
@@ -78,12 +86,12 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
         if (userData.email != null) {
             inputEmail = userData.email.toString()
         }
-        if (userData.username != null && userData.username != "") {
-            inputNamaLengkap = userData.username.toString()
-            usernameOrNama = "Username"
+        usernameOrNama = if (userData.username != null && userData.username != "") {
+            viewModel.setInputNamaLengkap(userData.username.toString())
+            "Username"
         } else {
-            inputNamaLengkap = namaLengkap.value
-            usernameOrNama = "Nama Lengkap"
+            viewModel.setInputNamaLengkap(namaLengkap.value)
+            "Nama Lengkap"
         }
     }
 
@@ -117,6 +125,13 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
                 if (selectedImageUri != null) {
                     AsyncImage(
                         model = selectedImageUri,
+                        contentDescription = "Profile Picture",
+                        modifier = commonModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                } else if (profilePictureUrl != null) {
+                    AsyncImage(
+                        model = profilePictureUrl,
                         contentDescription = "Profile Picture",
                         modifier = commonModifier,
                         contentScale = ContentScale.Crop
@@ -158,7 +173,7 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
             OutlinedTextField(
                 value = inputNamaLengkap,
                 onValueChange = {
-                    inputNamaLengkap = it
+                    viewModel.setInputNamaLengkap(it)
                     isInputValueChanged = true
                 },
                 label = { Text(text = usernameOrNama) }, // Ubah label
@@ -171,11 +186,43 @@ fun EditProfileScreen(navController: NavController, userData: UserData?) {
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    // TODO Update profil
+                    val email = inputEmail
+                    val namaLengkap = inputNamaLengkap
+                    val profilePictureUri = selectedImageUri
+
+                    viewModel.updateUserProfile(email, namaLengkap, profilePictureUri,
+                        onSuccess = {
+                            // Refresh the profile picture URL
+                            ref?.get()?.addOnSuccessListener { document ->
+                                if (document != null) {
+                                    profilePictureUrl =
+                                        document.data?.get("profilePictureUrl") as String?
+                                    selectedImageUri = null
+                                    navController.navigateUp()
+                                }
+                            }
+                        },
+                        onFailure = { exception ->
+                            // Handle failure
+                            Log.e(
+                                "EditProfileScreen",
+                                "Failed to update profile: ${exception.message}"
+                            )
+                        }
+                    )
                 },
                 enabled = isInputValueChanged
             ) {
-                Text(text = "Simpan")
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp),
+                        color = Color.White
+                    )
+                } else {
+                    Text(text = "Simpan")
+
+                }
             }
         }
     }
