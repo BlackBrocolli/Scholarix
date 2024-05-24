@@ -219,13 +219,21 @@ fun MainNavigation(
             OnBoardingScreen(navController = navController)
         }
         composable(Screen.SecondOnboarding.route) {
-            SecondOnboarding(navController = navController)
+            SecondOnboarding(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.ThirdOnboarding.route) {
-            ThirdOnboarding(navController = navController)
+            ThirdOnboarding(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.FourthOnboarding.route) {
-            FourthOnboarding(navController = navController)
+            googleAuthUiClient.getSignInUser()
+                ?.let { userData ->
+                    FourthOnboarding(
+                        navController = navController,
+                        viewModel = mainViewModel,
+                        userData = userData
+                    )
+
+                }
         }
         composable(Screen.MainView.route) {
             MainView(googleAuthUiClient)

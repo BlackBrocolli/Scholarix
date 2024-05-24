@@ -1,6 +1,5 @@
 package id.ac.stiki.doleno.scholarix.view.onboarding
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,14 +29,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,21 +46,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import id.ac.stiki.doleno.scholarix.model.Country
+import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 import id.ac.stiki.doleno.scholarix.viewmodel.CountryViewModel
+import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun FourthOnboarding(navController: NavController) {
+fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, userData: UserData) {
     // fetch countries
     val countryViewModel: CountryViewModel = viewModel()
     val viewState by countryViewModel.countriesState
+    val userEmail = userData.email
+    val isLoading by viewModel.isLoadingSaveUserPreference.observeAsState(initial = false)
 
-    val context = LocalContext.current
+//    val context = LocalContext.current
     val countries = viewState.list.sortedBy { it.name.common }
 
     // State untuk melacak indeks item negara yang dipilih
     val selectedItems = remember { mutableStateOf(setOf<Int>()) }
+    var selectedCountries by remember { mutableStateOf(listOf<String>()) }
 
     Scaffold(
         topBar = {
@@ -133,6 +138,12 @@ fun FourthOnboarding(navController: NavController) {
                                             } else {
                                                 selectedItems.value + index
                                             }
+                                        selectedCountries =
+                                            if (selectedCountries.contains(country.name.common)) {
+                                                selectedCountries - country.name.common
+                                            } else {
+                                                selectedCountries + country.name.common
+                                            }
                                     }
                                 )
                             }
@@ -143,6 +154,10 @@ fun FourthOnboarding(navController: NavController) {
             }
             Button(
                 onClick = {
+                    viewModel.savePreferensiNegara(selectedCountries)
+                    if (userEmail != null) {
+                        viewModel.saveUserPreferences(userEmail)
+                    }
                     navController.navigate(Screen.MainView.route) {
                         popUpTo(Screen.OnboardingScreen.route) {
                             inclusive = true
@@ -153,12 +168,20 @@ fun FourthOnboarding(navController: NavController) {
                     .fillMaxWidth()
                     .height(56.dp),
             ) {
-                Text(
-                    text = "Selesai",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp),
+                        color = Color.White
+                    )
+                } else {
+                    Text(
+                        text = "Selesai",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
             }
         }
     }

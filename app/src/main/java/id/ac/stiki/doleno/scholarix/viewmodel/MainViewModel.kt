@@ -1,18 +1,16 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
+import id.ac.stiki.doleno.scholarix.model.auth.Preference
 import id.ac.stiki.doleno.scholarix.model.auth.User
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 
@@ -125,6 +123,7 @@ class MainViewModel : ViewModel() {
     fun setSearchText(text: String) {
         _searchText.value = text
     }
+
     fun searchScholarshipsByName(name: String) {
         _isSearching.value = true
         _searchedScholarships.value = _scholarships.value?.filter { scholarship ->
@@ -371,4 +370,55 @@ class MainViewModel : ViewModel() {
             }
     }
     // ------ End of FAVORITE SCHOLARSHIPS ------
+
+    // ------ Start of ONBOARDING ---------
+    private val _levelPendidikan = MutableLiveData<List<String>>()
+    private val _tipePendanaan = MutableLiveData<List<String>>()
+    private val _preferensiNegara = MutableLiveData<List<String>>()
+    private val _isLoadingSaveUserPreference = MutableLiveData(false)
+    val isLoadingSaveUserPreference: LiveData<Boolean> = _isLoadingSaveUserPreference
+
+    fun saveLevelPendidikan(list: List<Boolean>) {
+        val levels = mutableListOf<String>()
+        if (list[0]) levels.add("S1")
+        if (list[1]) levels.add("S2")
+        if (list[2]) levels.add("S3")
+        if (list[3]) levels.add("Lainnya")
+        _levelPendidikan.value = levels
+    }
+
+    fun saveTipePendanaan(list: List<Boolean>) {
+        val types = mutableListOf<String>()
+        if (list[0]) types.add("Fully Funded")
+        if (list[1]) types.add("Partial Funded")
+        _tipePendanaan.value = types
+    }
+
+    fun savePreferensiNegara(list: List<String>) {
+        _preferensiNegara.value = list
+    }
+
+    fun saveUserPreferences(email: String) {
+        _isLoadingSaveUserPreference.value = true
+        val preferences = Preference(
+            degrees = _levelPendidikan.value ?: listOf(),
+            fundingStatus = _tipePendanaan.value ?: listOf(),
+            countries = _preferensiNegara.value ?: listOf()
+        )
+
+        db.collection("users").document(email)
+            .update("preference", preferences)
+            .addOnSuccessListener {
+                // Handle success
+                _isLoadingSaveUserPreference.value = false
+                Log.d("Firestore", "User references successfully updated!")
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+                _isLoadingSaveUserPreference.value = false
+                Log.w("Firestore", "Error updating User references", e)
+            }
+    }
+
+    // ------ End of ONBOARDING ---------
 }

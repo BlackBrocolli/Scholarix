@@ -35,33 +35,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
+import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun SecondOnboarding(navController: NavController) {
+fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
+
+    var selectedRows by remember { mutableStateOf(List(4) { false }) }
 
     Scaffold(
         topBar = {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                IconButton(onClick = { screenIndex-- }) {
-//                    Icon(
-//                        imageVector = Icons.Default.ArrowBack,
-//                        contentDescription = "Icon arrow back"
-//                    )
-//                }
-//                LinearProgressIndicator(
-//                    progress = progress,
-//                    modifier = Modifier.width(160.dp)
-//                )
-//                TextButton(onClick = {
-//                    screenIndex++
-//                }) {
-//                    Text(text = "Skip")
-//                }
-//            }
             OnboardingTopBar(
                 progress = 0.33f,
                 onBackNavClicked = { navController.navigateUp() },
@@ -92,7 +74,6 @@ fun SecondOnboarding(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // == PILIHAN LEVEL PENDIDIKAN ==
-                var selectedRows by remember { mutableStateOf(List(4) { false }) }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -280,6 +261,7 @@ fun SecondOnboarding(navController: NavController) {
             }
             Button(
                 onClick = {
+                    viewModel.saveLevelPendidikan(selectedRows)
                     navController.navigate(Screen.ThirdOnboarding.route)
                 },
                 modifier = Modifier

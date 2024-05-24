@@ -22,7 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,9 +35,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
+import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun ThirdOnboarding(navController: NavController) {
+fun ThirdOnboarding(navController: NavController, viewModel: MainViewModel) {
+
+    var selectedRows by remember { mutableStateOf(List(2) { false }) }
 
     Scaffold(
         topBar = {
@@ -70,15 +73,14 @@ fun ThirdOnboarding(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // == PILIHAN LEVEL PENDIDIKAN ==
-                var selectedRows by remember { mutableIntStateOf(-1) }
+                // == PILIHAN TIPE PENDANAAN ==
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows == 1) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[0]) Color(0xFF405E90) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -86,11 +88,15 @@ fun ThirdOnboarding(navController: NavController) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = 1
+                            selectedRows = selectedRows
+                                .toMutableList()
+                                .also {
+                                    it[0] = !it[0]
+                                }
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows == 1) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[0]) Color(0xFF405E90) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -100,10 +106,10 @@ fun ThirdOnboarding(navController: NavController) {
                         Text(
                             text = "Didanai Sepenuhnya",
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedRows == 1) Color.White else Color.Black
+                            color = if (selectedRows[0]) Color.White else Color.Black
                         )
                     }
-                    if (selectedRows == 1) {
+                    if (selectedRows[0]) {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
@@ -120,7 +126,7 @@ fun ThirdOnboarding(navController: NavController) {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows == 2) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[1]) Color(0xFF405E90) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -128,11 +134,15 @@ fun ThirdOnboarding(navController: NavController) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = 2
+                            selectedRows = selectedRows
+                                .toMutableList()
+                                .also {
+                                    it[1] = !it[1]
+                                }
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows == 2) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[1]) Color(0xFF405E90) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -142,10 +152,10 @@ fun ThirdOnboarding(navController: NavController) {
                         Text(
                             text = "Didanai Sebagian",
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedRows == 2) Color.White else Color.Black
+                            color = if (selectedRows[1]) Color.White else Color.Black
                         )
                     }
-                    if (selectedRows == 2) {
+                    if (selectedRows[1]) {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
@@ -155,10 +165,11 @@ fun ThirdOnboarding(navController: NavController) {
                         }
                     }
                 }
-                // == AKHIR PILIHAN LEVEL PENDIDIKAN ==
+                // == AKHIR PILIHAN TIPE PENDANAAN ==
             }
             Button(
                 onClick = {
+                    viewModel.saveTipePendanaan(selectedRows)
                     navController.navigate(Screen.FourthOnboarding.route)
                 },
                 modifier = Modifier

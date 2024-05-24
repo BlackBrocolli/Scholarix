@@ -25,6 +25,7 @@ import id.ac.stiki.doleno.scholarix.view.onboarding.SecondOnboarding
 import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
 import id.ac.stiki.doleno.scholarix.view.main.MainView
 import id.ac.stiki.doleno.scholarix.view.onboarding.ThirdOnboarding
+import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +36,7 @@ fun Navigation(
     startDestination: String
 ) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+    val mainViewModel: MainViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Screen.LoginScreen.route) {
@@ -142,13 +144,21 @@ fun Navigation(
             OnBoardingScreen(navController = navController)
         }
         composable(Screen.SecondOnboarding.route) {
-            SecondOnboarding(navController = navController)
+            SecondOnboarding(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.ThirdOnboarding.route) {
-            ThirdOnboarding(navController = navController)
+            ThirdOnboarding(navController = navController, viewModel = mainViewModel)
         }
         composable(Screen.FourthOnboarding.route) {
-            FourthOnboarding(navController = navController)
+            googleAuthUiClient.getSignInUser()
+                ?.let { userData ->
+                    FourthOnboarding(
+                        navController = navController,
+                        viewModel = mainViewModel,
+                        userData = userData
+                    )
+
+                }
         }
         composable(Screen.MainView.route) {
             MainView(googleAuthUiClient)
