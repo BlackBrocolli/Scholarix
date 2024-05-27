@@ -82,7 +82,7 @@ fun ProfileScreen(
                 .border(1.dp, Color.Black, CircleShape)
 
 //            if (userData?.profilePictureUrl != null) {
-            if (profilePictureUrl != null) {
+            if (profilePictureUrl != null && profilePictureUrl!!.isNotEmpty()) {
                 AsyncImage(
                     model = profilePictureUrl,
                     contentDescription = "Profile Picture",
@@ -91,7 +91,7 @@ fun ProfileScreen(
                 )
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.avataaars),
+                    painter = painterResource(id = R.drawable.default_avatar),
                     contentDescription = "Default Profile Picture",
                     modifier = commonModifier
                 )

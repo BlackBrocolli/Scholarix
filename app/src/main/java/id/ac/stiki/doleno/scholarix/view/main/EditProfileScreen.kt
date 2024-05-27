@@ -129,7 +129,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
                         modifier = commonModifier,
                         contentScale = ContentScale.Crop
                     )
-                } else if (profilePictureUrl != null) {
+                } else if (profilePictureUrl != null && profilePictureUrl!!.isNotEmpty()) {
                     AsyncImage(
                         model = profilePictureUrl,
                         contentDescription = "Profile Picture",
@@ -138,7 +138,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
                     )
                 } else {
                     Image(
-                        painter = painterResource(id = R.drawable.avataaars),
+                        painter = painterResource(id = R.drawable.default_avatar),
                         contentDescription = null,
                         modifier = commonModifier
                     )
