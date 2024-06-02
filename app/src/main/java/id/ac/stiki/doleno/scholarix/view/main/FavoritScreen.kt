@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import id.ac.stiki.doleno.scholarix.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.model.google.UserData
@@ -161,6 +162,8 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                 ),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                                 //                        color = Color(0xCC17181A)
                             )
                         }
@@ -189,7 +192,17 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
                 // TIPE PENDANAAN
-                Text(text = "Beasiswa ${beasiswa.fundingStatus}", fontSize = 12.sp)
+                val beasiswaText = if (beasiswa.fundingStatus != null) {
+                    "Beasiswa ${beasiswa.fundingStatus}"
+                } else {
+                    "Beasiswa ${beasiswa.amount}"
+                }
+                Text(
+                    text = beasiswaText,
+                    fontSize = 12.sp,
+                    maxLines = 1, // Batasi jumlah baris menjadi 1
+                    overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 // NAMA BEASISWA
                 Text(

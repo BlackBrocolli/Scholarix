@@ -17,7 +17,10 @@ data class Beasiswa(
     val documentsHtml: List<String> = listOf(""),
     val benefitsHtml: List<String> = listOf(""),
     val email: String? = null,
-    val phone: String? = null
+    val phone: String? = null,
+    val description: String = "",
+    val otherCriteria: String = "",
+    val amount: String = ""
 )
 
 object DummyBeasiswa {

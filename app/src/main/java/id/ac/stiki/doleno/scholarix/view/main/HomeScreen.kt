@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -175,25 +176,39 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                             Spacer(modifier = Modifier.width(8.dp))
                         }
 //                Spacer(modifier = Modifier.width(2.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0x80D9D9D9),
-                            )
-                        ) {
-                            Text(
-                                text = beasiswa.city ?: beasiswa.country,
-                                modifier = Modifier.padding(
-                                    horizontal = 8.dp,
-                                    vertical = 4.dp
-                                ),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                //                        color = Color(0xCC17181A)
-                            )
+                        if (beasiswa.city != null || beasiswa.country != "") {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0x80D9D9D9),
+                                )
+                            ) {
+                                Text(
+                                    text = beasiswa.city ?: beasiswa.country,
+                                    modifier = Modifier.padding(
+                                        horizontal = 8.dp,
+                                        vertical = 4.dp
+                                    ),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                    //                        color = Color(0xCC17181A)
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "Beasiswa ${beasiswa.fundingStatus}", fontSize = 12.sp)
+                    val beasiswaText = if (beasiswa.fundingStatus != null) {
+                        "Beasiswa ${beasiswa.fundingStatus}"
+                    } else {
+                        "Beasiswa ${beasiswa.amount}"
+                    }
+                    Text(
+                        text = beasiswaText,
+                        fontSize = 12.sp,
+                        maxLines = 1, // Batasi jumlah baris menjadi 1
+                        overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
+                    )
                     Text(
                         text = beasiswa.name,
                         fontSize = 14.sp,

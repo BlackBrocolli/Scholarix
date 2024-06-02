@@ -173,54 +173,62 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
             fontWeight = FontWeight.Black,
             fontSize = 18.sp
         )
-        beasiswa.fundingStatus?.let { Text(text = it, fontSize = 14.sp) }
+        val beasiswaText = if (beasiswa.fundingStatus != null) {
+            "Beasiswa ${beasiswa.fundingStatus}"
+        } else {
+            "Beasiswa ${beasiswa.amount}"
+        }
+        Text(
+            text = beasiswaText,
+            fontSize = 14.sp
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             // Menampilkan setiap derajat dalam kartu terpisah
-            beasiswa.degrees.forEach { degree ->
-                val containerColor = when (degree) {
-                    "S1" -> Color(0xFFD9FAE7)
-                    "S2" -> Color(0x401B73B3)
-                    "S3" -> Color(0x40C77738)
-                    else -> Color.Gray // Warna default jika derajat tidak dikenali
+            if (beasiswa.degrees.isNotEmpty()) {
+                beasiswa.degrees.forEach { degree ->
+                    val containerColor = when (degree) {
+                        "S1" -> Color(0xFFD9FAE7)
+                        "S2" -> Color(0x401B73B3)
+                        "S3" -> Color(0x40C77738)
+                        else -> Color.Gray // Warna default jika derajat tidak dikenali
+                    }
+                    val textColor = when (degree) {
+                        "S1" -> Color(0xFF21764C) // Warna teks untuk S1
+                        "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
+                        "S3" -> Color(0xFFC77738) // Warna teks untuk S3
+                        else -> Color.Black // Warna teks default jika derajat tidak dikenali
+                    }
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = containerColor,
+                        )
+                    ) {
+                        Text(
+                            text = degree,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
-                val textColor = when (degree) {
-                    "S1" -> Color(0xFF21764C) // Warna teks untuk S1
-                    "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
-                    "S3" -> Color(0xFFC77738) // Warna teks untuk S3
-                    else -> Color.Black // Warna teks default jika derajat tidak dikenali
-                }
+            }
+//                Spacer(modifier = Modifier.width(2.dp))
+            beasiswa.city?.let { city ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = containerColor,
+                        containerColor = Color(0x80D9D9D9),
                     )
                 ) {
                     Text(
-                        text = degree,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        text = city,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textColor
+                        // color = Color(0xCC17181A)
                     )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-//                Spacer(modifier = Modifier.width(2.dp))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0x80D9D9D9),
-                )
-            ) {
-                beasiswa.city.let {
-                    if (it != null) {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            //                        color = Color(0xCC17181A)
-                        )
-                    }
                 }
             }
         }
@@ -260,68 +268,76 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Tentang", fontWeight = FontWeight.Bold)
-                Text(
-                    text = "LOKASI NEGARA",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Row(verticalAlignment = Alignment.Top) {
+                if (beasiswa.country != "") {
                     Text(
-                        text = "\u2022", // Unicode untuk simbol bullet
+                        text = "LOKASI NEGARA",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    Text(text = beasiswa.country, fontSize = 14.sp)
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(
+                            text = "\u2022", // Unicode untuk simbol bullet
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        )
+                        Text(text = beasiswa.country, fontSize = 14.sp)
+                    }
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-                Text(
-                    text = "INSTITUSI ",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Row(verticalAlignment = Alignment.Top) {
+                if (beasiswa.institution != "") {
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
                     Text(
-                        text = "\u2022", // Unicode untuk simbol bullet
+                        text = "INSTITUSI ",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    Text(text = beasiswa.institution, fontSize = 14.sp)
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(
+                            text = "\u2022", // Unicode untuk simbol bullet
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        )
+                        Text(text = beasiswa.institution, fontSize = 14.sp)
+                    }
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-                Text(
-                    text = "JUMLAH BEASISWA ",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Row(verticalAlignment = Alignment.Top) {
+                if (beasiswa.opportunities != "") {
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
                     Text(
-                        text = "\u2022", // Unicode untuk simbol bullet
+                        text = "JUMLAH BEASISWA ",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    Text(text = beasiswa.opportunities, fontSize = 14.sp)
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(
+                            text = "\u2022", // Unicode untuk simbol bullet
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        )
+                        Text(text = beasiswa.opportunities, fontSize = 14.sp)
+                    }
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-                Text(
-                    text = "DURASI",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Row(verticalAlignment = Alignment.Top) {
+                if (beasiswa.duration != "") {
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
                     Text(
-                        text = "\u2022", // Unicode untuk simbol bullet
+                        text = "DURASI",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    Text(text = beasiswa.duration, fontSize = 14.sp)
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(
+                            text = "\u2022", // Unicode untuk simbol bullet
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        )
+                        Text(text = beasiswa.duration, fontSize = 14.sp)
+                    }
                 }
             }
         }
@@ -335,53 +351,60 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                 containerColor = Color.Transparent
             )
         ) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(text = "Manfaat", fontWeight = FontWeight.Bold, color = Color.Blue)
-                // Regex pattern untuk menghilangkan semua tag HTML kecuali <hr>, <p>, <ul>, <li>, </li>, <strong>
-                val cleanHtmlPattern = Regex("<(?!hr|p|ul|li|/li|/strong).*?>")
+            if (beasiswa.benefitsHtml.isNotEmpty()) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(text = "Manfaat", fontWeight = FontWeight.Bold, color = Color.Blue)
+                    // Regex pattern untuk menghilangkan semua tag HTML kecuali <hr>, <p>, <ul>, <li>, </li>, <strong>
+                    val cleanHtmlPattern = Regex("<(?!hr|p|ul|li|/li|/strong).*?>")
 
-                // Fungsi untuk membersihkan teks dari tag HTML dan mengkonversi tag <ul> dan <li> menjadi teks daftar
-                fun cleanAndFormatText(html: String): String {
-                    return html.replace(cleanHtmlPattern, "")
-                        .replace("<ul>", "\n") // Ganti <ul> dengan newline
-                        .replace("</ul>", "")
-                        .replace("<li>", "") // Hapus <li>
-                        .replace("</li>", "")
-                        .replace("</strong>", "")
-                        .replace("&nbsp;", " ")
+                    // Fungsi untuk membersihkan teks dari tag HTML dan mengkonversi tag <ul> dan <li> menjadi teks daftar
+                    fun cleanAndFormatText(html: String): String {
+                        return html.replace(cleanHtmlPattern, "")
+                            .replace("<ul>", "\n") // Ganti <ul> dengan newline
+                            .replace("</ul>", "")
+                            .replace("<li>", "") // Hapus <li>
+                            .replace("</li>", "")
+                            .replace("</strong>", "")
+                            .replace("&nbsp;", " ")
+                    }
+
+                    beasiswa.benefitsHtml.forEach { benefit ->
+                        val cleanText = when {
+                            benefit.startsWith("<hr>") -> {
+                                // Skip <hr> tag
+                                null
+                            }
+
+                            benefit.startsWith("<p>") -> {
+                                // Display text inside <p> tag
+                                cleanAndFormatText(benefit.removePrefix("<p>"))
+                            }
+
+                            benefit.startsWith("<ul>") -> {
+                                // Extract list items from <ul> tag
+                                val listItems = benefit
+                                    .removePrefix("<ul>").removeSuffix("</ul>")
+                                    .split("<li>").filter { it.isNotEmpty() }
+                                    .map { cleanAndFormatText(it) }
+                                listItems.joinToString("\u2022 ", prefix = "\u2022 ")
+                            }
+
+                            else -> {
+                                // Default case, display text
+                                cleanAndFormatText(benefit)
+                            }
+                        }
+
+                        // Display the clean text
+                        cleanText?.let {
+                            Text(text = it, fontSize = 14.sp)
+                        }
+                    }
                 }
-
-                beasiswa.benefitsHtml.forEach { benefit ->
-                    val cleanText = when {
-                        benefit.startsWith("<hr>") -> {
-                            // Skip <hr> tag
-                            null
-                        }
-
-                        benefit.startsWith("<p>") -> {
-                            // Display text inside <p> tag
-                            cleanAndFormatText(benefit.removePrefix("<p>"))
-                        }
-
-                        benefit.startsWith("<ul>") -> {
-                            // Extract list items from <ul> tag
-                            val listItems = benefit
-                                .removePrefix("<ul>").removeSuffix("</ul>")
-                                .split("<li>").filter { it.isNotEmpty() }
-                                .map { cleanAndFormatText(it) }
-                            listItems.joinToString("\u2022 ", prefix = "\u2022 ")
-                        }
-
-                        else -> {
-                            // Default case, display text
-                            cleanAndFormatText(benefit)
-                        }
-                    }
-
-                    // Display the clean text
-                    cleanText?.let {
-                        Text(text = it, fontSize = 14.sp)
-                    }
+            } else if (beasiswa.description.isNotEmpty()) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(text = "Deskripsi", fontWeight = FontWeight.Bold, color = Color.Blue)
+                    Text(text = beasiswa.description, fontSize = 14.sp)
                 }
             }
         }
@@ -453,6 +476,23 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                     }
                 } else {
                     Text(text = "-")
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        // CARD OTHER CRITERIA
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth(),
+            border = BorderStroke(1.dp, Color.LightGray),
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+            if (beasiswa.otherCriteria.isNotEmpty()) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(text = "Kriteria Lain", fontWeight = FontWeight.Bold)
+                    Text(text = beasiswa.otherCriteria, fontSize = 14.sp)
                 }
             }
         }
