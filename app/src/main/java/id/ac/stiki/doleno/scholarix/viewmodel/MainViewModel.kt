@@ -82,6 +82,9 @@ class MainViewModel : ViewModel() {
     private val _scholarship = MutableLiveData<Beasiswa>()
     val scholarship: LiveData<Beasiswa> = _scholarship
 
+    private val _indonesiaScholarship = MutableLiveData<BeasiswaIndonesia>()
+    val indonesiaScholarship: LiveData<BeasiswaIndonesia> = _indonesiaScholarship
+
     private val _isLoadingScholarships = MutableLiveData<Boolean>()
     val isLoadingScholarships: LiveData<Boolean> = _isLoadingScholarships
 
@@ -331,27 +334,51 @@ class MainViewModel : ViewModel() {
     }
 
     // Metode untuk mengambil satu beasiswa berdasarkan ID dari database
-    fun fetchScholarshipById(encodedId: String) {
+    fun fetchScholarshipById(encodedId: String, type: String) {
         val id = Uri.decode(encodedId) // Decode ID yang telah di-encoded sebelumnya
         _isLoadingScholarship.value = true
         _isErrorScholarship.value = false
-        db.collection("scholarships").document(id)
-            .get()
-            .addOnSuccessListener { document ->
-                _isLoadingScholarship.value = false
-                if (document.exists()) {
-                    val beasiswa = document.toObject(Beasiswa::class.java)
-                    beasiswa?.let {
-                        _scholarship.value = it
+        when (type) {
+            "beasiswaLuarNegeri" -> {
+                db.collection("scholarships").document(id)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        _isLoadingScholarship.value = false
+                        if (document.exists()) {
+                            val beasiswa = document.toObject(Beasiswa::class.java)
+                            beasiswa?.let {
+                                _scholarship.value = it
+                            }
+                        } else {
+                            _isErrorScholarship.value = true
+                        }
                     }
-                } else {
-                    _isErrorScholarship.value = true
-                }
+                    .addOnFailureListener {
+                        _isLoadingScholarship.value = false
+                        _isErrorScholarship.value = true
+                    }
             }
-            .addOnFailureListener {
-                _isLoadingScholarship.value = false
-                _isErrorScholarship.value = true
+
+            "beasiswaIndonesia" -> {
+                db.collection("indonesiaScholarships").document(id)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        _isLoadingScholarship.value = false
+                        if (document.exists()) {
+                            val beasiswa = document.toObject(BeasiswaIndonesia::class.java)
+                            beasiswa?.let {
+                                _indonesiaScholarship.value = it
+                            }
+                        } else {
+                            _isErrorScholarship.value = true
+                        }
+                    }
+                    .addOnFailureListener {
+                        _isLoadingScholarship.value = false
+                        _isErrorScholarship.value = true
+                    }
             }
+        }
     }
 
     // ------ Start of FAVORITE SCHOLARSHIPS ------

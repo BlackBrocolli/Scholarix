@@ -196,7 +196,8 @@ fun BeasiswaIndonesiaItem(
         maxLines = 2, // Batas maksimal 2 baris
         overflow = TextOverflow.Ellipsis, // Potong teks dengan elipsis jika melebihi batas
         modifier = Modifier
-            .heightIn(min = 32.dp) // Set tinggi minimum
+            .heightIn(min = 32.dp)
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }
     )
 }
 
@@ -220,7 +221,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                 .padding(start = paddingValues, end = 8.dp)
                 .widthIn(max = 260.dp)
                 .height(182.dp)
-                .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}") },
+                .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaLuarNegeri") },
             border = BorderStroke(1.dp, Color.LightGray),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(

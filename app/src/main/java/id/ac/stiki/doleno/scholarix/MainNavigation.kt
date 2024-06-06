@@ -94,17 +94,24 @@ fun MainNavigation(
             )
         }
         composable(
-            route = "${Screen.DetailBeasiswaScreen.route}/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
+            route = "${Screen.DetailBeasiswaScreen.route}/{id}/{type}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+                navArgument("type") {
+                    type = NavType.StringType
+                }
+            )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
-            if (id != null) {
+            val type = backStackEntry.arguments?.getString("type")
+            if (id != null && type != null) {
                 val encodedId = Uri.encode(id) // Melakukan encoding terhadap ID dengan spasi
                 googleAuthUiClient.getSignInUser()?.let {
                     DetailBeasiswaScreen(
                         id = encodedId,
+                        type = type,
                         viewModel = mainViewModel,
                         navController = navController,
                         userData = it

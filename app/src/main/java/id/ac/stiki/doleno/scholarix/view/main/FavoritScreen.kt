@@ -47,7 +47,9 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 @Composable
 fun FavoritScreen(viewModel: MainViewModel, userData: UserData, navController: NavController) {
 
+    // TODO: Tampilkan favorite yang beasiswa Indonesia
     val scholarships by viewModel.scholarships.observeAsState(initial = emptyList())
+    val indonesiaScholarships by viewModel.indonesiaScholarships.observeAsState(initial = emptyList())
     val favorites by viewModel.favorites.observeAsState(emptyList())
     val userEmail = userData.email
 
@@ -94,7 +96,7 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
             .fillMaxWidth()
             .padding(bottom = 16.dp)
             .clickable {
-                navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}")
+                navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaLuarNegeri")
             },
         border = BorderStroke(1.dp, Color.LightGray),
         shape = RoundedCornerShape(8.dp),
@@ -149,26 +151,26 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                             Spacer(modifier = Modifier.width(8.dp))
                         }
 //                Spacer(modifier = Modifier.width(2.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0x80D9D9D9),
-                            )
-                        ) {
-                            Text(
-                                text = beasiswa.city ?: beasiswa.country,
-                                modifier = Modifier.padding(
-                                    horizontal = 8.dp,
-                                    vertical = 4.dp
-                                ),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                                //                        color = Color(0xCC17181A)
-                            )
+                        if (beasiswa.city != null || beasiswa.country != "") {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0x80D9D9D9),
+                                )
+                            ) {
+                                Text(
+                                    text = beasiswa.city ?: beasiswa.country,
+                                    modifier = Modifier.padding(
+                                        horizontal = 8.dp,
+                                        vertical = 4.dp
+                                    ),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                    //                        color = Color(0xCC17181A)
+                                )
+                            }
                         }
-
-
                     }
 
                     // ICON FAVORITE

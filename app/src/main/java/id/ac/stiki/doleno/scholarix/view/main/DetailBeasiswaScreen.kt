@@ -46,31 +46,39 @@ import android.net.Uri
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.getValue
+import id.ac.stiki.doleno.scholarix.model.BeasiswaIndonesia
 import id.ac.stiki.doleno.scholarix.model.google.UserData
 
 @Composable
 fun DetailBeasiswaScreen(
     id: String,
+    type: String,
     viewModel: MainViewModel,
     navController: NavController,
     userData: UserData
 ) {
 
     val scholarship = viewModel.scholarship.observeAsState(initial = Beasiswa())
-    val isLoading = viewModel.isLoadingScholarship.observeAsState(initial = false)
-    val isError = viewModel.isErrorScholarship.observeAsState(initial = false)
+    val indonesiaScholarship =
+        viewModel.indonesiaScholarship.observeAsState(initial = BeasiswaIndonesia())
+    val isLoadingScholarship = viewModel.isLoadingScholarship.observeAsState(initial = false)
+    val isErrorScholarship = viewModel.isErrorScholarship.observeAsState(initial = false)
     val favorites by viewModel.favorites.observeAsState(initial = emptyList())
 
     val userEmail = userData.email
 
     LaunchedEffect(Unit) {
-        viewModel.fetchScholarshipById(id)
+        viewModel.fetchScholarshipById(id, type)
         userEmail?.let {
             viewModel.loadUserFavorites(it)
         }
     }
 
-    val isFavorite = scholarship.value.name in favorites
+    val isFavorite = when (type) {
+        "beasiswaLuarNegeri" -> scholarship.value.name in favorites
+        "beasiswaIndonesia" -> indonesiaScholarship.value.name in favorites
+        else -> false // Jika type tidak cocok, defaultkan ke false
+    }
 
     Scaffold(
         topBar = {
@@ -90,7 +98,15 @@ fun DetailBeasiswaScreen(
                     IconButton(
                         onClick = {
                             userEmail?.let { email ->
-                                viewModel.toggleFavorite(email, scholarship.value.name)
+                                val name = when (type) {
+                                    "beasiswaLuarNegeri" -> scholarship.value.name
+                                    "beasiswaIndonesia" -> indonesiaScholarship.value.name
+                                    else -> "" // Menangani kasus ketika type tidak cocok dengan yang diharapkan
+                                }
+
+                                if (name.isNotEmpty()) {
+                                    viewModel.toggleFavorite(email, name)
+                                }
                             }
                         }) {
                         Icon(
@@ -105,7 +121,11 @@ fun DetailBeasiswaScreen(
         bottomBar = {
             Button(
                 onClick = {
-                    val url = scholarship.value.link
+                    val url = when (type) {
+                        "beasiswaLuarNegeri" -> scholarship.value.link
+                        "beasiswaIndonesia" -> indonesiaScholarship.value.link
+                        else -> "" // Menangani kasus ketika type tidak cocok dengan yang diharapkan
+                    }
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(url)
                     navController.context.startActivity(intent)
@@ -137,25 +157,51 @@ fun DetailBeasiswaScreen(
             contentAlignment = Alignment.Center
         ) {
             when {
-                isLoading.value -> {
+                isLoadingScholarship.value -> {
                     // Display a loading animation or indicator
                     CircularProgressIndicator()
                 }
 
-                isError.value -> {
+                isErrorScholarship.value -> {
                     // Show an error message and possibly a retry button
                     Text("Failed to load scholarship details. Tap to retry.",
                         modifier = Modifier
-                            .clickable { viewModel.fetchScholarshipById(id) }
+                            .clickable { viewModel.fetchScholarshipById(id, type) }
                             .padding(16.dp)
                     )
                 }
 
                 else -> {
-                    DetailBeasiswaContent(scholarship.value)
+                    // Adjust UI based on collectionType
+                    when (type) {
+                        "beasiswaLuarNegeri" -> {
+                            DetailBeasiswaContent(scholarship.value)
+                        }
+
+                        "beasiswaIndonesia" -> {
+                            DetailBeasiswaIndonesiaContent(indonesiaScholarship.value)
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DetailBeasiswaIndonesiaContent(beasiswa: BeasiswaIndonesia) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .padding(vertical = 16.dp)
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Text(
+            text = beasiswa.name,
+            fontWeight = FontWeight.Black,
+            fontSize = 18.sp
+        )
     }
 }
 
