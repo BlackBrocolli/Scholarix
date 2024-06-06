@@ -14,13 +14,17 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
+import id.ac.stiki.doleno.scholarix.model.BeasiswaIndonesia
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
@@ -43,8 +48,14 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
 
     // Observing the LiveData for changes
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
-    val isLoading = viewModel.isLoading.observeAsState(initial = false)
-    val isError = viewModel.isError.observeAsState(initial = false)
+    val isLoadingScholarships = viewModel.isLoadingScholarships.observeAsState(initial = false)
+    val isErrorScholarships = viewModel.isErrorScholarships.observeAsState(initial = false)
+    val indonesiaScholarships =
+        viewModel.indonesiaScholarships.observeAsState(initial = emptyList())
+    val isLoadingIndonesiaScholarships =
+        viewModel.isLoadingIndonesiaScholarships.observeAsState(initial = false)
+    val isErrorIndonesiaScholarships =
+        viewModel.isErrorIndonesiaScholarships.observeAsState(initial = false)
 
     viewModel.resetSearching()
     viewModel.resetCardSelections()
@@ -53,6 +64,9 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
     LaunchedEffect(key1 = true) {
         if (scholarships.value.isEmpty()) {
             viewModel.fetchScholarshipDetails()
+        }
+        if (indonesiaScholarships.value.isEmpty()) {
+            viewModel.fetchIndonesiaScholarshipDetails()
         }
     }
 
@@ -69,7 +83,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Rekomendasi untuk Kamu",
+                text = "Beasiswa Luar Negeri",
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.1).sp
             )
@@ -84,12 +98,12 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
             }
         }
         when {
-            isLoading.value -> {
+            isLoadingScholarships.value -> {
                 // Display a loading animation or indicator
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
 
-            isError.value -> {
+            isErrorScholarships.value -> {
                 // Show an error message and possibly a retry button
                 Text("Failed to load scholarships. Tap to retry.",
                     modifier = Modifier
@@ -105,7 +119,85 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
                 )
             }
         }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Beasiswa Indonesia",
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.1).sp
+            )
+            TextButton(onClick = { }) {
+                Text(
+                    text = "Lihat Semua",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    letterSpacing = (-0.1).sp,
+                    color = Color.Blue
+                )
+            }
+        }
+        when {
+            isLoadingIndonesiaScholarships.value -> {
+                // Display a loading animation or indicator
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+
+            isErrorIndonesiaScholarships.value -> {
+                // Show an error message and possibly a retry button
+                Text("Failed to load Indonesia scholarships. Tap to retry.",
+                    modifier = Modifier
+                        .clickable { viewModel.fetchIndonesiaScholarshipDetails() }
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally))
+            }
+
+            else -> {
+                IndonesiaScholarshipList(
+                    scholarships = indonesiaScholarships.value,
+                    navController = navController
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun IndonesiaScholarshipList(scholarships: List<BeasiswaIndonesia>, navController: NavController) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .height(216.dp)
+    ) {
+        itemsIndexed(scholarships) { index, scholarship ->
+            if (index > 0) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+            BeasiswaIndonesiaItem(beasiswa = scholarship, isFirstChild = index == 0, navController)
+        }
+    }
+}
+
+@Composable
+fun BeasiswaIndonesiaItem(
+    beasiswa: BeasiswaIndonesia,
+    isFirstChild: Boolean,
+    navController: NavController
+) {
+    Text(
+        text = beasiswa.name,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 18.sp,
+        maxLines = 2, // Batas maksimal 2 baris
+        overflow = TextOverflow.Ellipsis, // Potong teks dengan elipsis jika melebihi batas
+        modifier = Modifier
+            .heightIn(min = 32.dp) // Set tinggi minimum
+    )
 }
 
 @Composable

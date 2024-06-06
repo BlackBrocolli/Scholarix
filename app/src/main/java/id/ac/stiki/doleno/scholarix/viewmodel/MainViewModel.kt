@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
+import id.ac.stiki.doleno.scholarix.model.BeasiswaIndonesia
 import id.ac.stiki.doleno.scholarix.model.auth.Preference
 import id.ac.stiki.doleno.scholarix.model.auth.User
 import id.ac.stiki.doleno.scholarix.navigation.Screen
@@ -81,11 +82,11 @@ class MainViewModel : ViewModel() {
     private val _scholarship = MutableLiveData<Beasiswa>()
     val scholarship: LiveData<Beasiswa> = _scholarship
 
-    private val _isLoadingAllScholarships = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoadingAllScholarships
+    private val _isLoadingScholarships = MutableLiveData<Boolean>()
+    val isLoadingScholarships: LiveData<Boolean> = _isLoadingScholarships
 
-    private val _isErrorAllScholarships = MutableLiveData<Boolean>()
-    val isError: LiveData<Boolean> = _isErrorAllScholarships
+    private val _isErrorScholarships = MutableLiveData<Boolean>()
+    val isErrorScholarships: LiveData<Boolean> = _isErrorScholarships
 
     // Variabel untuk status loading ambil satu beasiswa
     private val _isLoadingScholarship = MutableLiveData<Boolean>()
@@ -99,6 +100,39 @@ class MainViewModel : ViewModel() {
     private val _totalScholarshipsCount = MutableLiveData<Int>()
     val totalScholarshipsCount: LiveData<Int> = _totalScholarshipsCount
 
+    // --------------- GET INDONESIA SCHOLARSHIPS FROM DB ---------------
+    private val _indonesiaScholarships = MutableLiveData<List<BeasiswaIndonesia>>()
+    val indonesiaScholarships: MutableLiveData<List<BeasiswaIndonesia>> = _indonesiaScholarships
+
+    private val _isLoadingIndonesiaScholarships = MutableLiveData<Boolean>()
+    val isLoadingIndonesiaScholarships: LiveData<Boolean> = _isLoadingIndonesiaScholarships
+
+    private val _isErrorIndonesiaScholarships = MutableLiveData<Boolean>()
+    val isErrorIndonesiaScholarships: LiveData<Boolean> = _isErrorIndonesiaScholarships
+
+    // Jumlah beasiswa indonesia di firebase
+    private val _totalIndonesiaScholarshipsCount = MutableLiveData<Int>()
+    val totalIndonesiaScholarshipsCount: LiveData<Int> = _totalIndonesiaScholarshipsCount
+
+    // Get Indonesia scholarships from firebase
+    fun fetchIndonesiaScholarshipDetails() {
+        _isLoadingIndonesiaScholarships.value = true
+        _isErrorIndonesiaScholarships.value = false
+        db.collection("indonesiaScholarships")
+            .get()
+            .addOnSuccessListener { documents ->
+                _isLoadingIndonesiaScholarships.value = false
+                val scholarshipList = documents.mapNotNull { doc ->
+                    doc.toObject(BeasiswaIndonesia::class.java).apply { id = doc.id }
+                }
+                _indonesiaScholarships.value = scholarshipList
+                _totalIndonesiaScholarshipsCount.value = documents.size()
+            }
+            .addOnFailureListener {
+                _isLoadingIndonesiaScholarships.value = false
+                _isErrorIndonesiaScholarships.value = true
+            }
+    }
 
     // -------- Start of SEARCHING ----------
     // Variabel yang menyimpan hasil pencarian
@@ -278,12 +312,12 @@ class MainViewModel : ViewModel() {
 
     // Get ALL scholarships from firebase
     fun fetchScholarshipDetails() {
-        _isLoadingAllScholarships.value = true
-        _isErrorAllScholarships.value = false
+        _isLoadingScholarships.value = true
+        _isErrorScholarships.value = false
         db.collection("scholarships")
             .get()
             .addOnSuccessListener { documents ->
-                _isLoadingAllScholarships.value = false
+                _isLoadingScholarships.value = false
                 val scholarshipList = documents.mapNotNull { doc ->
                     doc.toObject(Beasiswa::class.java).apply { id = doc.id }
                 }
@@ -291,8 +325,8 @@ class MainViewModel : ViewModel() {
                 _totalScholarshipsCount.value = documents.size()
             }
             .addOnFailureListener {
-                _isLoadingAllScholarships.value = false
-                _isErrorAllScholarships.value = true
+                _isLoadingScholarships.value = false
+                _isErrorScholarships.value = true
             }
     }
 

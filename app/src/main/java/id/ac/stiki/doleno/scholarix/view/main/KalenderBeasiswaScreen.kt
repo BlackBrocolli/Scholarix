@@ -63,6 +63,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -437,30 +438,38 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                             Spacer(modifier = Modifier.width(8.dp))
                         }
 //                Spacer(modifier = Modifier.width(2.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0x80D9D9D9),
-                            )
-                        ) {
-                            androidx.compose.material3.Text(
-                                text = beasiswa.city ?: beasiswa.country,
-                                modifier = Modifier.padding(
-                                    horizontal = 8.dp,
-                                    vertical = 4.dp
-                                ),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                //                        color = Color(0xCC17181A)
-                            )
+                        if (beasiswa.city != null || beasiswa.country != "") {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0x80D9D9D9),
+                                )
+                            ) {
+                                androidx.compose.material3.Text(
+                                    text = beasiswa.city ?: beasiswa.country,
+                                    modifier = Modifier.padding(
+                                        horizontal = 8.dp,
+                                        vertical = 4.dp
+                                    ),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    //                        color = Color(0xCC17181A)
+                                )
+                            }
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                // TIPE PENDANAAN
+                val beasiswaText = if (beasiswa.fundingStatus != null) {
+                    "Beasiswa ${beasiswa.fundingStatus}"
+                } else {
+                    "Beasiswa ${beasiswa.amount}"
+                }
                 androidx.compose.material3.Text(
-                    text = "Beasiswa ${beasiswa.fundingStatus}",
-                    fontSize = 12.sp
+                    text = beasiswaText,
+                    fontSize = 12.sp,
+                    maxLines = 1, // Batasi jumlah baris menjadi 1
+                    overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // NAMA BEASISWA

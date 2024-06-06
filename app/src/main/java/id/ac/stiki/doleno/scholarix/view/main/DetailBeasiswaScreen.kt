@@ -268,7 +268,8 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Tentang", fontWeight = FontWeight.Bold)
-                if (beasiswa.country != "") {
+
+                if (beasiswa.country.isNotEmpty()) {
                     Text(
                         text = "LOKASI NEGARA",
                         fontWeight = FontWeight.Bold,
@@ -285,8 +286,11 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                         Text(text = beasiswa.country, fontSize = 14.sp)
                     }
                 }
-                if (beasiswa.institution != "") {
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+                if (beasiswa.institution.isNotEmpty()) {
+                    if (beasiswa.country.isNotEmpty()) {
+                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    }
                     Text(
                         text = "INSTITUSI ",
                         fontWeight = FontWeight.Bold,
@@ -303,8 +307,11 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                         Text(text = beasiswa.institution, fontSize = 14.sp)
                     }
                 }
-                if (beasiswa.opportunities != "") {
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+                if (beasiswa.opportunities.isNotEmpty()) {
+                    if (beasiswa.country.isNotEmpty() || beasiswa.institution.isNotEmpty()) {
+                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    }
                     Text(
                         text = "JUMLAH BEASISWA ",
                         fontWeight = FontWeight.Bold,
@@ -321,8 +328,11 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                         Text(text = beasiswa.opportunities, fontSize = 14.sp)
                     }
                 }
-                if (beasiswa.duration != "") {
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+                if (beasiswa.duration.isNotEmpty()) {
+                    if (beasiswa.country.isNotEmpty() || beasiswa.institution.isNotEmpty() || beasiswa.opportunities.isNotEmpty()) {
+                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    }
                     Text(
                         text = "DURASI",
                         fontWeight = FontWeight.Bold,
@@ -341,6 +351,7 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         // CARD BENEFIT
         OutlinedCard(
