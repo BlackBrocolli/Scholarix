@@ -202,6 +202,61 @@ private fun DetailBeasiswaIndonesiaContent(beasiswa: BeasiswaIndonesia) {
             fontWeight = FontWeight.Black,
             fontSize = 18.sp
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (beasiswa.pilihan.isNotEmpty()) {
+            BeasiswaIndonesiaOutlinedCard("Pilihan", beasiswa.pilihan)
+        }
+        if (beasiswa.persyaratan.isNotEmpty()) {
+            BeasiswaIndonesiaOutlinedCard("Persyaratan", beasiswa.persyaratan)
+        }
+        if (beasiswa.caramendaftar.isNotEmpty()) {
+            BeasiswaIndonesiaOutlinedCard("Cara Mendaftar", beasiswa.caramendaftar)
+        }
+        if (beasiswa.tahapan.isNotEmpty()) {
+            BeasiswaIndonesiaOutlinedCard("Tahapan", beasiswa.tahapan)
+        }
+        if (beasiswa.kontak.isNotEmpty()) {
+            BeasiswaIndonesiaOutlinedCard("Kontak", beasiswa.kontak, withBulletIcon = false)
+        }
+    }
+}
+
+@Composable
+fun BeasiswaIndonesiaOutlinedCard(
+    heading: String,
+    items: List<String>,
+    withBulletIcon: Boolean = true,
+) {
+    if (items.isNotEmpty()) {
+        OutlinedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            border = BorderStroke(1.dp, Color.LightGray),
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(text = heading, fontWeight = FontWeight.Bold)
+                items.forEach { item ->
+                    if (withBulletIcon) {
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text(
+                                text = "\u2022", // Unicode untuk simbol bullet
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            )
+                            Text(text = item, fontSize = 14.sp)
+                        }
+                    } else {
+                        Text(text = item, fontSize = 14.sp)
+                    }
+                }
+            }
+        }
     }
 }
 

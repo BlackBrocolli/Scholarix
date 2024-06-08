@@ -97,7 +97,6 @@ fun OnBoardingScreen(navController: NavController) {
             )
         }
     }
-
 }
 
 //@Preview(showBackground = true)

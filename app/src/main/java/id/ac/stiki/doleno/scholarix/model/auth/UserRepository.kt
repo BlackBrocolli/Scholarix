@@ -40,13 +40,14 @@ class UserRepository(
         }
     }
 
-    suspend fun login(email: String, password: String): Result<Boolean> = withContext(Dispatchers.IO) {
-        try {
-            auth.signInWithEmailAndPassword(email, password).await()
-            Result.Success(true)
-        } catch (e: Exception) {
-            Result.Error(e)
+    suspend fun login(email: String, password: String): Result<Boolean> =
+        withContext(Dispatchers.IO) {
+            try {
+                auth.signInWithEmailAndPassword(email, password).await()
+                Result.Success(true)
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
         }
-    }
 }
 
