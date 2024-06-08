@@ -57,7 +57,14 @@ fun MainNavigation(
         modifier = Modifier.padding(pd)
     ) {
         composable(Screen.BottomScreen.Home.route) {
-            HomeScreen(navController = navController, viewModel = mainViewModel)
+            val userEmail = googleAuthUiClient.getSignInUser()?.email
+            if (userEmail != null) {
+                HomeScreen(
+                    navController = navController,
+                    viewModel = mainViewModel,
+                    userEmail = userEmail
+                )
+            }
         }
         composable(Screen.BottomScreen.Favorit.route) {
             googleAuthUiClient.getSignInUser()

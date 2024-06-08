@@ -117,6 +117,49 @@ class MainViewModel : ViewModel() {
     private val _totalIndonesiaScholarshipsCount = MutableLiveData<Int>()
     val totalIndonesiaScholarshipsCount: LiveData<Int> = _totalIndonesiaScholarshipsCount
 
+    // --------------- GET USER PREFERENCE & RECOMENDED SCHOLARSHIPS ---------------
+    private val _userPreferences = MutableLiveData<Preference>()
+    val userPreferences: LiveData<Preference> = _userPreferences
+
+    private val _recommendedScholarships = MutableLiveData<List<Beasiswa>>()
+    val recommendedScholarships: LiveData<List<Beasiswa>> = _recommendedScholarships
+
+    private val _isLoadingRecommendedScholarships = MutableLiveData<Boolean>()
+    val isLoadingRecommendedScholarships: LiveData<Boolean> = _isLoadingRecommendedScholarships
+
+    fun fetchUserPreferences(email: String) {
+        _isLoadingRecommendedScholarships.value = true
+        val docRef = FirebaseFirestore.getInstance().collection("users").document(email)
+        docRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    _userPreferences.value = it.preference
+                    fetchRecommendedScholarships(it.preference)  // Fetch recommendations based on preferences
+                }
+            } else {
+                _isLoadingRecommendedScholarships.value = false  // No document found
+            }
+        }.addOnFailureListener {
+            _isLoadingRecommendedScholarships.value = false  // Error occurred
+        }
+    }
+
+    private fun fetchRecommendedScholarships(preferences: Preference) {
+        val allScholarships = _scholarships.value ?: run {
+            _isLoadingRecommendedScholarships.value = false
+            return
+        }
+
+        val filteredScholarships = allScholarships.filter { beasiswa ->
+            val matchesDegree = beasiswa.degrees.any { it in preferences.degrees }
+            val matchesFundingStatus = preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
+            matchesDegree && matchesFundingStatus
+        }
+        _recommendedScholarships.value = filteredScholarships
+        _isLoadingRecommendedScholarships.value = false
+    }
+
     // Get Indonesia scholarships from firebase
     fun fetchIndonesiaScholarshipDetails() {
         _isLoadingIndonesiaScholarships.value = true

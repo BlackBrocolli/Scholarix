@@ -44,9 +44,13 @@ import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
-fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
+fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail: String) {
 
     // Observing the LiveData for changes
+    val recommendedScholarships =
+        viewModel.recommendedScholarships.observeAsState(initial = emptyList())
+    val isLoadingRecommendedScholarships =
+        viewModel.isLoadingRecommendedScholarships.observeAsState(initial = false)
     val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
     val isLoadingScholarships = viewModel.isLoadingScholarships.observeAsState(initial = false)
     val isErrorScholarships = viewModel.isErrorScholarships.observeAsState(initial = false)
@@ -68,13 +72,66 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
         if (indonesiaScholarships.value.isEmpty()) {
             viewModel.fetchIndonesiaScholarshipDetails()
         }
+        if (recommendedScholarships.value.isEmpty()) {
+            viewModel.fetchUserPreferences(userEmail)
+        }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
 //            .padding(16.dp)
     ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Rekomendasi untuk kamu",
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.1).sp
+            )
+            TextButton(onClick = { }) {
+                Text(
+                    text = "Lihat Semua",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    letterSpacing = (-0.1).sp,
+                    color = Color.Blue
+                )
+            }
+        }
+        when {
+            isLoadingRecommendedScholarships.value -> {
+                // Display a loading animation or indicator
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+
+            recommendedScholarships.value.isEmpty() -> {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Tidak ada rekomendasi beasiswa.",
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = "Anda belum menambahkan preferensi.",
+                        fontSize = 14.sp
+                    )
+                    // TODO: Tombol yang mengarah pada fitur menambahkan preferensi
+                }
+            }
+
+            else -> {
+                ScholarshipList(
+                    scholarships = recommendedScholarships.value,
+                    navController = navController
+                )
+            }
+        }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -164,41 +221,6 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun IndonesiaScholarshipList(scholarships: List<BeasiswaIndonesia>, navController: NavController) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .height(216.dp)
-    ) {
-        itemsIndexed(scholarships) { index, scholarship ->
-            if (index > 0) {
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-            }
-            BeasiswaIndonesiaItem(beasiswa = scholarship, isFirstChild = index == 0, navController)
-        }
-    }
-}
-
-@Composable
-fun BeasiswaIndonesiaItem(
-    beasiswa: BeasiswaIndonesia,
-    isFirstChild: Boolean,
-    navController: NavController
-) {
-    Text(
-        text = beasiswa.name,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        lineHeight = 18.sp,
-        maxLines = 2, // Batas maksimal 2 baris
-        overflow = TextOverflow.Ellipsis, // Potong teks dengan elipsis jika melebihi batas
-        modifier = Modifier
-            .heightIn(min = 32.dp)
-            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }
-    )
 }
 
 @Composable
@@ -337,4 +359,39 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
             }
         }
     }
+}
+
+@Composable
+fun IndonesiaScholarshipList(scholarships: List<BeasiswaIndonesia>, navController: NavController) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .height(216.dp)
+    ) {
+        itemsIndexed(scholarships) { index, scholarship ->
+            if (index > 0) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+            BeasiswaIndonesiaItem(beasiswa = scholarship, isFirstChild = index == 0, navController)
+        }
+    }
+}
+
+@Composable
+fun BeasiswaIndonesiaItem(
+    beasiswa: BeasiswaIndonesia,
+    isFirstChild: Boolean,
+    navController: NavController
+) {
+    Text(
+        text = beasiswa.name,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 18.sp,
+        maxLines = 2, // Batas maksimal 2 baris
+        overflow = TextOverflow.Ellipsis, // Potong teks dengan elipsis jika melebihi batas
+        modifier = Modifier
+            .heightIn(min = 32.dp)
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }
+    )
 }
