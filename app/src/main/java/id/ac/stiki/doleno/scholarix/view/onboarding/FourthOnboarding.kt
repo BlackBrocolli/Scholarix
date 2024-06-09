@@ -61,7 +61,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
     val isLoading by viewModel.isLoadingSaveUserPreference.observeAsState(initial = false)
 
 //    val context = LocalContext.current
-    val countries = viewState.list.sortedBy { it.name.common }
+    val countries = viewState.list.sortedBy { it.name }
 
     // State untuk melacak indeks item negara yang dipilih
     val selectedItems = remember { mutableStateOf(setOf<Int>()) }
@@ -139,10 +139,10 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                                 selectedItems.value + index
                                             }
                                         selectedCountries =
-                                            if (selectedCountries.contains(country.name.common)) {
-                                                selectedCountries - country.name.common
+                                            if (selectedCountries.contains(country.name)) {
+                                                selectedCountries - country.name
                                             } else {
-                                                selectedCountries + country.name.common
+                                                selectedCountries + country.name
                                             }
                                     }
                                 )
@@ -215,7 +215,7 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Spacer(modifier = Modifier.width(12.dp))
             Image(
-                painter = rememberAsyncImagePainter(model = country.flags.png),
+                painter = rememberAsyncImagePainter(model = country.flag),
                 contentDescription = "Country Flag",
                 modifier = Modifier
                     .size(40.dp)
@@ -225,10 +225,10 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(12.dp))
             // nama negara
             val maxLength = 22 // Panjang maksimal yang diinginkan
-            val text = if (country.name.common.length > maxLength) {
-                "${country.name.common.substring(0, maxLength)}..."
+            val text = if (country.name.length > maxLength) {
+                "${country.name.substring(0, maxLength)}..."
             } else {
-                country.name.common
+                country.name
             }
             Text(text = text, color = if (isSelected) Color.White else Color.Black)
         }
