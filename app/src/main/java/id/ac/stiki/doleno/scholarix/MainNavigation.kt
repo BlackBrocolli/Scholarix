@@ -102,7 +102,14 @@ fun MainNavigation(
             )
         }
         composable(Screen.PreferensiUser.route) {
-            PreferensiUser(navController = navController, viewModel = mainViewModel)
+            val userEmail = googleAuthUiClient.getSignInUser()?.email
+            if (userEmail != null) {
+                PreferensiUser(
+                    navController = navController,
+                    viewModel = mainViewModel,
+                    email = userEmail
+                )
+            }
         }
         composable(
             route = "${Screen.DetailBeasiswaScreen.route}/{id}/{type}",

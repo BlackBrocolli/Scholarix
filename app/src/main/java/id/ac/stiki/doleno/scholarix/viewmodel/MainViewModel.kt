@@ -1,7 +1,9 @@
 package id.ac.stiki.doleno.scholarix.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -121,6 +123,15 @@ class MainViewModel : ViewModel() {
     private val _userPreferences = MutableLiveData<Preference>()
     val userPreferences: LiveData<Preference> = _userPreferences
 
+    private val _userDegreesPreference = MutableLiveData<MutableList<String>>(mutableListOf())
+    val userDegreesPreference: LiveData<MutableList<String>> = _userDegreesPreference
+
+    private val _userFundingStatusPreference = MutableLiveData<MutableList<String>>(mutableListOf())
+    val userFundingStatusPreference: LiveData<MutableList<String>> = _userFundingStatusPreference
+
+    private val _userCountriesPreference = MutableLiveData<MutableList<String>>(mutableListOf())
+    val userCountriesPreference: LiveData<MutableList<String>> = _userCountriesPreference
+
     private val _recommendedScholarships = MutableLiveData<List<Beasiswa>>()
     val recommendedScholarships: LiveData<List<Beasiswa>> = _recommendedScholarships
 
@@ -136,6 +147,15 @@ class MainViewModel : ViewModel() {
                 user?.let {
                     _userPreferences.value = it.preference
                     fetchRecommendedScholarships(it.preference)  // Fetch recommendations based on preferences
+                    it.preference.degrees.let { degrees ->
+                        _userDegreesPreference.value = degrees.toMutableList()
+                    }
+                    it.preference.fundingStatus.let { fundingStatus ->
+                        _userFundingStatusPreference.value = fundingStatus.toMutableList()
+                    }
+                    it.preference.countries.let { countries ->
+                        _userCountriesPreference.value = countries.toMutableList()
+                    }
                 }
             } else {
                 _isLoadingRecommendedScholarships.value = false  // No document found
@@ -145,6 +165,29 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun updateUserPreferences(email: String, context: Context) {
+        val updatedPreference = Preference(
+            degrees = userDegreesPreference.value ?: listOf(),
+            fundingStatus = userFundingStatusPreference.value ?: listOf(),
+            countries = userCountriesPreference.value ?: listOf()
+        )
+
+        val userDocRef = FirebaseFirestore.getInstance().collection("users").document(email)
+        userDocRef.update("preference", updatedPreference)
+            .addOnSuccessListener {
+                Log.d("MainViewModel", "User preference updated successfully.")
+                fetchUserPreferences(email)
+                Toast.makeText(context, "Preferensi pengguna berhasil diperbarui.", Toast.LENGTH_SHORT).show()
+                // Implement any necessary UI feedback or additional logic upon success
+            }
+            .addOnFailureListener { e ->
+                Log.w("MainViewModel", "Error updating user preference", e)
+                Toast.makeText(context, "Gagal memperbarui preferensi pengguna.", Toast.LENGTH_SHORT).show()
+                // Implement any necessary UI feedback or error handling logic
+            }
+    }
+
+
     private fun fetchRecommendedScholarships(preferences: Preference) {
         val allScholarships = _scholarships.value ?: run {
             _isLoadingRecommendedScholarships.value = false
@@ -153,11 +196,46 @@ class MainViewModel : ViewModel() {
 
         val filteredScholarships = allScholarships.filter { beasiswa ->
             val matchesDegree = beasiswa.degrees.any { it in preferences.degrees }
-            val matchesFundingStatus = preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
+            val matchesFundingStatus =
+                preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
             matchesDegree && matchesFundingStatus
         }
         _recommendedScholarships.value = filteredScholarships
         _isLoadingRecommendedScholarships.value = false
+    }
+
+    fun togglePreference(preferenceType: String, text: String) {
+        when (preferenceType) {
+            "degree" -> {
+                val currentPreferences = _userDegreesPreference.value ?: mutableListOf()
+                if (currentPreferences.contains(text)) {
+                    currentPreferences.remove(text)
+                } else {
+                    currentPreferences.add(text)
+                }
+                _userDegreesPreference.value = currentPreferences
+            }
+
+            "funding" -> {
+                val currentPreferences = _userFundingStatusPreference.value ?: mutableListOf()
+                if (currentPreferences.contains(text)) {
+                    currentPreferences.remove(text)
+                } else {
+                    currentPreferences.add(text)
+                }
+                _userFundingStatusPreference.value = currentPreferences
+            }
+
+            "country" -> {
+                val currentPreferences = _userCountriesPreference.value ?: mutableListOf()
+                if (currentPreferences.contains(text)) {
+                    currentPreferences.remove(text)
+                } else {
+                    currentPreferences.add(text)
+                }
+                _userCountriesPreference.value = currentPreferences
+            }
+        }
     }
 
     // Get Indonesia scholarships from firebase
