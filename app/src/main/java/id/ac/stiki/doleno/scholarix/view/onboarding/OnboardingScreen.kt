@@ -82,7 +82,11 @@ fun OnBoardingScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(
             onClick = {
-                Toast.makeText(context, "Nanti saja!", Toast.LENGTH_SHORT).show()
+                navController.navigate(Screen.MainView.route) {
+                    popUpTo(Screen.OnboardingScreen.route) {
+                        inclusive = true
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

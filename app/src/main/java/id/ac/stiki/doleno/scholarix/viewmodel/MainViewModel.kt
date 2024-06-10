@@ -194,13 +194,31 @@ class MainViewModel : ViewModel() {
             return
         }
 
-        val filteredScholarships = allScholarships.filter { beasiswa ->
-            val matchesDegree = beasiswa.degrees.any { it in preferences.degrees }
-            val matchesFundingStatus =
-                preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
-            matchesDegree && matchesFundingStatus
+        val filteredScholarships = if (preferences.degrees.isNotEmpty()) {
+            allScholarships.filter { beasiswa ->
+                val matchesDegree = beasiswa.degrees.any { it in preferences.degrees }
+                matchesDegree
+            }
+        } else {
+            allScholarships
         }
-        _recommendedScholarships.value = filteredScholarships
+
+        val filteredByFundingStatus = if (preferences.fundingStatus.isNotEmpty()) {
+            filteredScholarships.filter { beasiswa ->
+                val matchesFundingStatus =
+                    preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
+                matchesFundingStatus
+            }
+        } else {
+            filteredScholarships
+        }
+
+        // TODO: nanti jika preferences.countries sudah jalan, maka tambahkan juga if preferences.countries.isEmpty()
+        _recommendedScholarships.value = if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty()) {
+            emptyList() // Mengosongkan daftar rekomendasi jika kedua preferensi kosong
+        } else {
+            filteredByFundingStatus
+        }
         _isLoadingRecommendedScholarships.value = false
     }
 

@@ -168,7 +168,8 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                 // TODO: membuat fitur agar bisa menambahkan negara preferensi
                 // TODO: ketika mencari negara, munculkan daftar negara yang sesuai dari db
                 // TODO: ketika dipilih, tambahkan chip baru
-                // TODO: nanti ketika tombol simpan diklik, maka akan nambah negara baru disana
+                // TODO: Tambahkan ke variabel sementara mirip _userCountriesPreference
+                // TODO: nanti ketika tombol simpan diklik, baru simpan ke db
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -80,7 +80,7 @@ fun MainView(googleAuthUiClient: GoogleAuthUiClient) {
             )
         } else if (currentRoute == Screen.BottomScreen.Home.route) {
             TopAppBar(
-                title = { Text(text = "Judul ini ganti search bar") },
+                title = { Text(text = "Home") },
                 elevation = 4.dp
             )
         } else if (currentRoute == Screen.BottomScreen.Favorit.route) {
