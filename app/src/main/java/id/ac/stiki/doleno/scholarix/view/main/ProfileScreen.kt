@@ -127,6 +127,21 @@ fun ProfileScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp)
+                .clickable { navController.navigate(Screen.PreferensiUser.route) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_checklist_24),
+                contentDescription = null,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(text = "Preferensi Pengguna")
+        }
+        Divider()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(start = 24.dp, bottom = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

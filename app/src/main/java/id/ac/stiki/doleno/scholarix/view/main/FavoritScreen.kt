@@ -123,13 +123,13 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                 "S1" -> Color(0xFFD9FAE7)
                                 "S2" -> Color(0x401B73B3)
                                 "S3" -> Color(0x40C77738)
-                                else -> Color.Gray // Warna default jika derajat tidak dikenali
+                                else -> Color(0xFFEDE7F6)
                             }
                             val textColor = when (degree) {
-                                "S1" -> Color(0xFF21764C) // Warna teks untuk S1
-                                "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
-                                "S3" -> Color(0xFFC77738) // Warna teks untuk S3
-                                else -> Color.Black // Warna teks default jika derajat tidak dikenali
+                                "S1" -> Color(0xFF21764C)
+                                "S2" -> Color(0xFF1B73B3)
+                                "S3" -> Color(0xFFC77738)
+                                else -> Color(0xFF4A148C)
                             }
 
                             Card(

@@ -90,6 +90,9 @@ dependencies {
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
+    // FLowRow
+    implementation ("com.google.accompanist:accompanist-flowlayout:0.21.0-beta")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

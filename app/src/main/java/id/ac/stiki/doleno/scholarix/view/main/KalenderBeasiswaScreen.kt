@@ -138,7 +138,6 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         OutlinedTextField(
                             value = searchText,
                             onValueChange = {
-                                //TODO: lakukan operasi pencarian beasiswa
                                 viewModel.setSearchText(it)
                                 viewModel.searchScholarshipsByName(searchText)
                             },
@@ -384,7 +383,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp)
-            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}") },
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaLuarNegeri") },
         border = BorderStroke(1.dp, Color.LightGray),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
@@ -410,13 +409,13 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                 "S1" -> Color(0xFFD9FAE7)
                                 "S2" -> Color(0x401B73B3)
                                 "S3" -> Color(0x40C77738)
-                                else -> Color.Gray // Warna default jika derajat tidak dikenali
+                                else -> Color(0xFFEDE7F6)
                             }
                             val textColor = when (degree) {
-                                "S1" -> Color(0xFF21764C) // Warna teks untuk S1
-                                "S2" -> Color(0xFF1B73B3) // Warna teks untuk S2
-                                "S3" -> Color(0xFFC77738) // Warna teks untuk S3
-                                else -> Color.Black // Warna teks default jika derajat tidak dikenali
+                                "S1" -> Color(0xFF21764C)
+                                "S2" -> Color(0xFF1B73B3)
+                                "S3" -> Color(0xFFC77738)
+                                else -> Color(0xFF4A148C)
                             }
 
                             Card(
@@ -581,7 +580,7 @@ fun DrawerFilterOptions(
             }
             Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
             Text(
-                text = "Tipe Beasiswa",
+                text = "Tipe Pendanaan",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(vertical = 12.dp)
             )

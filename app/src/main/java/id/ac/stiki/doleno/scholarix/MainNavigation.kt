@@ -32,6 +32,7 @@ import id.ac.stiki.doleno.scholarix.view.main.FavoritScreen
 import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
 import id.ac.stiki.doleno.scholarix.view.main.KalenderBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.MainView
+import id.ac.stiki.doleno.scholarix.view.main.PreferensiUser
 import id.ac.stiki.doleno.scholarix.view.main.ProfileScreen
 import id.ac.stiki.doleno.scholarix.view.onboarding.FourthOnboarding
 import id.ac.stiki.doleno.scholarix.view.onboarding.OnBoardingScreen
@@ -99,6 +100,9 @@ fun MainNavigation(
                 navController = navController,
                 userData = googleAuthUiClient.getSignInUser()
             )
+        }
+        composable(Screen.PreferensiUser.route) {
+            PreferensiUser(navController = navController, viewModel = mainViewModel)
         }
         composable(
             route = "${Screen.DetailBeasiswaScreen.route}/{id}/{type}",
