@@ -1,6 +1,5 @@
 package id.ac.stiki.doleno.scholarix.view.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,22 +10,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +46,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,8 +66,20 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email: String) {
 
     val userPreferences by viewModel.userPreferences.observeAsState()
+    val countries by viewModel.countries.observeAsState(emptyList())
     var searchText by remember { mutableStateOf("") }
+    val filteredCountries by viewModel.filteredCountries.observeAsState(emptyList())
+    var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        if (countries.isEmpty()) {
+            viewModel.fetchCountries()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -79,6 +98,105 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                Text(
+                    text = "Negara",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                // TODO: membuat fitur agar bisa menambahkan negara preferensi
+                // TODO: ketika mencari negara, munculkan daftar negara yang sesuai dari db
+                // TODO: ketika dipilih, tambahkan chip baru
+                // TODO: Tambahkan ke variabel sementara mirip _userCountriesPreference
+                // TODO: nanti ketika tombol simpan diklik, baru simpan ke db
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        // Search Bar
+                        OutlinedTextField(
+                            value = searchText,
+                            onValueChange = { newValue ->
+                                searchText = newValue
+                            },
+                            placeholder = { Text("Cari negara") },
+                            textStyle = TextStyle(fontSize = 14.sp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(56.dp)
+                                .focusRequester(focusRequester),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Search // Menetapkan aksi IME menjadi "Search"
+                            ),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search Icon"
+                                )
+                            },
+                            trailingIcon = {
+                                if (searchText.isNotEmpty()) {
+                                    IconButton(onClick = {
+                                        viewModel.filterCountries(searchText)
+                                        expanded = true
+                                        focusManager.clearFocus()
+                                        keyboardController?.hide()
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search Icon"
+                                        )
+                                    }
+                                }
+                            },
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    // Tindakan yang ingin dilakukan saat tombol "Search" pada keyboard ditekan
+                                    viewModel.filterCountries(searchText)
+                                    expanded = true
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }
+                            ),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded && filteredCountries.isNotEmpty(),
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 200.dp)
+                            .padding(horizontal = 16.dp) // Limit the height of the dropdown menu
+                    ) {
+                        filteredCountries.forEach { country ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    searchText = country.name
+                                    expanded = false
+                                    // Keep focus on the text field to keep the keyboard open
+                                    focusRequester.requestFocus()
+                                }
+                            ) {
+                                Text(text = country.name)
+                            }
+                        }
+                    }
+                }
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 8.dp
+                ) {
+                    userPreferences?.countries?.forEach { country ->
+                        InputChipNegara(
+                            text = country,
+                            onDismiss = { viewModel.togglePreference("country", country) }
+                        )
+                    }
+                }
                 Text(
                     text = "Jenjang",
                     fontSize = 16.sp,
@@ -159,68 +277,6 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                             ?: false,
                         preferenceType = "funding"
                     )
-                }
-                Text(
-                    text = "Negara",
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-                // TODO: membuat fitur agar bisa menambahkan negara preferensi
-                // TODO: ketika mencari negara, munculkan daftar negara yang sesuai dari db
-                // TODO: ketika dipilih, tambahkan chip baru
-                // TODO: Tambahkan ke variabel sementara mirip _userCountriesPreference
-                // TODO: nanti ketika tombol simpan diklik, baru simpan ke db
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                ) {
-                    // Search Bar
-                    OutlinedTextField(
-                        value = searchText,
-                        onValueChange = {
-//                        viewModel.setSearchText(it)
-//                        viewModel.searchScholarshipsByName(searchText)
-                            searchText = it
-                        },
-                        placeholder = { Text("Cari negara") },
-                        textStyle = TextStyle(fontSize = 14.sp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(56.dp),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search Icon"
-                            )
-                        },
-                        trailingIcon = {
-                            if (searchText.isNotEmpty()) {
-                                IconButton(onClick = {
-//                                viewModel.resetSearching()
-                                    searchText = ""
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear Icon"
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 8.dp
-                ) {
-                    userPreferences?.countries?.forEach { country ->
-                        InputChipNegara(
-                            text = country,
-                            onDismiss = { viewModel.togglePreference("country", country) }
-                        )
-                    }
                 }
             }
             Column(modifier = Modifier.padding(16.dp)) {

@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.model.BeasiswaIndonesia
+import id.ac.stiki.doleno.scholarix.model.Country
 import id.ac.stiki.doleno.scholarix.model.auth.Preference
 import id.ac.stiki.doleno.scholarix.model.auth.User
 import id.ac.stiki.doleno.scholarix.navigation.Screen
@@ -138,6 +139,12 @@ class MainViewModel : ViewModel() {
     private val _isLoadingRecommendedScholarships = MutableLiveData<Boolean>()
     val isLoadingRecommendedScholarships: LiveData<Boolean> = _isLoadingRecommendedScholarships
 
+    private val _countries = MutableLiveData<List<Country>>()
+    val countries: LiveData<List<Country>> = _countries
+
+    private val _filteredCountries = MutableLiveData<List<Country>>()
+    val filteredCountries: LiveData<List<Country>> = _filteredCountries
+
     fun fetchUserPreferences(email: String) {
         _isLoadingRecommendedScholarships.value = true
         val docRef = FirebaseFirestore.getInstance().collection("users").document(email)
@@ -177,16 +184,46 @@ class MainViewModel : ViewModel() {
             .addOnSuccessListener {
                 Log.d("MainViewModel", "User preference updated successfully.")
                 fetchUserPreferences(email)
-                Toast.makeText(context, "Preferensi pengguna berhasil diperbarui.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Preferensi pengguna berhasil diperbarui.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 // Implement any necessary UI feedback or additional logic upon success
             }
             .addOnFailureListener { e ->
                 Log.w("MainViewModel", "Error updating user preference", e)
-                Toast.makeText(context, "Gagal memperbarui preferensi pengguna.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Gagal memperbarui preferensi pengguna.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 // Implement any necessary UI feedback or error handling logic
             }
     }
 
+    fun fetchCountries() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("countries")
+            .get()
+            .addOnSuccessListener { result ->
+                val countriesList = result.mapNotNull { document ->
+                    document.toObject(Country::class.java)
+                }
+                _countries.value = countriesList
+            }
+            .addOnFailureListener { exception ->
+                Log.w("MainViewModel", "Error getting countries: ", exception)
+            }
+    }
+
+    fun filterCountries(query: String) {
+        _filteredCountries.value = if (query.isEmpty()) {
+            emptyList()
+        } else {
+            _countries.value?.filter { it.name.contains(query, ignoreCase = true) } ?: emptyList()
+        }
+    }
 
     private fun fetchRecommendedScholarships(preferences: Preference) {
         val allScholarships = _scholarships.value ?: run {
@@ -214,11 +251,12 @@ class MainViewModel : ViewModel() {
         }
 
         // TODO: nanti jika preferences.countries sudah jalan, maka tambahkan juga if preferences.countries.isEmpty()
-        _recommendedScholarships.value = if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty()) {
-            emptyList() // Mengosongkan daftar rekomendasi jika kedua preferensi kosong
-        } else {
-            filteredByFundingStatus
-        }
+        _recommendedScholarships.value =
+            if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty()) {
+                emptyList() // Mengosongkan daftar rekomendasi jika kedua preferensi kosong
+            } else {
+                filteredByFundingStatus
+            }
         _isLoadingRecommendedScholarships.value = false
     }
 

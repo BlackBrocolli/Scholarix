@@ -15,8 +15,8 @@ package id.ac.stiki.doleno.scholarix.model
 //)
 
 data class Country(
-    val name: String,
-    val flag: String
+    val name: String = "",
+    val flag: String = ""
 )
 
 //data class CountriesResponse(val countries: List<Country>)
