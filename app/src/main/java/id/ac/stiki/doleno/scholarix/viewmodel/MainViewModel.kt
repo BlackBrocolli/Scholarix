@@ -225,6 +225,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun addSelectedCountriesToUserPreferences(selectedCountries: List<String>) {
+        // Mendapatkan daftar negara yang sudah ada sebelumnya
+        val currentCountries = _userCountriesPreference.value ?: mutableListOf()
+
+        // Menambahkan semua negara dari selectedCountries ke daftar negara yang sudah ada
+        currentCountries.addAll(selectedCountries)
+
+        // Menghapus duplikat dan mengurutkan daftar negara
+        val uniqueSortedCountries = currentCountries.distinct().sortedBy { it }
+
+        // Update _userCountriesPreference dengan nilai baru (pastikan untuk mengonversi ke MutableList)
+        _userCountriesPreference.value = uniqueSortedCountries.toMutableList()
+    }
+
     private fun fetchRecommendedScholarships(preferences: Preference) {
         val allScholarships = _scholarships.value ?: run {
             _isLoadingRecommendedScholarships.value = false
@@ -250,12 +264,21 @@ class MainViewModel : ViewModel() {
             filteredScholarships
         }
 
-        // TODO: nanti jika preferences.countries sudah jalan, maka tambahkan juga if preferences.countries.isEmpty()
+        val filteredByCountries = if (preferences.countries.isNotEmpty()) {
+            filteredByFundingStatus.filter { beasiswa ->
+                val matchesCountries =
+                    preferences.countries.contains(beasiswa.country ?: "")
+                matchesCountries
+            }
+        } else {
+            filteredByFundingStatus
+        }
+
         _recommendedScholarships.value =
-            if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty()) {
-                emptyList() // Mengosongkan daftar rekomendasi jika kedua preferensi kosong
+            if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty() && preferences.countries.isEmpty()) {
+                emptyList() // Mengosongkan daftar rekomendasi jika ketiga preferensi kosong
             } else {
-                filteredByFundingStatus
+                filteredByCountries
             }
         _isLoadingRecommendedScholarships.value = false
     }
@@ -363,7 +386,6 @@ class MainViewModel : ViewModel() {
     // ----------- End of PAGINATION ---------
 
     // == Start of FILTERING ==
-    // TODO: add variables and functions for filtering
 
     // State to track the selected status of each card
     private val _selectedCards = MutableLiveData<Map<String, Boolean>>()

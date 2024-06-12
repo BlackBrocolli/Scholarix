@@ -74,6 +74,7 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    var selectedCountries by remember { mutableStateOf<MutableList<String>>(mutableListOf()) }
 
     LaunchedEffect(Unit) {
         if (countries.isEmpty()) {
@@ -178,6 +179,7 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                                     expanded = false
                                     // Keep focus on the text field to keep the keyboard open
                                     focusRequester.requestFocus()
+                                    selectedCountries.add(country.name)
                                 }
                             ) {
                                 Text(text = country.name)
@@ -195,6 +197,14 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                             text = country,
                             onDismiss = { viewModel.togglePreference("country", country) }
                         )
+                    }
+                    if (selectedCountries.isNotEmpty()) {
+                        selectedCountries.forEach { country ->
+                            InputChipNegara(
+                                text = country,
+                                onDismiss = { selectedCountries.remove(country) }
+                            )
+                        }
                     }
                 }
                 Text(
@@ -286,6 +296,7 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                         .height(48.dp),
 
                     onClick = {
+                        viewModel.addSelectedCountriesToUserPreferences(selectedCountries)
                         viewModel.updateUserPreferences(email, context)
                         navController.navigateUp()
                     },
