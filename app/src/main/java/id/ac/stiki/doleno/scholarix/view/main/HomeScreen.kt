@@ -71,14 +71,14 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
 
     LaunchedEffect(key1 = true) {
         if (scholarships.value.isEmpty()) {
-            viewModel.fetchScholarshipDetails()
+            viewModel.fetchScholarshipDetails(userEmail)
         }
         if (indonesiaScholarships.value.isEmpty()) {
             viewModel.fetchIndonesiaScholarshipDetails()
         }
-        if (recommendedScholarships.value.isEmpty()) {
-            viewModel.fetchUserPreferences(userEmail)
-        }
+//        if (recommendedScholarships.value.isEmpty()) {
+//            viewModel.fetchUserPreferences(userEmail)
+//        }
     }
 
     Column(
@@ -99,7 +99,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.1).sp
             )
-            TextButton(onClick = { }) {
+            TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/rekomendasi") }) {
                 Text(
                     text = "Lihat Semua",
                     fontWeight = FontWeight.Bold,
@@ -158,7 +158,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.1).sp
             )
-            TextButton(onClick = { navController.navigate(Screen.KalenderBeasiswaScreen.route) }) {
+            TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/luarnegeri") }) {
                 Text(
                     text = "Lihat Semua",
                     fontWeight = FontWeight.Bold,
@@ -178,7 +178,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 // Show an error message and possibly a retry button
                 Text("Failed to load scholarships. Tap to retry.",
                     modifier = Modifier
-                        .clickable { viewModel.fetchScholarshipDetails() }
+                        .clickable { viewModel.fetchScholarshipDetails(userEmail) }
                         .padding(16.dp)
                         .align(Alignment.CenterHorizontally))
             }

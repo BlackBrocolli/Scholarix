@@ -73,12 +73,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavController) {
+fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavController, type: String) {
 
     // Observing the LiveData for changes
-    val scholarships = viewModel.scholarships.observeAsState(initial = emptyList())
+    // TODO: buat pengkondisian untuk tahu mau gunakan scholarships atau recommendedScholarships
+    val scholarships = when (type) {
+        "rekomendasi" -> viewModel.recommendedScholarships.observeAsState(initial = emptyList()).value
+        "luarnegeri" -> viewModel.scholarships.observeAsState(initial = emptyList()).value
+        else -> emptyList() // Menyediakan default kosong jika tipe tidak sesuai
+    }
+    val totalScholarshipsCount = when (type) {
+        "luarnegeri" -> viewModel.totalScholarshipsCount.observeAsState(initial = 0).value
+        "rekomendasi" -> viewModel.totalRecommendedScholarshipsCount.observeAsState(initial = 0).value
+        else -> 0 // Menyediakan default jika tipe tidak sesuai
+    }
     val searchedScholarships = viewModel.searchedScholarships.observeAsState(initial = emptyList())
-    val totalScholarshipsCount = viewModel.totalScholarshipsCount.observeAsState(initial = 0)
     val totalSearchedScholarshipsCount =
         viewModel.totalSearchedScholarshipsCount.observeAsState(initial = 0)
     val isSearching = viewModel.isSearching.observeAsState(initial = false)
@@ -138,7 +147,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             value = searchText,
                             onValueChange = {
                                 viewModel.setSearchText(it)
-                                viewModel.searchScholarshipsByName(searchText)
+                                viewModel.searchScholarshipsByName(searchText, type)
                             },
                             placeholder = { Text("Cari beasiswa") },
                             textStyle = TextStyle(fontSize = 14.sp),
@@ -293,7 +302,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         )
                     } else {
                         Text(
-                            text = "Menampilkan ${totalScholarshipsCount.value} Beasiswa",
+                            text = "Menampilkan ${totalScholarshipsCount} Beasiswa",
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -322,7 +331,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
             val scholarshipsToShow = when {
                 isFiltering.value -> filteredScholarships.value
                 isSearching.value -> searchedScholarships.value
-                else -> scholarships.value
+                else -> scholarships
             }
 
             // Calculate the start and end indices for the current page

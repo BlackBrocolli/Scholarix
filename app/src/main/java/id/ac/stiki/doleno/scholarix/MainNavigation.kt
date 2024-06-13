@@ -137,8 +137,25 @@ fun MainNavigation(
                 }
             }
         }
-        composable(Screen.KalenderBeasiswaScreen.route) {
-            KalenderBeasiswaScreen(viewModel = mainViewModel, navController = navController)
+//        composable(Screen.KalenderBeasiswaScreen.route) {
+//            KalenderBeasiswaScreen(viewModel = mainViewModel, navController = navController)
+//        }
+        composable(
+            route = "${Screen.KalenderBeasiswaScreen.route}/{type}",
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
+            if (type != null) {
+                KalenderBeasiswaScreen(
+                    viewModel = mainViewModel,
+                    navController = navController,
+                    type = type
+                )
+            }
         }
 
         composable(Screen.LoginScreen.route) {

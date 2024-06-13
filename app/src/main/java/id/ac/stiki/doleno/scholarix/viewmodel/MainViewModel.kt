@@ -125,16 +125,20 @@ class MainViewModel : ViewModel() {
     val userPreferences: LiveData<Preference> = _userPreferences
 
     private val _userDegreesPreference = MutableLiveData<MutableList<String>>(mutableListOf())
-    val userDegreesPreference: LiveData<MutableList<String>> = _userDegreesPreference
+    private val userDegreesPreference: LiveData<MutableList<String>> = _userDegreesPreference
 
     private val _userFundingStatusPreference = MutableLiveData<MutableList<String>>(mutableListOf())
-    val userFundingStatusPreference: LiveData<MutableList<String>> = _userFundingStatusPreference
+    private val userFundingStatusPreference: LiveData<MutableList<String>> =
+        _userFundingStatusPreference
 
     private val _userCountriesPreference = MutableLiveData<MutableList<String>>(mutableListOf())
-    val userCountriesPreference: LiveData<MutableList<String>> = _userCountriesPreference
+    private val userCountriesPreference: LiveData<MutableList<String>> = _userCountriesPreference
 
     private val _recommendedScholarships = MutableLiveData<List<Beasiswa>>()
     val recommendedScholarships: LiveData<List<Beasiswa>> = _recommendedScholarships
+
+    private val _totalRecommendedScholarshipsCount = MutableLiveData<Int>()
+    val totalRecommendedScholarshipsCount: LiveData<Int> = _totalRecommendedScholarshipsCount
 
     private val _isLoadingRecommendedScholarships = MutableLiveData<Boolean>()
     val isLoadingRecommendedScholarships: LiveData<Boolean> = _isLoadingRecommendedScholarships
@@ -241,7 +245,7 @@ class MainViewModel : ViewModel() {
 
     private fun fetchRecommendedScholarships(preferences: Preference) {
         val allScholarships = _scholarships.value ?: run {
-            _isLoadingRecommendedScholarships.value = false
+//            _isLoadingRecommendedScholarships.value = false
             return
         }
 
@@ -267,19 +271,24 @@ class MainViewModel : ViewModel() {
         val filteredByCountries = if (preferences.countries.isNotEmpty()) {
             filteredByFundingStatus.filter { beasiswa ->
                 val matchesCountries =
-                    preferences.countries.contains(beasiswa.country ?: "")
+                    preferences.countries.contains(beasiswa.country)
                 matchesCountries
             }
         } else {
             filteredByFundingStatus
         }
 
-        _recommendedScholarships.value =
+        val recommendedScholarshipsList =
             if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty() && preferences.countries.isEmpty()) {
                 emptyList() // Mengosongkan daftar rekomendasi jika ketiga preferensi kosong
             } else {
                 filteredByCountries
             }
+
+        _recommendedScholarships.value = recommendedScholarshipsList
+
+        // Update jumlah beasiswa yang direkomendasikan
+        _totalRecommendedScholarshipsCount.value = recommendedScholarshipsList.size
         _isLoadingRecommendedScholarships.value = false
     }
 
@@ -361,9 +370,16 @@ class MainViewModel : ViewModel() {
         _searchText.value = text
     }
 
-    fun searchScholarshipsByName(name: String) {
+    fun searchScholarshipsByName(name: String, type: String) {
         _isSearching.value = true
-        _searchedScholarships.value = _scholarships.value?.filter { scholarship ->
+
+        val scholarships = when (type) {
+            "luarnegeri" -> _scholarships.value
+            "rekomendasi" -> _recommendedScholarships.value
+            else -> emptyList()
+        }
+
+        _searchedScholarships.value = scholarships?.filter { scholarship ->
             scholarship.name.contains(name, ignoreCase = true)
         } ?: emptyList()
 
@@ -513,8 +529,9 @@ class MainViewModel : ViewModel() {
     // == End of FILTERING ==
 
     // Get ALL scholarships from firebase
-    fun fetchScholarshipDetails() {
+    fun fetchScholarshipDetails(userEmail: String) {
         _isLoadingScholarships.value = true
+        _isLoadingRecommendedScholarships.value = true
         _isErrorScholarships.value = false
         db.collection("scholarships")
             .get()
@@ -525,6 +542,7 @@ class MainViewModel : ViewModel() {
                 }
                 _scholarships.value = scholarshipList
                 _totalScholarshipsCount.value = documents.size()
+                fetchUserPreferences(userEmail)
             }
             .addOnFailureListener {
                 _isLoadingScholarships.value = false
