@@ -121,7 +121,11 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
             TopAppBar(
                 elevation = 1.5.dp,
                 backgroundColor = Color.White,
-                modifier = Modifier.height(216.dp)
+                modifier = if (type != "indonesia") {
+                    Modifier.height(216.dp)
+                } else {
+                    Modifier.height(144.dp)
+                }
             ) {
                 Column(verticalArrangement = Arrangement.Top) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -178,121 +182,135 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         )
                     }
                     // BUTTON FILTER DAN SELECT BOX
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Button(
-                            onClick = {
-                                // TODO: open drawer
-                                scope.launch {
-                                    scaffoldState.drawerState.open()
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    0xFF8F79E8
-                                )
-                            ),
+                    if (type != "indonesia") {
+                        Row(
                             modifier = Modifier
-                                .weight(0.5f)
-                                .height(48.dp)
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                            verticalAlignment = Alignment.Bottom
                         ) {
-                            Text(text = "Filter", color = Color.White)
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        // DROPDOWN URUTKAN BERDASAR
-                        // TODO: JIKA value dari inputUrutkanBerdasar terlalu panjang, maka ubah jadi ...
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(56.dp)
-                                .clickable {
-                                    dropdownExpanded = true
-                                    borderColor = Color(0xFF8F79E8)
+                            Button(
+                                onClick = {
+                                    // TODO: open drawer
+                                    scope.launch {
+                                        scaffoldState.drawerState.open()
+                                    }
                                 },
-                        ) {
-                            OutlinedTextField(
-                                enabled = false,
-                                value = inputUrutkanBerdasar,
-                                onValueChange = {
-                                    viewModel.updateSortingPreference(it, type = type)
-                                },
-                                label = {
-                                    androidx.compose.material3.Text(
-                                        text = "Urutkan Berdasarkan",
-                                        color = Color(0xFF8F79E8)
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        0xFF8F79E8
                                     )
-                                },
-                                textStyle = TextStyle(fontSize = 14.sp),
-                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = null,
-                                    )
-                                },
-                                readOnly = true,
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.Black,  // Warna teks ketika aktif
-                                    disabledTextColor = Color.Black, // Warna teks tetap hitam ketika dinonaktifkan
-                                    disabledBorderColor = borderColor, // Warna border tetap cerah saat dinonaktifkan
-                                    disabledLabelColor = Color(0xFF8F79E8),
-                                )
-                            )
-                            DropdownMenu(
-                                expanded = dropdownExpanded,
-                                onDismissRequest = { dropdownExpanded = false },
+                                ),
                                 modifier = Modifier
-                                    .verticalScroll(rememberScrollState())
-                                    .heightIn(max = 250.dp)
+                                    .weight(0.5f)
+                                    .height(48.dp)
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Nama A-Z") },
-                                    onClick = {
-                                        viewModel.updateSortingPreference("Nama A-Z", type = type)
-                                        dropdownExpanded = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Nama Z-A") },
-                                    onClick = {
-                                        viewModel.updateSortingPreference("Nama Z-A", type = type)
-                                        dropdownExpanded = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Terpopuler") },
-                                    onClick = {
-                                        viewModel.updateSortingPreference("Terpopuler", type = type)
-                                        dropdownExpanded = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Deadline Terdekat") },
-                                    onClick = {
-                                        viewModel.updateSortingPreference(
-                                            "Deadline Terdekat",
-                                            type = type
-                                        )
-                                        dropdownExpanded = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Deadline Terjauh") },
-                                    onClick = {
-                                        viewModel.updateSortingPreference(
-                                            "Deadline Terjauh",
-                                            type = type
-                                        )
-                                        dropdownExpanded = false
-                                    }
-                                )
+                                Text(text = "Filter", color = Color.White)
                             }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            // DROPDOWN URUTKAN BERDASAR
+                            // TODO: JIKA value dari inputUrutkanBerdasar terlalu panjang, maka ubah jadi ...
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(56.dp)
+                                    .clickable {
+                                        dropdownExpanded = true
+                                        borderColor = Color(0xFF8F79E8)
+                                    },
+                            ) {
+                                OutlinedTextField(
+                                    enabled = false,
+                                    value = inputUrutkanBerdasar,
+                                    onValueChange = {
+                                        viewModel.updateSortingPreference(it, type = type)
+                                    },
+                                    label = {
+                                        androidx.compose.material3.Text(
+                                            text = "Urutkan Berdasarkan",
+                                            color = Color(0xFF8F79E8)
+                                        )
+                                    },
+                                    textStyle = TextStyle(fontSize = 14.sp),
+                                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    readOnly = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.Black,  // Warna teks ketika aktif
+                                        disabledTextColor = Color.Black, // Warna teks tetap hitam ketika dinonaktifkan
+                                        disabledBorderColor = borderColor, // Warna border tetap cerah saat dinonaktifkan
+                                        disabledLabelColor = Color(0xFF8F79E8),
+                                    )
+                                )
+                                DropdownMenu(
+                                    expanded = dropdownExpanded,
+                                    onDismissRequest = { dropdownExpanded = false },
+                                    modifier = Modifier
+                                        .verticalScroll(rememberScrollState())
+                                        .heightIn(max = 250.dp)
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Nama A-Z") },
+                                        onClick = {
+                                            viewModel.updateSortingPreference(
+                                                "Nama A-Z",
+                                                type = type
+                                            )
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Nama Z-A") },
+                                        onClick = {
+                                            viewModel.updateSortingPreference(
+                                                "Nama Z-A",
+                                                type = type
+                                            )
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Terpopuler") },
+                                        onClick = {
+                                            viewModel.updateSortingPreference(
+                                                "Terpopuler",
+                                                type = type
+                                            )
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Deadline Terdekat") },
+                                        onClick = {
+                                            viewModel.updateSortingPreference(
+                                                "Deadline Terdekat",
+                                                type = type
+                                            )
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Deadline Terjauh") },
+                                        onClick = {
+                                            viewModel.updateSortingPreference(
+                                                "Deadline Terjauh",
+                                                type = type
+                                            )
+                                            dropdownExpanded = false
+                                        }
+                                    )
+                                }
 
+                            }
                         }
+                    }
+                    if (type == "indonesia") {
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
                     if (isFiltering.value) {
                         Text(
@@ -364,6 +382,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             beasiswa = beasiswaIndonesia,
                             navController = navController
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
                     } else {
                         val beasiswaLuar = beasiswa as Beasiswa
                         BeasiswaItem(
