@@ -67,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import id.ac.stiki.doleno.scholarix.model.Beasiswa
+import id.ac.stiki.doleno.scholarix.model.BeasiswaIndonesia
 import id.ac.stiki.doleno.scholarix.navigation.Screen
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -76,15 +77,16 @@ import kotlinx.coroutines.launch
 fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavController, type: String) {
 
     // Observing the LiveData for changes
-    // TODO: buat pengkondisian untuk tahu mau gunakan scholarships atau recommendedScholarships
     val scholarships = when (type) {
         "rekomendasi" -> viewModel.recommendedScholarships.observeAsState(initial = emptyList()).value
         "luarnegeri" -> viewModel.scholarships.observeAsState(initial = emptyList()).value
+        "indonesia" -> viewModel.indonesiaScholarships.observeAsState(initial = emptyList()).value
         else -> emptyList() // Menyediakan default kosong jika tipe tidak sesuai
     }
     val totalScholarshipsCount = when (type) {
         "luarnegeri" -> viewModel.totalScholarshipsCount.observeAsState(initial = 0).value
         "rekomendasi" -> viewModel.totalRecommendedScholarshipsCount.observeAsState(initial = 0).value
+        "indonesia" -> viewModel.totalIndonesiaScholarshipsCount.observeAsState(initial = 0).value
         else -> 0 // Menyediakan default jika tipe tidak sesuai
     }
     val searchedScholarships = viewModel.searchedScholarships.observeAsState(initial = emptyList())
@@ -351,16 +353,28 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
             ) {
                 itemsIndexed(scholarshipsToShow.subList(startIndex, endIndex)) { index, beasiswa ->
                     if (index == 0) {
-                        Spacer(modifier = Modifier.height(16.dp)) // Tambahkan padding jika ini adalah item pertama
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                    BeasiswaItem(
-                        beasiswa = beasiswa,
-                        navController = navController,
-                    )
+                    if (type == "indonesia" && index > 0) {
+                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    }
+                    if (type == "indonesia") {
+                        val beasiswaIndonesia = beasiswa as BeasiswaIndonesia
+                        BeasiswaIndonesiaItem(
+                            beasiswa = beasiswaIndonesia,
+                            navController = navController
+                        )
+                    } else {
+                        val beasiswaLuar = beasiswa as Beasiswa
+                        BeasiswaItem(
+                            beasiswa = beasiswaLuar,
+                            navController = navController,
+                        )
+                    }
                 }
 
+                // Pagination controls
                 item {
-                    // Pagination controls
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -390,6 +404,21 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
             }
         }
     }
+}
+
+@Composable
+fun BeasiswaIndonesiaItem(beasiswa: BeasiswaIndonesia, navController: NavController) {
+    Text(
+        text = beasiswa.name,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 18.sp,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .heightIn(min = 32.dp)
+            .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }
+    )
 }
 
 @Composable

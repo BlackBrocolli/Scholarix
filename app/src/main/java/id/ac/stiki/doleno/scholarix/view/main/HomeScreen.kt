@@ -200,7 +200,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.1).sp
             )
-            TextButton(onClick = { }) {
+            TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/indonesia") }) {
                 Text(
                     text = "Lihat Semua",
                     fontWeight = FontWeight.Bold,
