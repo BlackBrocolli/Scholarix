@@ -395,18 +395,40 @@ class MainViewModel : ViewModel() {
     fun searchScholarshipsByName(name: String, type: String) {
         _isSearching.value = true
 
-        val scholarships = when (type) {
-            "luarnegeri" -> _scholarships.value
-            "rekomendasi" -> _recommendedScholarships.value
-            else -> emptyList()
+        when (type) {
+            "luarnegeri" -> {
+                val scholarships: List<Beasiswa> = _scholarships.value ?: emptyList()
+                searchGeneralScholarshipsByName(name, scholarships)
+            }
+            "rekomendasi" -> {
+                val scholarships: List<Beasiswa> = _recommendedScholarships.value ?: emptyList()
+                searchGeneralScholarshipsByName(name, scholarships)
+            }
+            "indonesia" -> {
+                val scholarships: List<BeasiswaIndonesia> = _indonesiaScholarships.value ?: emptyList()
+                searchIndonesianScholarshipsByName(name, scholarships)
+            }
+            else -> {
+                _searchedScholarships.value = emptyList()
+            }
         }
-
-        _searchedScholarships.value = scholarships?.filter { scholarship ->
-            scholarship.name.contains(name, ignoreCase = true)
-        } ?: emptyList()
 
         _totalSearchedScholarshipsCount.value = _searchedScholarships.value!!.size
         resetCurrentPage()
+    }
+
+    // Fungsi pencarian untuk beasiswa umum
+    private fun searchGeneralScholarshipsByName(name: String, scholarships: List<Beasiswa>) {
+        _searchedScholarships.value = scholarships.filter { scholarship ->
+            scholarship.name.contains(name, ignoreCase = true)
+        }
+    }
+
+    // Fungsi pencarian untuk beasiswa Indonesia
+    private fun searchIndonesianScholarshipsByName(name: String, scholarships: List<BeasiswaIndonesia>) {
+        _searchedScholarships.value = scholarships.filter { scholarship ->
+            scholarship.name.contains(name, ignoreCase = true)
+        } as List<Beasiswa> // Casting ke List<Beasiswa>
     }
     // ------- End of Searching ---------
 
