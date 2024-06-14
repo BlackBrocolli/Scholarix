@@ -451,6 +451,7 @@ class MainViewModel : ViewModel() {
         _selectedDegrees.value = emptyList()
         _selectedFundingStatus.value = emptyList()
         _selectedCards.value = _selectedCards.value?.mapValues { false }
+        _isFiltering.value = false
     }
 
     private val _isFiltering = MutableLiveData<Boolean>()
@@ -519,22 +520,30 @@ class MainViewModel : ViewModel() {
         toggleCardSelection(status)  // Toggle the card selection state
     }
 
-    fun checkAndSetFiltering() {
+    fun checkAndSetFiltering(type: String) {
         val hasSelectedDegrees = _selectedDegrees.value?.isNotEmpty() == true
         val hasSelectedFundingStatus = _selectedFundingStatus.value?.isNotEmpty() == true
         val isFilteringNow = hasSelectedDegrees || hasSelectedFundingStatus
         _isFiltering.value = isFilteringNow
 
         if (isFilteringNow) {
-            performFiltering()
+            performFiltering(type = type)
         }
     }
 
-    fun performFiltering() {
+    fun performFiltering(type: String) {
         val degrees = _selectedDegrees.value ?: emptyList()
         val fundingStatus = _selectedFundingStatus.value ?: emptyList()
         val scholarshipsToFilter =
-            if (_isSearching.value == true) _searchedScholarships.value else _scholarships.value
+            if (_isSearching.value == true) {
+                _searchedScholarships.value
+            } else {
+                when (type) {
+                    "rekomendasi" -> _recommendedScholarships.value
+                    "luarnegeri" -> _scholarships.value
+                    else -> emptyList()
+                }
+            }
 
         if (scholarshipsToFilter != null) {
             val filteredList = scholarshipsToFilter.filter { scholarship ->

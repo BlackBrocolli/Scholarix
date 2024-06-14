@@ -103,7 +103,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
 
     LaunchedEffect(isFiltering) {
         if (isFiltering.value) {
-            viewModel.performFiltering()
+            viewModel.performFiltering(type)
         }
     }
 
@@ -325,6 +325,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                 viewModel = viewModel,
                 scope = scope,
                 scaffoldState = scaffoldState,
+                type = type
             )
         }
     ) { innerPadding ->
@@ -531,6 +532,7 @@ fun DrawerFilterOptions(
     viewModel: MainViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
+    type: String
 ) {
     Column(
         modifier = Modifier
@@ -632,9 +634,7 @@ fun DrawerFilterOptions(
                     .padding(end = 4.dp),
                 border = BorderStroke(1.dp, Color(0xFF8F79E8)),
                 onClick = {
-                    // Reset all filtering value
                     viewModel.resetCardSelections()
-//                    viewModel.setFiltering(false)
                 }
             ) {
                 Text(
@@ -654,7 +654,7 @@ fun DrawerFilterOptions(
                 ),
                 onClick = {
                     // TODO: Lakukan filtering
-                    viewModel.checkAndSetFiltering()
+                    viewModel.checkAndSetFiltering(type = type)
 
                     scope.launch {
                         scaffoldState.drawerState.close()
