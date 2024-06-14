@@ -41,7 +41,13 @@ class MainViewModel : ViewModel() {
 
     private fun sortScholarships(type: String) {
         val sortByDeadline: (Beasiswa) -> String? = { it.deadline }
-        val sortByName: (Beasiswa) -> String = { it.name }
+        val sortByName: (Any) -> String = {
+            when(it) {
+                is Beasiswa -> it.name
+                is BeasiswaIndonesia -> it.name
+                else -> "" // Menangani kasus tipe lain jika diperlukan
+            }
+        }
 
         when (type) {
             "rekomendasi" -> {
