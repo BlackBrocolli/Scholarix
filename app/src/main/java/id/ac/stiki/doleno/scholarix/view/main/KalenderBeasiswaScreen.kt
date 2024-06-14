@@ -216,7 +216,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 enabled = false,
                                 value = inputUrutkanBerdasar,
                                 onValueChange = {
-                                    viewModel.updateSortingPreference(it)
+                                    viewModel.updateSortingPreference(it, type = type)
                                 },
                                 label = {
                                     androidx.compose.material3.Text(
@@ -250,35 +250,41 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                 DropdownMenuItem(
                                     text = { Text("Nama A-Z") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Nama A-Z")
+                                        viewModel.updateSortingPreference("Nama A-Z", type = type)
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Nama Z-A") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Nama Z-A")
+                                        viewModel.updateSortingPreference("Nama Z-A", type = type)
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Terpopuler") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Terpopuler")
+                                        viewModel.updateSortingPreference("Terpopuler", type = type)
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Deadline Terdekat") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Deadline Terdekat")
+                                        viewModel.updateSortingPreference(
+                                            "Deadline Terdekat",
+                                            type = type
+                                        )
                                         dropdownExpanded = false
                                     }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Deadline Terjauh") },
                                     onClick = {
-                                        viewModel.updateSortingPreference("Deadline Terjauh")
+                                        viewModel.updateSortingPreference(
+                                            "Deadline Terjauh",
+                                            type = type
+                                        )
                                         dropdownExpanded = false
                                     }
                                 )
@@ -302,7 +308,7 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         )
                     } else {
                         Text(
-                            text = "Menampilkan ${totalScholarshipsCount} Beasiswa",
+                            text = "Menampilkan $totalScholarshipsCount Beasiswa",
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()

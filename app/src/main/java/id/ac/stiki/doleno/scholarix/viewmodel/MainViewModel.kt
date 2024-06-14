@@ -34,22 +34,38 @@ class MainViewModel : ViewModel() {
     val inputUrutkanBerdasar: MutableState<String>
         get() = _inputUrutkanBerdasar
 
-    fun updateSortingPreference(value: String) {
+    fun updateSortingPreference(value: String, type: String) {
         _inputUrutkanBerdasar.value = value
-        sortScholarships()
+        sortScholarships(type = type)
     }
 
-    private fun sortScholarships() {
+    private fun sortScholarships(type: String) {
         val sortByDeadline: (Beasiswa) -> String? = { it.deadline }
         val sortByName: (Beasiswa) -> String = { it.name }
 
-        _scholarships.value = _scholarships.value?.let { list ->
-            when (_inputUrutkanBerdasar.value) {
-                "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
-                "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
-                "Nama A-Z" -> list.sortedBy(sortByName)
-                "Nama Z-A" -> list.sortedByDescending(sortByName)
-                else -> list
+        when (type) {
+            "rekomendasi" -> {
+                _recommendedScholarships.value = _recommendedScholarships.value?.let { list ->
+                    when (_inputUrutkanBerdasar.value) {
+                        "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                        "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                        "Nama A-Z" -> list.sortedBy(sortByName)
+                        "Nama Z-A" -> list.sortedByDescending(sortByName)
+                        else -> list
+                    }
+                }
+            }
+
+            "luarnegeri" -> {
+                _scholarships.value = _scholarships.value?.let { list ->
+                    when (_inputUrutkanBerdasar.value) {
+                        "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                        "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                        "Nama A-Z" -> list.sortedBy(sortByName)
+                        "Nama Z-A" -> list.sortedByDescending(sortByName)
+                        else -> list
+                    }
+                }
             }
         }
 
@@ -72,6 +88,12 @@ class MainViewModel : ViewModel() {
                 else -> list
             }
         }
+    }
+
+    fun resetSorting() {
+        _inputUrutkanBerdasar.value = "Nama A-Z"
+        sortScholarships("rekomendasi")
+        sortScholarships("luarnegeri")
     }
     // == End of SORTING ==
 
@@ -149,7 +171,7 @@ class MainViewModel : ViewModel() {
     private val _filteredCountries = MutableLiveData<List<Country>>()
     val filteredCountries: LiveData<List<Country>> = _filteredCountries
 
-    fun fetchUserPreferences(email: String) {
+    private fun fetchUserPreferences(email: String) {
         _isLoadingRecommendedScholarships.value = true
         val docRef = FirebaseFirestore.getInstance().collection("users").document(email)
         docRef.get().addOnSuccessListener { document ->

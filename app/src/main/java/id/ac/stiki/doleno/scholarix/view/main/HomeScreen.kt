@@ -76,9 +76,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
         if (indonesiaScholarships.value.isEmpty()) {
             viewModel.fetchIndonesiaScholarshipDetails()
         }
-//        if (recommendedScholarships.value.isEmpty()) {
-//            viewModel.fetchUserPreferences(userEmail)
-//        }
+        viewModel.resetSorting()
     }
 
     Column(
