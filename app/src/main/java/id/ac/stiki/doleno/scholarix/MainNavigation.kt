@@ -28,6 +28,7 @@ import id.ac.stiki.doleno.scholarix.view.auth.LupaPasswordScreen
 import id.ac.stiki.doleno.scholarix.view.auth.SignupScreen
 import id.ac.stiki.doleno.scholarix.view.main.DetailBeasiswaScreen
 import id.ac.stiki.doleno.scholarix.view.main.EditProfileScreen
+import id.ac.stiki.doleno.scholarix.view.main.FavoritList
 import id.ac.stiki.doleno.scholarix.view.main.FavoritScreen
 import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
 import id.ac.stiki.doleno.scholarix.view.main.KalenderBeasiswaScreen
@@ -68,14 +69,7 @@ fun MainNavigation(
             }
         }
         composable(Screen.BottomScreen.Favorit.route) {
-            googleAuthUiClient.getSignInUser()
-                ?.let { it1 ->
-                    FavoritScreen(
-                        viewModel = mainViewModel,
-                        userData = it1,
-                        navController = navController
-                    )
-                }
+            FavoritScreen(navController = navController)
         }
         composable(Screen.BottomScreen.Profil.route) {
             ProfileScreen(
@@ -157,7 +151,27 @@ fun MainNavigation(
                 )
             }
         }
-
+        composable(
+            route = "${Screen.FavoritList.route}/{title}",
+            arguments = listOf(
+                navArgument("title") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title")
+            if (title != null) {
+                googleAuthUiClient.getSignInUser()
+                    ?.let { it1 ->
+                        FavoritList(
+                            title = title,
+                            navController = navController,
+                            viewModel = mainViewModel,
+                            userData = it1
+                        )
+                    }
+            }
+        }
         composable(Screen.LoginScreen.route) {
             val authViewModel: AuthViewModel = viewModel()
             val state by authViewModel.state.collectAsStateWithLifecycle()
