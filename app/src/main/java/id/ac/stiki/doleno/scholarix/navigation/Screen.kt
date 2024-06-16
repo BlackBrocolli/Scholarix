@@ -17,6 +17,8 @@ sealed class Screen(val route: String, val title: String = "") {
     object DetailBeasiswaScreen : Screen("detail_beasiswa_screen")
     object KalenderBeasiswaScreen : Screen("kalender_beasiswa_screen")
     object FavoritList : Screen("favorit_list")
+    object KetentuanPenggunaan : Screen("ketentuan_penggunaan")
+    object KebijakanPrivasi : Screen("kebijakan_privasi")
 
     sealed class BottomScreen(
         val bottomTitle: String,

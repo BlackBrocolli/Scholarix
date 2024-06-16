@@ -32,6 +32,8 @@ import id.ac.stiki.doleno.scholarix.view.main.FavoritList
 import id.ac.stiki.doleno.scholarix.view.main.FavoritScreen
 import id.ac.stiki.doleno.scholarix.view.main.HomeScreen
 import id.ac.stiki.doleno.scholarix.view.main.KalenderBeasiswaScreen
+import id.ac.stiki.doleno.scholarix.view.main.KebijakanPrivasi
+import id.ac.stiki.doleno.scholarix.view.main.KetentuanPenggunaan
 import id.ac.stiki.doleno.scholarix.view.main.MainView
 import id.ac.stiki.doleno.scholarix.view.main.PreferensiUser
 import id.ac.stiki.doleno.scholarix.view.main.ProfileScreen
@@ -296,6 +298,12 @@ fun MainNavigation(
         }
         composable(Screen.LupaPasswordScreen.route) {
             LupaPasswordScreen(navController = navController)
+        }
+        composable(Screen.KetentuanPenggunaan.route) {
+            KetentuanPenggunaan(navController = navController)
+        }
+        composable(Screen.KebijakanPrivasi.route) {
+            KebijakanPrivasi(navController = navController)
         }
     }
 }

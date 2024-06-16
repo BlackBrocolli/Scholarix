@@ -142,7 +142,8 @@ fun ProfileScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp),
+                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp)
+                .clickable { navController.navigate(Screen.KetentuanPenggunaan.route) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -150,13 +151,14 @@ fun ProfileScreen(
                 contentDescription = null,
                 modifier = Modifier.padding(end = 8.dp)
             )
-            Text(text = "Syarat dan Ketentuan")
+            Text(text = "Ketentuan Penggunaan")
         }
         Divider()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp),
+                .padding(start = 24.dp, bottom = 16.dp, top = 16.dp)
+                .clickable { navController.navigate(Screen.KebijakanPrivasi.route) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
