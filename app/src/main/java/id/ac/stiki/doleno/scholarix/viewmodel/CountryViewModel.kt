@@ -4,6 +4,8 @@ package id.ac.stiki.doleno.scholarix.viewmodel
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.ac.stiki.doleno.scholarix.model.Country
@@ -57,4 +59,30 @@ class CountryViewModel : ViewModel() {
         val error: String? = null,
         val list: List<Country> = emptyList()
     )
+
+    // == FITUR SEARCH COUNTRIES ==
+    private val _searchText = MutableLiveData("")
+    val searchText: LiveData<String> = _searchText
+
+    private val _isSearching = MutableLiveData(false)
+    val isSearching: LiveData<Boolean> = _isSearching
+
+    private val _searchedCountries = MutableLiveData<List<Country>>()
+    val searchedCountries: LiveData<List<Country>> = _searchedCountries
+
+    fun setSearchText(text: String) {
+        _searchText.value = text
+        searchCountriesByName(text) // Memanggil fungsi pencarian
+    }
+
+    fun resetSearching() {
+        _searchText.value = ""
+        _isSearching.value = false
+        _searchedCountries.value = emptyList()
+    }
+
+    private fun searchCountriesByName(name: String) {
+        _isSearching.value = true
+        _searchedCountries.value = _countriesState.value.list.filter { it.name.contains(name, ignoreCase = true) }
+    }
 }

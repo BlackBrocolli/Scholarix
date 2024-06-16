@@ -19,12 +19,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,9 +65,9 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
     val viewState by countryViewModel.countriesState
     val userEmail = userData.email
     val isLoading by viewModel.isLoadingSaveUserPreference.observeAsState(initial = false)
-
-//    val context = LocalContext.current
-    val countries = viewState.list.sortedBy { it.name }
+    val searchText by countryViewModel.searchText.observeAsState("")
+    val isSearching by countryViewModel.isSearching.observeAsState(false)
+    val searchedCountries by countryViewModel.searchedCountries.observeAsState(emptyList())
 
     // State untuk melacak indeks item negara yang dipilih
     val selectedItems = remember { mutableStateOf(setOf<Int>()) }
@@ -126,7 +132,47 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
 
                     else -> {
                         LazyColumn {
-                            itemsIndexed(countries) { index, country ->
+                            item {
+                                // SEARCH BAR
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp)
+                                ) {
+                                    // Search Bar
+                                    OutlinedTextField(
+                                        value = searchText,
+                                        onValueChange = {
+                                            countryViewModel.setSearchText(it)
+                                        },
+                                        placeholder = { androidx.compose.material.Text("Cari negara") },
+                                        textStyle = TextStyle(fontSize = 14.sp),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(56.dp),
+                                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = "Search Icon"
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            if (searchText.isNotEmpty()) {
+                                                IconButton(onClick = {
+                                                    countryViewModel.resetSearching()
+                                                }) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Clear,
+                                                        contentDescription = "Clear Icon"
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                            itemsIndexed(if (isSearching) searchedCountries else viewState.list) { index, country ->
                                 CountryItem(
                                     country = country,
                                     isSelected = selectedItems.value.contains(index),
