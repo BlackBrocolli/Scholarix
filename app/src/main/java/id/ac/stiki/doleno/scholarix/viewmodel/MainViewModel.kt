@@ -42,7 +42,7 @@ class MainViewModel : ViewModel() {
     private fun sortScholarships(type: String) {
         val sortByDeadline: (Beasiswa) -> String? = { it.deadline }
         val sortByName: (Any) -> String = {
-            when(it) {
+            when (it) {
                 is Beasiswa -> it.name
                 is BeasiswaIndonesia -> it.name
                 else -> "" // Menangani kasus tipe lain jika diperlukan
@@ -273,49 +273,29 @@ class MainViewModel : ViewModel() {
 
     private fun fetchRecommendedScholarships(preferences: Preference) {
         val allScholarships = _scholarships.value ?: run {
-//            _isLoadingRecommendedScholarships.value = false
+            _isLoadingRecommendedScholarships.value = false
             return
         }
 
-        val filteredScholarships = if (preferences.degrees.isNotEmpty()) {
-            allScholarships.filter { beasiswa ->
-                val matchesDegree = beasiswa.degrees.any { it in preferences.degrees }
-                matchesDegree
-            }
-        } else {
-            allScholarships
+        val exactMatches = allScholarships.filter { beasiswa ->
+            val matchesDegree = preferences.degrees.isEmpty() || beasiswa.degrees.any { it in preferences.degrees }
+            val matchesFundingStatus = preferences.fundingStatus.isEmpty() || preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
+            val matchesCountries = preferences.countries.isEmpty() || preferences.countries.contains(beasiswa.country)
+
+            matchesDegree && matchesFundingStatus && matchesCountries
         }
 
-        val filteredByFundingStatus = if (preferences.fundingStatus.isNotEmpty()) {
-            filteredScholarships.filter { beasiswa ->
-                val matchesFundingStatus =
-                    preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
-                matchesFundingStatus
-            }
-        } else {
-            filteredScholarships
-        }
+        val partialMatches = allScholarships.filter { beasiswa ->
+            val matchesDegree = preferences.degrees.isNotEmpty() && beasiswa.degrees.any { it in preferences.degrees }
+            val matchesFundingStatus = preferences.fundingStatus.isNotEmpty() && preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
+            val matchesCountries = preferences.countries.isNotEmpty() && preferences.countries.contains(beasiswa.country)
 
-        val filteredByCountries = if (preferences.countries.isNotEmpty()) {
-            filteredByFundingStatus.filter { beasiswa ->
-                val matchesCountries =
-                    preferences.countries.contains(beasiswa.country)
-                matchesCountries
-            }
-        } else {
-            filteredByFundingStatus
-        }
+            matchesDegree || matchesFundingStatus || matchesCountries
+        }.distinct() - exactMatches.toSet()
 
-        val recommendedScholarshipsList =
-            if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty() && preferences.countries.isEmpty()) {
-                emptyList() // Mengosongkan daftar rekomendasi jika ketiga preferensi kosong
-            } else {
-                filteredByCountries
-            }
+        val recommendedScholarshipsList = exactMatches + partialMatches
 
         _recommendedScholarships.value = recommendedScholarshipsList
-
-        // Update jumlah beasiswa yang direkomendasikan
         _totalRecommendedScholarshipsCount.value = recommendedScholarshipsList.size
         _isLoadingRecommendedScholarships.value = false
     }
@@ -406,14 +386,18 @@ class MainViewModel : ViewModel() {
                 val scholarships: List<Beasiswa> = _scholarships.value ?: emptyList()
                 searchGeneralScholarshipsByName(name, scholarships)
             }
+
             "rekomendasi" -> {
                 val scholarships: List<Beasiswa> = _recommendedScholarships.value ?: emptyList()
                 searchGeneralScholarshipsByName(name, scholarships)
             }
+
             "indonesia" -> {
-                val scholarships: List<BeasiswaIndonesia> = _indonesiaScholarships.value ?: emptyList()
+                val scholarships: List<BeasiswaIndonesia> =
+                    _indonesiaScholarships.value ?: emptyList()
                 searchIndonesianScholarshipsByName(name, scholarships)
             }
+
             else -> {
                 _searchedScholarships.value = emptyList()
             }
@@ -431,7 +415,10 @@ class MainViewModel : ViewModel() {
     }
 
     // Fungsi pencarian untuk beasiswa Indonesia
-    private fun searchIndonesianScholarshipsByName(name: String, scholarships: List<BeasiswaIndonesia>) {
+    private fun searchIndonesianScholarshipsByName(
+        name: String,
+        scholarships: List<BeasiswaIndonesia>
+    ) {
         _searchedScholarships.value = scholarships.filter { scholarship ->
             scholarship.name.contains(name, ignoreCase = true)
         } as List<Beasiswa> // Casting ke List<Beasiswa>
