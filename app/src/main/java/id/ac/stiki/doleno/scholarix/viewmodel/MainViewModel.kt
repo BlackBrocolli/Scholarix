@@ -277,18 +277,35 @@ class MainViewModel : ViewModel() {
             return
         }
 
+        if (preferences.degrees.isEmpty() && preferences.fundingStatus.isEmpty() && preferences.countries.isEmpty()) {
+            _recommendedScholarships.value = emptyList()
+            _totalRecommendedScholarshipsCount.value = 0
+            _isLoadingRecommendedScholarships.value = false
+            return
+        }
+
         val exactMatches = allScholarships.filter { beasiswa ->
-            val matchesDegree = preferences.degrees.isEmpty() || beasiswa.degrees.any { it in preferences.degrees }
-            val matchesFundingStatus = preferences.fundingStatus.isEmpty() || preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
-            val matchesCountries = preferences.countries.isEmpty() || preferences.countries.contains(beasiswa.country)
+            val matchesDegree =
+                preferences.degrees.isEmpty() || beasiswa.degrees.any { it in preferences.degrees }
+            val matchesFundingStatus =
+                preferences.fundingStatus.isEmpty() || preferences.fundingStatus.contains(
+                    beasiswa.fundingStatus ?: ""
+                )
+            val matchesCountries =
+                preferences.countries.isEmpty() || preferences.countries.contains(beasiswa.country)
 
             matchesDegree && matchesFundingStatus && matchesCountries
         }
 
         val partialMatches = allScholarships.filter { beasiswa ->
-            val matchesDegree = preferences.degrees.isNotEmpty() && beasiswa.degrees.any { it in preferences.degrees }
-            val matchesFundingStatus = preferences.fundingStatus.isNotEmpty() && preferences.fundingStatus.contains(beasiswa.fundingStatus ?: "")
-            val matchesCountries = preferences.countries.isNotEmpty() && preferences.countries.contains(beasiswa.country)
+            val matchesDegree =
+                preferences.degrees.isNotEmpty() && beasiswa.degrees.any { it in preferences.degrees }
+            val matchesFundingStatus =
+                preferences.fundingStatus.isNotEmpty() && preferences.fundingStatus.contains(
+                    beasiswa.fundingStatus ?: ""
+                )
+            val matchesCountries =
+                preferences.countries.isNotEmpty() && preferences.countries.contains(beasiswa.country)
 
             matchesDegree || matchesFundingStatus || matchesCountries
         }.distinct() - exactMatches.toSet()
