@@ -29,6 +29,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -132,7 +133,8 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         IconButton(onClick = { navController.navigateUp() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Arrow Back Icon"
+                                contentDescription = "Arrow Back Icon",
+                                tint = MaterialTheme.colors.onSurface
                             )
                         }
                         Text(
@@ -164,9 +166,18 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = "Search Icon"
+                                    contentDescription = "Search Icon",
+                                    tint = Color.Gray
                                 )
                             },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(
+                                    0xFF8F79E8
+                                ),
+                                cursorColor = MaterialTheme.colors.onSurface,
+                                focusedTextColor = MaterialTheme.colors.onSurface,
+                                unfocusedTextColor = MaterialTheme.colors.onSurface
+                            ),
                             trailingIcon = {
                                 if (searchText.isNotEmpty()) {
                                     IconButton(onClick = {
@@ -174,7 +185,8 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                     }) {
                                         Icon(
                                             imageVector = Icons.Default.Clear,
-                                            contentDescription = "Clear Icon"
+                                            contentDescription = "Clear Icon",
+                                            tint = Color.Gray
                                         )
                                     }
                                 }
@@ -253,19 +265,30 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                     modifier = Modifier
                                         .verticalScroll(rememberScrollState())
                                         .heightIn(max = 250.dp)
+                                        .background(Color.White),
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Nama A-Z") },
+                                        text = {
+                                            Text(
+                                                "Nama A-Z",
+                                                color = MaterialTheme.colors.onSurface
+                                            )
+                                        },
                                         onClick = {
                                             viewModel.updateSortingPreference(
                                                 "Nama A-Z",
                                                 type = type
                                             )
                                             dropdownExpanded = false
-                                        }
+                                        },
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Nama Z-A") },
+                                        text = {
+                                            Text(
+                                                "Nama Z-A",
+                                                color = MaterialTheme.colors.onSurface
+                                            )
+                                        },
                                         onClick = {
                                             viewModel.updateSortingPreference(
                                                 "Nama Z-A",
@@ -275,7 +298,12 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Terpopuler") },
+                                        text = {
+                                            Text(
+                                                "Terpopuler",
+                                                color = MaterialTheme.colors.onSurface
+                                            )
+                                        },
                                         onClick = {
                                             viewModel.updateSortingPreference(
                                                 "Terpopuler",
@@ -285,7 +313,12 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Deadline Terdekat") },
+                                        text = {
+                                            Text(
+                                                "Deadline Terdekat",
+                                                color = MaterialTheme.colors.onSurface
+                                            )
+                                        },
                                         onClick = {
                                             viewModel.updateSortingPreference(
                                                 "Deadline Terdekat",
@@ -295,7 +328,12 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Deadline Terjauh") },
+                                        text = {
+                                            Text(
+                                                "Deadline Terjauh",
+                                                color = MaterialTheme.colors.onSurface
+                                            )
+                                        },
                                         onClick = {
                                             viewModel.updateSortingPreference(
                                                 "Deadline Terjauh",
@@ -305,7 +343,6 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                                         }
                                     )
                                 }
-
                             }
                         }
                     }
@@ -514,6 +551,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                     ),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.onSurface
                                     //                        color = Color(0xCC17181A)
                                 )
                             }
@@ -530,6 +568,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                 androidx.compose.material3.Text(
                     text = beasiswaText,
                     fontSize = 12.sp,
+                    color = MaterialTheme.colors.onSurface,
                     maxLines = 1, // Batasi jumlah baris menjadi 1
                     overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
                 )
@@ -539,7 +578,8 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     text = beasiswa.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
+                    lineHeight = 24.sp,
+                    color = MaterialTheme.colors.onSurface
                 )
             }
 
@@ -560,7 +600,8 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                 ) {
                     androidx.compose.material3.Text(
                         text = "Deadline",
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colors.onSurface
                     )
                     beasiswa.deadline?.let {
                         androidx.compose.material3.Text(
@@ -642,7 +683,10 @@ fun DrawerFilterOptions(
                     viewModel = viewModel
                 )
             }
-            Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
+            Divider(
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                color = Color.LightGray
+            )
             Text(
                 text = "Tipe Pendanaan",
                 fontSize = 16.sp,
@@ -666,7 +710,10 @@ fun DrawerFilterOptions(
                     viewModel = viewModel
                 )
             }
-            Divider(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp))
+            Divider(
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                color = Color.LightGray
+            )
         }
         Row(
             modifier = Modifier

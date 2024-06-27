@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,53 +41,64 @@ fun KetentuanPenggunaan(navController: NavController) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 8.dp)
                 .background(Color.White)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Ketentuan Penggunaan",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = (-0.5).sp
-            )
-            Row {
-                Text(text = "Lihat juga: ", fontSize = 14.sp)
+            Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
-                            append("Kebijakan Privasi")
-                        }
-                    },
-                    fontSize = 14.sp,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.KebijakanPrivasi.route)
-                    }
+                    text = "Ketentuan Penggunaan",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = (-0.5).sp,
+                    color = MaterialTheme.colors.onSurface
+                )
+                Row {
+                    Text(text = "Lihat juga: ", fontSize = 14.sp, color = MaterialTheme.colors.onSurface)
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Blue,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            ) {
+                                append("Kebijakan Privasi")
+                            }
+                        },
+                        fontSize = 14.sp,
+                        modifier = Modifier.clickable {
+                            navController.navigate(Screen.KebijakanPrivasi.route)
+                        },
+                        color = MaterialTheme.colors.onSurface
+                    )
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(id = R.string.ketentuan_penggunaan_1),
+                    fontSize = 14.sp, lineHeight = 18.sp,
+                    color = MaterialTheme.colors.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(id = R.string.ketentuan_penggunaan_2),
+                    fontSize = 14.sp, lineHeight = 18.sp,
+                    color = MaterialTheme.colors.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(id = R.string.ketentuan_penggunaan_3),
+                    fontSize = 14.sp, lineHeight = 18.sp,
+                    color = MaterialTheme.colors.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(id = R.string.ketentuan_penggunaan_4),
+                    fontSize = 14.sp, lineHeight = 18.sp,
+                    color = MaterialTheme.colors.onSurface
                 )
             }
-            Text(
-                text = stringResource(id = R.string.ketentuan_penggunaan_1),
-                fontSize = 14.sp, lineHeight = 18.sp
-            )
-            Text(
-                text = stringResource(id = R.string.ketentuan_penggunaan_2),
-                fontSize = 14.sp, lineHeight = 18.sp
-            )
-            Text(
-                text = stringResource(id = R.string.ketentuan_penggunaan_3),
-                fontSize = 14.sp, lineHeight = 18.sp
-            )
-            Text(
-                text = stringResource(id = R.string.ketentuan_penggunaan_4),
-                fontSize = 14.sp, lineHeight = 18.sp
-            )
         }
     }
 }

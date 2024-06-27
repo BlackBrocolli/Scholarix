@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -35,6 +36,7 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,7 +91,9 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
             }
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)) {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -102,7 +106,8 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                 Text(
                     text = "Negara",
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                 )
 
                 // TODO: membuat fitur agar bisa menambahkan negara preferensi
@@ -132,25 +137,25 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Search // Menetapkan aksi IME menjadi "Search"
                             ),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Search Icon"
-                                )
-                            },
+//                            leadingIcon = {
+//                                Icon(
+//                                    imageVector = Icons.Default.Search,
+//                                    contentDescription = "Search Icon",
+//                                    tint = Color.Gray
+//                                )
+//                            },
                             trailingIcon = {
-                                if (searchText.isNotEmpty()) {
-                                    IconButton(onClick = {
-                                        viewModel.filterCountries(searchText)
-                                        expanded = true
-                                        focusManager.clearFocus()
-                                        keyboardController?.hide()
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Search,
-                                            contentDescription = "Search Icon"
-                                        )
-                                    }
+                                IconButton(onClick = {
+                                    viewModel.filterCountries(searchText)
+                                    expanded = true
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search Icon",
+                                        tint = Color(0xFF8F79E8)
+                                    )
                                 }
                             },
                             keyboardActions = KeyboardActions(
@@ -161,6 +166,16 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
                                 }
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(
+                                    0xFF8F79E8
+                                ),
+                                cursorColor = androidx.compose.material.MaterialTheme.colors.onSurface,
+                                focusedTextColor = androidx.compose.material.MaterialTheme.colors.onSurface,
+                                unfocusedTextColor = Color.DarkGray,
+                                unfocusedPlaceholderColor = Color.DarkGray,
+                                focusedPlaceholderColor = Color.DarkGray
                             ),
                         )
                     }
@@ -210,7 +225,8 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                 Text(
                     text = "Jenjang",
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                 )
                 Row(
                     modifier = Modifier
@@ -261,7 +277,8 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                 Text(
                     text = "Tipe Pendanaan",
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                 )
                 Row(
                     modifier = Modifier
@@ -300,8 +317,11 @@ fun PreferensiUser(navController: NavController, viewModel: MainViewModel, email
                         viewModel.updateUserPreferences(email, context)
                         navController.navigateUp()
                     },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF8F79E8),
+                    )
                 ) {
-                    Text(text = "Simpan")
+                    Text(text = "Simpan", color = Color.White)
                 }
             }
         }

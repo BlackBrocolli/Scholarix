@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -81,12 +82,15 @@ fun FavoritList(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
                 .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
                 if (favoriteBeasiswaList.isNotEmpty() || favoriteBeasiswaIndonesaList.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
@@ -105,13 +109,16 @@ fun FavoritList(
                                 }
                             } else {
                                 item {
-                                    Text(
-                                        text = "Belum ada beasiswa Luar Negeri yang ditambahkan ke daftar favorit.",
-                                        modifier = Modifier
-                                            .align(Alignment.Center)
-                                            .padding(16.dp),
-                                        textAlign = TextAlign.Center
-                                    )
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        Text(
+                                            text = "Belum ada beasiswa luar negeri yang ditambahkan ke daftar favorit.",
+                                            modifier = Modifier
+                                                .align(Alignment.Center)
+                                                .padding(16.dp),
+                                            textAlign = TextAlign.Center,
+                                            color = androidx.compose.material.MaterialTheme.colors.onSurface
+                                        )
+                                    }
                                 }
                             }
                         } else if (title == "Beasiswa Indonesia") {
@@ -130,7 +137,8 @@ fun FavoritList(
                                             modifier = Modifier
                                                 .align(Alignment.Center)
                                                 .padding(16.dp),
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
+                                            color = androidx.compose.material.MaterialTheme.colors.onSurface
                                         )
                                     }
                                 }
@@ -143,7 +151,8 @@ fun FavoritList(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(16.dp),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = androidx.compose.material.MaterialTheme.colors.onSurface
                     )
                 }
             }
@@ -160,11 +169,12 @@ fun FavoriteBeasiswaIndonesiaItem(beasiswa: BeasiswaIndonesia, navController: Na
         lineHeight = 18.sp,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis,
+        color = MaterialTheme.colors.onSurface,
         modifier = Modifier
             .heightIn(min = 32.dp)
             .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }
     )
-    Divider(modifier = Modifier.padding(vertical = 8.dp))
+    Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
 }
 
 @Composable
@@ -244,7 +254,8 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                                     //                        color = Color(0xCC17181A)
                                 )
                             }
@@ -281,7 +292,8 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     text = beasiswaText,
                     fontSize = 12.sp,
                     maxLines = 1, // Batasi jumlah baris menjadi 1
-                    overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
+                    overflow = TextOverflow.Ellipsis, // Tambahkan elipsis jika teks terlalu panjang
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // NAMA BEASISWA
@@ -289,7 +301,8 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     text = beasiswa.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
+                    lineHeight = 24.sp,
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
                 )
             }
 
@@ -308,7 +321,11 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Deadline", fontSize = 12.sp)
+                    Text(
+                        text = "Deadline",
+                        fontSize = 12.sp,
+                        color = androidx.compose.material.MaterialTheme.colors.onSurface
+                    )
                     beasiswa.deadline?.let {
                         Text(
                             text = it,

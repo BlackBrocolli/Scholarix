@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -95,7 +96,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             Text(
                 text = "Rekomendasi untuk kamu",
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.1).sp
+                letterSpacing = (-0.1).sp,
+                color = MaterialTheme.colors.onSurface
             )
             TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/rekomendasi") }) {
                 Text(
@@ -109,14 +111,18 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
         }
         when {
             isLoadingRecommendedScholarships.value -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = Color.Gray
+                )
             }
 
             recommendedScholarships.value.isEmpty() -> {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Tidak ada rekomendasi beasiswa.",
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSurface
                     )
                     Text(
                         text = buildAnnotatedString {
@@ -154,7 +160,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             Text(
                 text = "Beasiswa Luar Negeri",
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.1).sp
+                letterSpacing = (-0.1).sp,
+                color = MaterialTheme.colors.onSurface
             )
             TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/luarnegeri") }) {
                 Text(
@@ -169,7 +176,10 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
         when {
             isLoadingScholarships.value -> {
                 // Display a loading animation or indicator
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = Color.Gray
+                )
             }
 
             isErrorScholarships.value -> {
@@ -178,7 +188,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                     modifier = Modifier
                         .clickable { viewModel.fetchScholarshipDetails(userEmail) }
                         .padding(16.dp)
-                        .align(Alignment.CenterHorizontally))
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colors.onSurface)
             }
 
             else -> {
@@ -198,7 +209,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             Text(
                 text = "Beasiswa Indonesia",
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.1).sp
+                letterSpacing = (-0.1).sp,
+                color = MaterialTheme.colors.onSurface
             )
             TextButton(onClick = { navController.navigate("${Screen.KalenderBeasiswaScreen.route}/indonesia") }) {
                 Text(
@@ -213,7 +225,10 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
         when {
             isLoadingIndonesiaScholarships.value -> {
                 // Display a loading animation or indicator
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = Color.Gray
+                )
             }
 
             isErrorIndonesiaScholarships.value -> {
@@ -222,7 +237,8 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                     modifier = Modifier
                         .clickable { viewModel.fetchIndonesiaScholarshipDetails() }
                         .padding(16.dp)
-                        .align(Alignment.CenterHorizontally))
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colors.onSurface)
             }
 
             else -> {
@@ -318,7 +334,8 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colors.onSurface
                                     //                        color = Color(0xCC17181A)
                                 )
                             }
@@ -334,13 +351,15 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                         text = beasiswaText,
                         fontSize = 12.sp,
                         maxLines = 1, // Batasi jumlah baris menjadi 1
-                        overflow = TextOverflow.Ellipsis // Tambahkan elipsis jika teks terlalu panjang
+                        overflow = TextOverflow.Ellipsis, // Tambahkan elipsis jika teks terlalu panjang
+                        color = MaterialTheme.colors.onSurface
                     )
                     Text(
                         text = beasiswa.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 18.sp,
+                        color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
                             .heightIn(32.dp) // Set tinggi minimum
                     )
@@ -359,7 +378,11 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Deadline", fontSize = 12.sp)
+                        Text(
+                            text = "Deadline",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                         // Check if the deadline is null and choose the display text accordingly
                         Text(
                             text = beasiswa.deadline ?: "N/A",  // Display "N/A" if deadline is null
@@ -382,7 +405,7 @@ fun IndonesiaScholarshipList(scholarships: List<BeasiswaIndonesia>, navControlle
     ) {
         itemsIndexed(scholarships) { index, scholarship ->
             if (index > 0) {
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
             }
             BeasiswaIndonesiaItem(beasiswa = scholarship, isFirstChild = index == 0, navController)
         }
@@ -402,6 +425,7 @@ fun BeasiswaIndonesiaItem(
         lineHeight = 18.sp,
         maxLines = 2, // Batas maksimal 2 baris
         overflow = TextOverflow.Ellipsis, // Potong teks dengan elipsis jika melebihi batas
+        color = MaterialTheme.colors.onSurface,
         modifier = Modifier
             .heightIn(min = 32.dp)
             .clickable { navController.navigate("${Screen.DetailBeasiswaScreen.route}/${beasiswa.id}/beasiswaIndonesia") }

@@ -2,11 +2,13 @@ package id.ac.stiki.doleno.scholarix.view.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,10 +23,12 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -141,166 +145,245 @@ fun SignupScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .background(Color.White)
+                .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = inputNamaLengkap,
-                onValueChange = {
-                    inputNamaLengkap = it
-                    validateNama(it)
-                },
-                label = { Text(text = "Nama Lengkap") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = namaError.isNotEmpty(),
-                trailingIcon = {
-                    if (namaError.isNotEmpty()) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = "Error",
-                            tint = Color.Red
-                        )
-                    }
-                }
-            )
-            if (namaError.isNotEmpty()) {
-                Text(
-                    text = namaError,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-            OutlinedTextField(
-                value = inputEmail,
-                onValueChange = {
-                    inputEmail = it
-                    validateEmail(it)
-                },
-                label = { Text(text = "Email") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                isError = emailError.isNotEmpty(),
-                trailingIcon = {
-                    if (emailError.isNotEmpty()) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = "Error",
-                            tint = Color.Red
-                        )
-                    }
-                }
-            )
-            if (emailError.isNotEmpty()) {
-                Text(
-                    text = emailError,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-            OutlinedTextField(
-                value = inputNomorHP,
-                onValueChange = {
-                    inputNomorHP = it
-                    validateNomorHP(it)
-                },
-                label = { Text(text = "No Handphone") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = nomorHPError.isNotEmpty(),
-                trailingIcon = {
-                    if (nomorHPError.isNotEmpty()) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = "Error",
-                            tint = Color.Red
-                        )
-                    }
-                }
-            )
-            if (nomorHPError.isNotEmpty()) {
-                Text(
-                    text = nomorHPError,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            OutlinedTextField(
-                value = inputPassword,
-                onValueChange = {
-                    inputPassword = it
-                    validatePassword(it)
-                    validateKonfirmasiPassword(it, inputKonfirmasiPassword)
-                },
-                label = { Text(text = "Password") },
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = passwordError.isNotEmpty(),
-                trailingIcon = {
-                    IconButton(
-                        onClick = { passwordVisible = !passwordVisible }
-                    ) {
-                        Icon(
-                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
-                        )
-                    }
-                }
-            )
-            if (passwordError.isNotEmpty()) {
-                Text(
-                    text = passwordError,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            OutlinedTextField(
-                value = inputKonfirmasiPassword,
-                onValueChange = {
-                    inputKonfirmasiPassword = it
-                    validateKonfirmasiPassword(inputPassword, it)
-                },
-                label = { Text(text = "Konfirmasi Password") },
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = if (konfirmasiPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = konfirmasiPasswordError.isNotEmpty(),
-                trailingIcon = {
-                    IconButton(
-                        onClick = { konfirmasiPasswordVisible = !konfirmasiPasswordVisible }
-                    ) {
-                        Icon(
-                            imageVector = if (konfirmasiPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (konfirmasiPasswordVisible) "Hide password" else "Show password"
-                        )
-                    }
-                }
-            )
-            if (konfirmasiPasswordError.isNotEmpty()) {
-                Text(
-                    text = konfirmasiPasswordError,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(2.dp))
-            Spacer(modifier = Modifier.height(2.dp))
-
-            Button(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                onClick = {
-                    authViewModel.signUp(inputEmail, inputPassword, inputNamaLengkap, inputNomorHP, navController, context)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = inputNamaLengkap,
+                    onValueChange = {
+                        inputNamaLengkap = it
+                        validateNama(it)
+                    },
+                    label = { Text(text = "Nama Lengkap") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = namaError.isNotEmpty(),
+                    trailingIcon = {
+                        if (namaError.isNotEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                tint = Color.Red
+                            )
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedBorderColor = Color(0xFF8F79E8),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF8F79E8),
+                        unfocusedLabelColor = Color.DarkGray,
+                        cursorColor = Color(0xFF8F79E8),
+                        errorBorderColor = Color.Red,
+                        errorCursorColor = Color.Red,
+                        errorLabelColor = Color.Red,
+                        errorTextColor = Color.Black
+                    )
+                )
+                if (namaError.isNotEmpty()) {
+                    Text(
+                        text = namaError,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+                OutlinedTextField(
+                    value = inputEmail,
+                    onValueChange = {
+                        inputEmail = it
+                        validateEmail(it)
+                    },
+                    label = { Text(text = "Email") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                    isError = emailError.isNotEmpty(),
+                    trailingIcon = {
+                        if (emailError.isNotEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                tint = Color.Red
+                            )
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedBorderColor = Color(0xFF8F79E8),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF8F79E8),
+                        unfocusedLabelColor = Color.DarkGray,
+                        cursorColor = Color(0xFF8F79E8),
+                        errorBorderColor = Color.Red,
+                        errorCursorColor = Color.Red,
+                        errorLabelColor = Color.Red,
+                        errorTextColor = Color.Black
+                    )
+                )
+                if (emailError.isNotEmpty()) {
+                    Text(
+                        text = emailError,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+                OutlinedTextField(
+                    value = inputNomorHP,
+                    onValueChange = {
+                        inputNomorHP = it
+                        validateNomorHP(it)
+                    },
+                    label = { Text(text = "No Handphone") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = nomorHPError.isNotEmpty(),
+                    trailingIcon = {
+                        if (nomorHPError.isNotEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                tint = Color.Red
+                            )
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedBorderColor = Color(0xFF8F79E8),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF8F79E8),
+                        unfocusedLabelColor = Color.DarkGray,
+                        cursorColor = Color(0xFF8F79E8),
+                        errorBorderColor = Color.Red,
+                        errorCursorColor = Color.Red,
+                        errorLabelColor = Color.Red,
+                        errorTextColor = Color.Black
+                    )
+                )
+                if (nomorHPError.isNotEmpty()) {
+                    Text(
+                        text = nomorHPError,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = inputPassword,
+                    onValueChange = {
+                        inputPassword = it
+                        validatePassword(it)
+                        validateKonfirmasiPassword(it, inputKonfirmasiPassword)
+                    },
+                    label = { Text(text = "Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = passwordError.isNotEmpty(),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { passwordVisible = !passwordVisible }
+                        ) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedBorderColor = Color(0xFF8F79E8),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF8F79E8),
+                        unfocusedLabelColor = Color.DarkGray,
+                        cursorColor = Color(0xFF8F79E8),
+                        errorBorderColor = Color.Red,
+                        errorCursorColor = Color.Red,
+                        errorLabelColor = Color.Red,
+                        errorTextColor = Color.Black
+                    ),
+                )
+                if (passwordError.isNotEmpty()) {
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = inputKonfirmasiPassword,
+                    onValueChange = {
+                        inputKonfirmasiPassword = it
+                        validateKonfirmasiPassword(inputPassword, it)
+                    },
+                    label = { Text(text = "Konfirmasi Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = if (konfirmasiPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = konfirmasiPasswordError.isNotEmpty(),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { konfirmasiPasswordVisible = !konfirmasiPasswordVisible }
+                        ) {
+                            Icon(
+                                imageVector = if (konfirmasiPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (konfirmasiPasswordVisible) "Hide password" else "Show password",
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedBorderColor = Color(0xFF8F79E8),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF8F79E8),
+                        unfocusedLabelColor = Color.DarkGray,
+                        cursorColor = Color(0xFF8F79E8),
+                        errorBorderColor = Color.Red,
+                        errorCursorColor = Color.Red,
+                        errorLabelColor = Color.Red,
+                        errorTextColor = Color.Black
+                    ),
+                )
+                if (konfirmasiPasswordError.isNotEmpty()) {
+                    Text(
+                        text = konfirmasiPasswordError,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    onClick = {
+                        authViewModel.signUp(
+                            inputEmail,
+                            inputPassword,
+                            inputNamaLengkap,
+                            inputNomorHP,
+                            navController,
+                            context
+                        )
 //                    inputEmail = ""
 //                    inputPassword = ""
 //                    inputNamaLengkap = ""
@@ -310,55 +393,66 @@ fun SignupScreen(
 //                        "Daftar berhasil!",
 //                        Toast.LENGTH_SHORT
 //                    ).show()
-                },
-                enabled = isFormValid() // Memeriksa apakah formulir valid
-            ) {
-                Text(text = "Daftar")
-            }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.LightGray,
+                        containerColor = Color(0xFF8F79E8),
+                    ),
+                    enabled = isFormValid() // Memeriksa apakah formulir valid
+                ) {
+                    Text(text = "Daftar", color = if (isFormValid()) Color.White else Color.Black)
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Atau daftar dengan akun",
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = { onSignInGoogleClick() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.google),
-                        contentDescription = "Google Icon",
-                        modifier = Modifier.size(20.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Atau daftar dengan akun",
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colors.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = { onSignInGoogleClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.google),
+                            contentDescription = "Google Icon",
+                            modifier = Modifier.size(20.dp) // Sesuaikan ukuran ikon sesuai kebutuhan
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Google",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colors.onSurface
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = "Google",
-                        fontWeight = FontWeight.Bold
+                        text = "Sudah punya akun?",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = "Masuk",
+                        fontSize = 12.sp,
+                        color = Color(0xFF8F79E8),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable {
+                            navController.navigate(Screen.LoginScreen.route)
+                        }
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Sudah punya akun?",
-                    fontSize = 12.sp,
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(
-                    text = "Masuk",
-                    fontSize = 12.sp,
-                    color = Color(android.graphics.Color.parseColor("#007FFF")),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.LoginScreen.route)
-                    }
-                )
             }
 
         }

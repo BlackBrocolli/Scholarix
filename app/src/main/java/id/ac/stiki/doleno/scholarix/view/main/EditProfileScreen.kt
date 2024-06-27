@@ -43,8 +43,9 @@ import id.ac.stiki.doleno.scholarix.model.google.UserData
 import id.ac.stiki.doleno.scholarix.view.auth.MyTopAppBar
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.livedata.observeAsState
 import id.ac.stiki.doleno.scholarix.viewmodel.AuthViewModel
 
@@ -105,8 +106,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+                .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Box(
@@ -166,9 +166,19 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
                 value = inputEmail,
                 onValueChange = { inputEmail = it },
                 label = { Text(text = "Email") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-                readOnly = true
+                readOnly = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.DarkGray,
+                    focusedBorderColor = Color(0xFF8F79E8),
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color(0xFF8F79E8),
+                    unfocusedLabelColor = Color.Gray
+                )
             )
             OutlinedTextField(
                 value = inputNamaLengkap,
@@ -177,51 +187,67 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
                     isInputValueChanged = true
                 },
                 label = { Text(text = usernameOrNama) }, // Ubah label
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text) // Ubah keyboardType
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                onClick = {
-                    val email = inputEmail
-                    val namaLengkap = inputNamaLengkap
-                    val profilePictureUri = selectedImageUri
+                    .padding(horizontal = 16.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text), // Ubah keyboardType
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.DarkGray,
+                    focusedBorderColor = Color(0xFF8F79E8),
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = Color(0xFF8F79E8),
+                    unfocusedLabelColor = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Box(modifier = Modifier.padding(16.dp)) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    onClick = {
+                        val email = inputEmail
+                        val inputanNamaLengkap = inputNamaLengkap
+                        val profilePictureUri = selectedImageUri
 
-                    viewModel.updateUserProfile(email, namaLengkap, profilePictureUri,
-                        onSuccess = {
-                            // Refresh the profile picture URL
-                            ref?.get()?.addOnSuccessListener { document ->
-                                if (document != null) {
-                                    profilePictureUrl =
-                                        document.data?.get("profilePictureUrl") as String?
-                                    selectedImageUri = null
-                                    navController.navigateUp()
+                        viewModel.updateUserProfile(email, inputanNamaLengkap, profilePictureUri,
+                            onSuccess = {
+                                // Refresh the profile picture URL
+                                ref?.get()?.addOnSuccessListener { document ->
+                                    if (document != null) {
+                                        profilePictureUrl =
+                                            document.data?.get("profilePictureUrl") as String?
+                                        selectedImageUri = null
+                                        navController.navigateUp()
+                                    }
                                 }
+                            },
+                            onFailure = { exception ->
+                                // Handle failure
+                                Log.e(
+                                    "EditProfileScreen",
+                                    "Failed to update profile: ${exception.message}"
+                                )
                             }
-                        },
-                        onFailure = { exception ->
-                            // Handle failure
-                            Log.e(
-                                "EditProfileScreen",
-                                "Failed to update profile: ${exception.message}"
-                            )
-                        }
+                        )
+                    },
+                    enabled = isInputValueChanged,
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.LightGray,
+                        containerColor = Color(0xFF8F79E8),
                     )
-                },
-                enabled = isInputValueChanged
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp),
-                        color = Color.White
-                    )
-                } else {
-                    Text(text = "Simpan")
-
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        val textColor = if (isInputValueChanged) Color.White else Color.Black
+                        Text(text = "Simpan", color = textColor)
+                    }
                 }
             }
         }

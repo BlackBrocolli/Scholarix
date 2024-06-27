@@ -43,6 +43,9 @@ import id.ac.stiki.doleno.scholarix.model.Beasiswa
 import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.getValue
@@ -90,7 +93,8 @@ fun DetailBeasiswaScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Arrow Back Icon"
+                            contentDescription = "Arrow Back Icon",
+                            tint = MaterialTheme.colors.onSurface
                         )
                     }
                 },
@@ -119,41 +123,50 @@ fun DetailBeasiswaScreen(
             )
         },
         bottomBar = {
-            Button(
-                onClick = {
-                    val url = when (type) {
-                        "beasiswaLuarNegeri" -> scholarship.value.link
-                        "beasiswaIndonesia" -> indonesiaScholarship.value.link
-                        else -> "" // Menangani kasus ketika type tidak cocok dengan yang diharapkan
-                    }
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(url)
-                    navController.context.startActivity(intent)
-                },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .background(Color.White) // Mengatur latar belakang menjadi putih
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Button(
+                    onClick = {
+                        val url = when (type) {
+                            "beasiswaLuarNegeri" -> scholarship.value.link
+                            "beasiswaIndonesia" -> indonesiaScholarship.value.link
+                            else -> "" // Menangani kasus ketika type tidak cocok dengan yang diharapkan
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = Uri.parse(url)
+                        navController.context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                 ) {
-                    Text(text = "Kunjungi Website")
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(text = "Kunjungi Website", color = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         }
-
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .background(Color.White),
             contentAlignment = Alignment.Center
         ) {
             when {
@@ -200,7 +213,8 @@ private fun DetailBeasiswaIndonesiaContent(beasiswa: BeasiswaIndonesia) {
         Text(
             text = beasiswa.name,
             fontWeight = FontWeight.Black,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colors.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (beasiswa.pilihan.isNotEmpty()) {
@@ -239,7 +253,11 @@ fun BeasiswaIndonesiaOutlinedCard(
             )
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text(text = heading, fontWeight = FontWeight.Bold)
+                Text(
+                    text = heading,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSurface
+                )
                 items.forEach { item ->
                     if (withBulletIcon) {
                         Row(verticalAlignment = Alignment.Top) {
@@ -247,12 +265,17 @@ fun BeasiswaIndonesiaOutlinedCard(
                                 text = "\u2022", // Unicode untuk simbol bullet
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
-                                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                                modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                                color = MaterialTheme.colors.onSurface
                             )
-                            Text(text = item, fontSize = 14.sp)
+                            Text(
+                                text = item,
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colors.onSurface
+                            )
                         }
                     } else {
-                        Text(text = item, fontSize = 14.sp)
+                        Text(text = item, fontSize = 14.sp, color = MaterialTheme.colors.onSurface)
                     }
                 }
             }
@@ -272,7 +295,8 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         Text(
             text = beasiswa.name,
             fontWeight = FontWeight.Black,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colors.onSurface
         )
         val beasiswaText = if (beasiswa.fundingStatus != null) {
             "Beasiswa ${beasiswa.fundingStatus}"
@@ -281,7 +305,8 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         }
         Text(
             text = beasiswaText,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colors.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
@@ -328,6 +353,7 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.onSurface
                         // color = Color(0xCC17181A)
                     )
                 }
@@ -347,7 +373,7 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Deadline", fontSize = 12.sp)
+                Text(text = "Deadline", fontSize = 12.sp, color = MaterialTheme.colors.onSurface)
                 beasiswa.deadline?.let {
                     Text(
                         text = it,
@@ -368,86 +394,123 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
             )
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text(text = "Tentang", fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Tentang",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSurface
+                )
 
                 if (beasiswa.country.isNotEmpty()) {
                     Text(
                         text = "LOKASI NEGARA",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colors.onSurface
                     )
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = "\u2022", // Unicode untuk simbol bullet
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                            color = MaterialTheme.colors.onSurface
                         )
-                        Text(text = beasiswa.country, fontSize = 14.sp)
+                        Text(
+                            text = beasiswa.country,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                     }
                 }
 
                 if (beasiswa.institution.isNotEmpty()) {
                     if (beasiswa.country.isNotEmpty()) {
-                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                        Divider(
+                            modifier = Modifier.padding(vertical = 16.dp),
+                            color = Color.LightGray
+                        )
                     }
                     Text(
                         text = "INSTITUSI ",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colors.onSurface
                     )
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = "\u2022", // Unicode untuk simbol bullet
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                            color = MaterialTheme.colors.onSurface
                         )
-                        Text(text = beasiswa.institution, fontSize = 14.sp)
+                        Text(
+                            text = beasiswa.institution,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                     }
                 }
 
                 if (beasiswa.opportunities.isNotEmpty()) {
                     if (beasiswa.country.isNotEmpty() || beasiswa.institution.isNotEmpty()) {
-                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                        Divider(
+                            modifier = Modifier.padding(vertical = 16.dp),
+                            color = Color.LightGray
+                        )
                     }
                     Text(
                         text = "JUMLAH BEASISWA ",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colors.onSurface
                     )
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = "\u2022", // Unicode untuk simbol bullet
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                            color = MaterialTheme.colors.onSurface
                         )
-                        Text(text = beasiswa.opportunities, fontSize = 14.sp)
+                        Text(
+                            text = "${beasiswa.opportunities} beasiswa",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                     }
                 }
 
                 if (beasiswa.duration.isNotEmpty()) {
                     if (beasiswa.country.isNotEmpty() || beasiswa.institution.isNotEmpty() || beasiswa.opportunities.isNotEmpty()) {
-                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                        Divider(
+                            modifier = Modifier.padding(vertical = 16.dp),
+                            color = Color.LightGray
+                        )
                     }
                     Text(
                         text = "DURASI",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colors.onSurface
                     )
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = "\u2022", // Unicode untuk simbol bullet
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                            color = MaterialTheme.colors.onSurface
                         )
-                        Text(text = beasiswa.duration, fontSize = 14.sp)
+                        Text(
+                            text = beasiswa.duration,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                     }
                 }
             }
@@ -509,14 +572,22 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
 
                         // Display the clean text
                         cleanText?.let {
-                            Text(text = it, fontSize = 14.sp)
+                            Text(
+                                text = it,
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colors.onSurface
+                            )
                         }
                     }
                 }
             } else if (beasiswa.description.isNotEmpty()) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(text = "Deskripsi", fontWeight = FontWeight.Bold, color = Color.Blue)
-                    Text(text = beasiswa.description, fontSize = 14.sp)
+                    Text(
+                        text = beasiswa.description,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
                 }
             }
         }
@@ -531,28 +602,37 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
             )
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text(text = "Persyaratan", fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Persyaratan",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSurface
+                )
                 Text(
                     text = "KEWARGANEGARAAN",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 4.dp), color = MaterialTheme.colors.onSurface
                 )
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
                         text = "\u2022", // Unicode untuk simbol bullet
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                        modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                        color = MaterialTheme.colors.onSurface
                     )
-                    Text(text = beasiswa.eligibleNationals, fontSize = 14.sp)
+                    Text(
+                        text = beasiswa.eligibleNationals,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
+                Divider(modifier = Modifier.padding(vertical = 16.dp), color = Color.LightGray)
                 Text(
                     text = "SERTIFIKAT BAHASA",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 4.dp), color = MaterialTheme.colors.onSurface
                 )
                 if (beasiswa.languageRequirements.isNotEmpty()) {
                     Row(verticalAlignment = Alignment.Top) {
@@ -560,19 +640,24 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                             text = "\u2022", // Unicode untuk simbol bullet
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                            color = MaterialTheme.colors.onSurface
                         )
-                        Text(text = beasiswa.languageRequirements, fontSize = 14.sp)
+                        Text(
+                            text = beasiswa.languageRequirements,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface
+                        )
                     }
                 } else {
-                    Text(text = "-")
+                    Text(text = "-", color = MaterialTheme.colors.onSurface)
                 }
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
+                Divider(modifier = Modifier.padding(vertical = 16.dp), color = Color.LightGray)
                 Text(
                     text = "DOKUMEN",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 4.dp), color = MaterialTheme.colors.onSurface
                 )
                 if (beasiswa.documentsHtml.isNotEmpty()) {
                     beasiswa.documentsHtml.forEach { document ->
@@ -581,13 +666,18 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                                 text = "\u2022", // Unicode untuk simbol bullet
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
-                                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
+                                modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+                                color = MaterialTheme.colors.onSurface
                             )
-                            Text(text = document, fontSize = 14.sp)
+                            Text(
+                                text = document,
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colors.onSurface
+                            )
                         }
                     }
                 } else {
-                    Text(text = "-")
+                    Text(text = "-", color = MaterialTheme.colors.onSurface)
                 }
             }
         }
@@ -603,8 +693,16 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
         ) {
             if (beasiswa.otherCriteria.isNotEmpty()) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text(text = "Kriteria Lain", fontWeight = FontWeight.Bold)
-                    Text(text = beasiswa.otherCriteria, fontSize = 14.sp)
+                    Text(
+                        text = "Kriteria Lain",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                    Text(
+                        text = beasiswa.otherCriteria,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
                 }
             }
         }
