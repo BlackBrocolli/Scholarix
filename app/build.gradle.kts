@@ -93,6 +93,8 @@ dependencies {
     // FLowRow
     implementation ("com.google.accompanist:accompanist-flowlayout:0.21.0-beta")
 
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

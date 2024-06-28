@@ -20,15 +20,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -91,14 +94,15 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+                .background(Color.White)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .padding(horizontal = 16.dp),
+//                    .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -106,7 +110,8 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                     text = "Preferensi Negara",
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -117,7 +122,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(color = Color(0xFF8F79E8))
                         }
                     }
 
@@ -154,9 +159,18 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Default.Search,
-                                                contentDescription = "Search Icon"
+                                                contentDescription = "Search Icon",
+                                                tint = Color.Gray
                                             )
                                         },
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = Color(
+                                                0xFF8F79E8
+                                            ),
+                                            cursorColor = MaterialTheme.colors.onSurface,
+                                            focusedTextColor = MaterialTheme.colors.onSurface,
+                                            unfocusedTextColor = MaterialTheme.colors.onSurface
+                                        ),
                                         trailingIcon = {
                                             if (searchText.isNotEmpty()) {
                                                 IconButton(onClick = {
@@ -164,7 +178,8 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                                 }) {
                                                     Icon(
                                                         imageVector = Icons.Default.Clear,
-                                                        contentDescription = "Clear Icon"
+                                                        contentDescription = "Clear Icon",
+                                                        tint = Color.Gray
                                                     )
                                                 }
                                             }
@@ -198,35 +213,47 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                 }
                 // == AKHIR PILIHAN PREFERENSI NEGARA ==
             }
-            Button(
-                onClick = {
-                    viewModel.savePreferensiNegara(selectedCountries)
-                    if (userEmail != null) {
-                        viewModel.saveUserPreferences(userEmail)
-                    }
-                    navController.navigate(Screen.MainView.route) {
-                        popUpTo(Screen.OnboardingScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp),
-                        color = Color.White
+                Button(
+                    onClick = {
+                        viewModel.savePreferensiNegara(selectedCountries)
+                        if (userEmail != null) {
+                            viewModel.saveUserPreferences(userEmail)
+                        }
+                        navController.navigate(Screen.MainView.route) {
+                            popUpTo(Screen.OnboardingScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.LightGray,
+                        containerColor = Color(0xFF8F79E8),
                     )
-                } else {
-                    Text(
-                        text = "Selesai",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text(
+                            text = "Selesai",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }
@@ -242,7 +269,7 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
             .border(
                 border = BorderStroke(
                     1.dp,
-                    color = if (isSelected) Color(0xFF405E90) else Color.Gray.copy(
+                    color = if (isSelected) Color(0xFF8F79E8) else Color.Gray.copy(
                         alpha = 0.5f
                     )
                 ),
@@ -253,7 +280,7 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
             }
             .background(
                 shape = RoundedCornerShape(20),
-                color = if (isSelected) Color(0xFF405E90) else Color.Transparent
+                color = if (isSelected) Color(0xFF8F79E8) else Color.Transparent
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

@@ -400,7 +400,7 @@ fun SignupScreen(
                     ),
                     enabled = isFormValid() // Memeriksa apakah formulir valid
                 ) {
-                    Text(text = "Daftar", color = if (isFormValid()) Color.White else Color.Black)
+                    Text(text = "Daftar", color = Color.White)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

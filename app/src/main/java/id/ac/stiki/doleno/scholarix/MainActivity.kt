@@ -1,13 +1,18 @@
 package id.ac.stiki.doleno.scholarix
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.identity.Identity
 import id.ac.stiki.doleno.scholarix.auth.google.GoogleAuthUiClient
 import id.ac.stiki.doleno.scholarix.navigation.Screen
@@ -37,6 +42,8 @@ class MainActivity : ComponentActivity() {
                         Screen.LoginScreen.route // Pengguna belum login, mulai dari halaman login
                     }
 
+                    SetupSystemBarsColor()
+
                     Navigation(
                         googleAuthUiClient = googleAuthUiClient,
                         navController = navController,
@@ -45,6 +52,26 @@ class MainActivity : ComponentActivity() {
                     // MainView()
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun SetupSystemBarsColor() {
+        fun isColorLight(color: Color): Boolean {
+            return color.luminance() > 0.5f
+        }
+
+        val systemUiController = rememberSystemUiController()
+        val useDarkIcons = isColorLight(Color(0xFF733CEF))  // Ganti dengan warna yang sesuai
+
+        SideEffect {
+            systemUiController.setStatusBarColor(
+                color = Color(0xFF733CEF), // Ganti dengan warna yang Anda inginkan
+                darkIcons = useDarkIcons
+            )
+            systemUiController.setNavigationBarColor(
+                color = Color.Black
+            )
         }
     }
 }

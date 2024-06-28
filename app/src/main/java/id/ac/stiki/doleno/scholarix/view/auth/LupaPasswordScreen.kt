@@ -133,7 +133,7 @@ fun LupaPasswordScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Reset Password",
-                        color = if (isFormValid()) Color.White else Color.Black
+                        color = Color.White
                     )
                 }
             }

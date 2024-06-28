@@ -50,7 +50,10 @@ fun MainView(googleAuthUiClient: GoogleAuthUiClient) {
 
     val bottomBar: @Composable () -> Unit = {
         if (shouldShowBottomBar) {
-            BottomNavigation(modifier = Modifier.wrapContentSize()) {
+            BottomNavigation(
+                modifier = Modifier.wrapContentSize(),
+                backgroundColor = Color.White
+            ) {
                 screensInBottomBar.forEach { item ->
                     BottomNavigationItem(
                         selected = currentRoute == item.bottomRoute,
@@ -64,8 +67,8 @@ fun MainView(googleAuthUiClient: GoogleAuthUiClient) {
                         label = {
                             Text(text = item.bottomTitle)
                         },
-                        selectedContentColor = Color.White,
-                        unselectedContentColor = Color.Black
+                        selectedContentColor = Color(0xFF8F79E8),
+                        unselectedContentColor = Color.Gray
                     )
                 }
             }
@@ -75,18 +78,21 @@ fun MainView(googleAuthUiClient: GoogleAuthUiClient) {
     val topBar: @Composable () -> Unit = {
         if (currentRoute == Screen.BottomScreen.Profil.route) {
             TopAppBar(
-                title = { Text(text = "Profil") },
-                elevation = 4.dp
+                title = { Text(text = "Profil", color = Color.White) },
+                elevation = 4.dp,
+                backgroundColor = Color(0xFF8F79E8)
             )
         } else if (currentRoute == Screen.BottomScreen.Home.route) {
             TopAppBar(
-                title = { Text(text = "Home") },
-                elevation = 4.dp
+                title = { Text(text = "Home", color = Color.White) },
+                elevation = 4.dp,
+                backgroundColor = Color(0xFF8F79E8)
             )
         } else if (currentRoute == Screen.BottomScreen.Favorit.route) {
             TopAppBar(
-                title = { Text(text = "Favorit") },
-                elevation = 4.dp
+                title = { Text(text = "Favorit", color = Color.White) },
+                elevation = 4.dp,
+                backgroundColor = Color(0xFF8F79E8)
             )
         }
     }

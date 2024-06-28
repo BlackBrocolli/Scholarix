@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -54,22 +57,24 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+                .fillMaxWidth()
+                .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = "Level Pendidikan",
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -80,7 +85,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[0]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[0]) Color(0xFF8F79E8) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -96,7 +101,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[0]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[0]) Color(0xFF8F79E8) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -126,7 +131,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[1]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[1]) Color(0xFF8F79E8) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -142,7 +147,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[1]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[1]) Color(0xFF8F79E8) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -172,7 +177,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[2]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[2]) Color(0xFF8F79E8) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -188,7 +193,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[2]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[2]) Color(0xFF8F79E8) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -218,7 +223,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if (selectedRows[3]) Color(0xFF405E90) else Color.Gray.copy(
+                                color = if (selectedRows[3]) Color(0xFF8F79E8) else Color.Gray.copy(
                                     alpha = 0.5f
                                 )
                             ),
@@ -234,7 +239,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         }
                         .background(
                             shape = RoundedCornerShape(20),
-                            color = if (selectedRows[3]) Color(0xFF405E90) else Color.Transparent
+                            color = if (selectedRows[3]) Color(0xFF8F79E8) else Color.Transparent
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -259,21 +264,33 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                 }
                 // == AKHIR PILIHAN LEVEL PENDIDIKAN ==
             }
-            Button(
-                onClick = {
-                    viewModel.saveLevelPendidikan(selectedRows)
-                    navController.navigate(Screen.ThirdOnboarding.route)
-                },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
             ) {
-                Text(
-                    text = "Selanjutnya",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
+                Button(
+                    onClick = {
+                        viewModel.saveLevelPendidikan(selectedRows)
+                        navController.navigate(Screen.ThirdOnboarding.route)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.LightGray,
+                        containerColor = Color(0xFF8F79E8),
+                    )
+                ) {
+                    Text(
+                        text = "Selanjutnya",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily,
+                        color = Color.White
+                    )
+                }
             }
         }
     }

@@ -113,7 +113,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             isLoadingRecommendedScholarships.value -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Gray
+                    color = Color(0xFF8F79E8)
                 )
             }
 
@@ -178,7 +178,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 // Display a loading animation or indicator
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Gray
+                    color = Color(0xFF8F79E8)
                 )
             }
 
@@ -227,7 +227,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
                 // Display a loading animation or indicator
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Gray
+                    color = Color(0xFF8F79E8)
                 )
             }
 

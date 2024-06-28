@@ -1,7 +1,8 @@
 package id.ac.stiki.doleno.scholarix.view.onboarding
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,14 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,19 +33,24 @@ import id.ac.stiki.doleno.scholarix.ui.theme.poppinsFontFamily
 @Composable
 fun OnBoardingScreen(navController: NavController) {
 
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Spacer(modifier = Modifier.height(56.dp))
             Text(
                 text = "Selamat datang di Scholarix",
                 fontSize = 22.sp,
-                fontWeight = FontWeight(600)
+                fontWeight = FontWeight(600),
+                color = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -64,41 +71,55 @@ fun OnBoardingScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize()
             )
         }
-        Button(
-            onClick = {
-                navController.navigate(Screen.SecondOnboarding.route)
-            },
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = "Lanjutkan",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = poppinsFontFamily
-            )
+            Button(
+                onClick = {
+                    navController.navigate(Screen.SecondOnboarding.route)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = Color.LightGray,
+                    containerColor = Color(0xFF8F79E8),
+                )
+            ) {
+                Text(
+                    text = "Lanjutkan",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily,
+                    color = Color.White
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        TextButton(
-            onClick = {
-                navController.navigate(Screen.MainView.route) {
-                    popUpTo(Screen.OnboardingScreen.route) {
-                        inclusive = true
+        Box(modifier = Modifier.padding(bottom = 16.dp)) {
+            TextButton(
+                onClick = {
+                    navController.navigate(Screen.MainView.route) {
+                        popUpTo(Screen.OnboardingScreen.route) {
+                            inclusive = true
+                        }
                     }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
 //            colors = ButtonDefaults.buttonColors(Color(0xFF4A5391))
-        ) {
-            Text(
-                text = "Tambahkan preferensi nanti",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = poppinsFontFamily
-            )
+            ) {
+                Text(
+                    text = "Tambahkan preferensi nanti",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily,
+                    color = Color(0xFF8F79E8)
+                )
+            }
         }
     }
 }

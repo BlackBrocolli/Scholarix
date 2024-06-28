@@ -249,7 +249,7 @@ fun LoginScreen(
                 ) {
                     Text(
                         text = "Masuk",
-                        color = if (isFormValid()) Color.White else Color.Black
+                        color = Color.White
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
