@@ -37,9 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +60,7 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
 fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, userData: UserData) {
-    // fetch countries
+    // Fetch countries
     val countryViewModel: CountryViewModel = viewModel()
     val viewState by countryViewModel.countriesState
     val userEmail = userData.email
@@ -73,7 +70,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
     val searchedCountries by countryViewModel.searchedCountries.observeAsState(emptyList())
 
     // State untuk melacak nama negara yang dipilih
-    var selectedCountries by remember { mutableStateOf(setOf<String>()) }
+    val selectedCountries by viewModel.selectedCountries.observeAsState(setOf())
 
     Scaffold(
         topBar = {
@@ -148,7 +145,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                         onValueChange = {
                                             countryViewModel.setSearchText(it)
                                         },
-                                        placeholder = { androidx.compose.material.Text("Cari negara") },
+                                        placeholder = { Text("Cari negara") },
                                         textStyle = TextStyle(fontSize = 14.sp),
                                         modifier = Modifier
                                             .weight(1f)
@@ -162,9 +159,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                             )
                                         },
                                         colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = Color(
-                                                0xFF8F79E8
-                                            ),
+                                            focusedBorderColor = Color(0xFF8F79E8),
                                             cursorColor = MaterialTheme.colors.onSurface,
                                             focusedTextColor = MaterialTheme.colors.onSurface,
                                             unfocusedTextColor = MaterialTheme.colors.onSurface
@@ -185,17 +180,18 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                                     )
                                 }
                             }
-                            itemsIndexed(if (isSearching) searchedCountries else viewState.list) { index, country ->
+                            itemsIndexed(if (isSearching) searchedCountries else viewState.list) { _, country ->
                                 CountryItem(
                                     country = country,
                                     isSelected = selectedCountries.contains(country.name),
                                     onClick = {
                                         // Menambah atau menghapus negara yang dipilih
-                                        selectedCountries = if (selectedCountries.contains(country.name)) {
+                                        val newSelectedCountries = if (selectedCountries.contains(country.name)) {
                                             selectedCountries - country.name
                                         } else {
                                             selectedCountries + country.name
                                         }
+                                        viewModel.savePreferensiNegara(newSelectedCountries)
                                     }
                                 )
                             }
@@ -212,7 +208,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
             ) {
                 Button(
                     onClick = {
-                        viewModel.savePreferensiNegara(selectedCountries.toList())
+                        viewModel.savePreferensiNegara(selectedCountries)
                         if (userEmail != null) {
                             viewModel.saveUserPreferences(userEmail)
                         }
@@ -260,9 +256,7 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
             .border(
                 border = BorderStroke(
                     1.dp,
-                    color = if (isSelected) Color(0xFF8F79E8) else Color.Gray.copy(
-                        alpha = 0.5f
-                    )
+                    color = if (isSelected) Color(0xFF8F79E8) else Color.Gray.copy(alpha = 0.5f)
                 ),
                 shape = RoundedCornerShape(20)
             )
@@ -283,11 +277,11 @@ fun CountryItem(country: Country, isSelected: Boolean, onClick: () -> Unit) {
                 contentDescription = "Country Flag",
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(12.dp)), // Mengatur ukuran gambar bendera
+                    .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(12.dp))
-            // nama negara
+            // Nama negara
             val maxLength = 22 // Panjang maksimal yang diinginkan
             val text = if (country.name.length > maxLength) {
                 "${country.name.substring(0, maxLength)}..."

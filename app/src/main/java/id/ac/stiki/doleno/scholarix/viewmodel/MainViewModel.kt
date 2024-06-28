@@ -20,6 +20,68 @@ import id.ac.stiki.doleno.scholarix.navigation.Screen
 
 class MainViewModel : ViewModel() {
 
+    // == Onboarding ==
+    private val _levelPendidikan = MutableLiveData<List<String>>()
+    private val _tipePendanaan = MutableLiveData<List<String>>()
+    private val _preferensiNegara = MutableLiveData<List<String>>()
+    private val _isLoadingSaveUserPreference = MutableLiveData(false)
+    val isLoadingSaveUserPreference: LiveData<Boolean> = _isLoadingSaveUserPreference
+
+    private val _selectedLevelPendidikan = MutableLiveData(List(4) { false })
+    val selectedLevelPendidikan: LiveData<List<Boolean>> get() = _selectedLevelPendidikan
+
+    private val _selectedTipePendanaan = MutableLiveData(List(2) { false })
+    val selectedTipePendanaan: LiveData<List<Boolean>> get() = _selectedTipePendanaan
+
+    private val _selectedCountries = MutableLiveData<Set<String>>(setOf())
+    val selectedCountries: LiveData<Set<String>> get() = _selectedCountries
+
+    fun saveLevelPendidikanOnboarding(selected: List<Boolean>) {
+        _selectedLevelPendidikan.value = selected
+        val levels = mutableListOf<String>()
+        if (selected[0]) levels.add("S1")
+        if (selected[1]) levels.add("S2")
+        if (selected[2]) levels.add("S3")
+        if (selected[3]) levels.add("Lainnya")
+        _levelPendidikan.value = levels
+    }
+
+    fun saveTipePendanaan(selected: List<Boolean>) {
+        _selectedTipePendanaan.value = selected
+        val types = mutableListOf<String>()
+        if (selected[0]) types.add("Fully Funded")
+        if (selected[1]) types.add("Partial Funded")
+        _tipePendanaan.value = types
+    }
+
+    fun savePreferensiNegara(selected: Set<String>) {
+        _selectedCountries.value = selected
+        _preferensiNegara.value = selected.toList()
+    }
+
+    fun saveUserPreferences(email: String) {
+        _isLoadingSaveUserPreference.value = true
+        val preferences = Preference(
+            degrees = _levelPendidikan.value ?: listOf(),
+            fundingStatus = _tipePendanaan.value ?: listOf(),
+            countries = _preferensiNegara.value ?: listOf()
+        )
+
+        db.collection("users").document(email)
+            .update("preference", preferences)
+            .addOnSuccessListener {
+                // Handle success
+                _isLoadingSaveUserPreference.value = false
+                Log.d("Firestore", "User references successfully updated!")
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+                _isLoadingSaveUserPreference.value = false
+                Log.w("Firestore", "Error updating User references", e)
+            }
+    }
+    // == End of onboarding ==
+
     private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.BottomScreen.Home)
 
     val currentScreen: MutableState<Screen>
@@ -711,55 +773,4 @@ class MainViewModel : ViewModel() {
             }
     }
     // ------ End of FAVORITE SCHOLARSHIPS ------
-
-    // ------ Start of ONBOARDING ---------
-    private val _levelPendidikan = MutableLiveData<List<String>>()
-    private val _tipePendanaan = MutableLiveData<List<String>>()
-    private val _preferensiNegara = MutableLiveData<List<String>>()
-    private val _isLoadingSaveUserPreference = MutableLiveData(false)
-    val isLoadingSaveUserPreference: LiveData<Boolean> = _isLoadingSaveUserPreference
-
-    fun saveLevelPendidikan(list: List<Boolean>) {
-        val levels = mutableListOf<String>()
-        if (list[0]) levels.add("S1")
-        if (list[1]) levels.add("S2")
-        if (list[2]) levels.add("S3")
-        if (list[3]) levels.add("Lainnya")
-        _levelPendidikan.value = levels
-    }
-
-    fun saveTipePendanaan(list: List<Boolean>) {
-        val types = mutableListOf<String>()
-        if (list[0]) types.add("Fully Funded")
-        if (list[1]) types.add("Partial Funded")
-        _tipePendanaan.value = types
-    }
-
-    fun savePreferensiNegara(list: List<String>) {
-        _preferensiNegara.value = list
-    }
-
-    fun saveUserPreferences(email: String) {
-        _isLoadingSaveUserPreference.value = true
-        val preferences = Preference(
-            degrees = _levelPendidikan.value ?: listOf(),
-            fundingStatus = _tipePendanaan.value ?: listOf(),
-            countries = _preferensiNegara.value ?: listOf()
-        )
-
-        db.collection("users").document(email)
-            .update("preference", preferences)
-            .addOnSuccessListener {
-                // Handle success
-                _isLoadingSaveUserPreference.value = false
-                Log.d("Firestore", "User references successfully updated!")
-            }
-            .addOnFailureListener { e ->
-                // Handle failure
-                _isLoadingSaveUserPreference.value = false
-                Log.w("Firestore", "Error updating User references", e)
-            }
-    }
-
-    // ------ End of ONBOARDING ---------
 }

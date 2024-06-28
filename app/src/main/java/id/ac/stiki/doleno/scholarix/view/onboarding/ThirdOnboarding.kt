@@ -25,9 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,8 +40,7 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
 fun ThirdOnboarding(navController: NavController, viewModel: MainViewModel) {
-
-    var selectedRows by remember { mutableStateOf(List(2) { false }) }
+    val selectedRows by viewModel.selectedTipePendanaan.observeAsState(List(2) { false })
 
     Scaffold(
         topBar = {
@@ -93,11 +90,11 @@ fun ThirdOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveTipePendanaan(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[0] = !it[0]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),
@@ -139,11 +136,11 @@ fun ThirdOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveTipePendanaan(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[1] = !it[1]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),

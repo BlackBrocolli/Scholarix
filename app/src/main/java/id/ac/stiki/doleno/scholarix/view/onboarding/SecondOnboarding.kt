@@ -25,9 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,8 +40,7 @@ import id.ac.stiki.doleno.scholarix.viewmodel.MainViewModel
 
 @Composable
 fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
-
-    var selectedRows by remember { mutableStateOf(List(4) { false }) }
+    val selectedRows by viewModel.selectedLevelPendidikan.observeAsState(List(4) { false })
 
     Scaffold(
         topBar = {
@@ -67,7 +64,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = "Level Pendidikan",
@@ -93,11 +90,11 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveLevelPendidikanOnboarding(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[0] = !it[0]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),
@@ -125,6 +122,8 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
+                // Ulangi untuk baris lainnya...
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -139,11 +138,11 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveLevelPendidikanOnboarding(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[1] = !it[1]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),
@@ -171,6 +170,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -185,11 +185,11 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveLevelPendidikanOnboarding(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[2] = !it[2]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),
@@ -217,6 +217,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -231,11 +232,11 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
                         )
                         .height(64.dp)
                         .clickable {
-                            selectedRows = selectedRows
+                            viewModel.saveLevelPendidikanOnboarding(selectedRows
                                 .toMutableList()
                                 .also {
                                     it[3] = !it[3]
-                                }
+                                })
                         }
                         .background(
                             shape = RoundedCornerShape(20),
@@ -272,7 +273,7 @@ fun SecondOnboarding(navController: NavController, viewModel: MainViewModel) {
             ) {
                 Button(
                     onClick = {
-                        viewModel.saveLevelPendidikan(selectedRows)
+                        viewModel.saveLevelPendidikanOnboarding(selectedRows)
                         navController.navigate(Screen.ThirdOnboarding.route)
                     },
                     modifier = Modifier
