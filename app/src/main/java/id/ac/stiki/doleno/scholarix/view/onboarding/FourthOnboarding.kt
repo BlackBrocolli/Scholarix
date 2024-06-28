@@ -72,9 +72,8 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
     val isSearching by countryViewModel.isSearching.observeAsState(false)
     val searchedCountries by countryViewModel.searchedCountries.observeAsState(emptyList())
 
-    // State untuk melacak indeks item negara yang dipilih
-    val selectedItems = remember { mutableStateOf(setOf<Int>()) }
-    var selectedCountries by remember { mutableStateOf(listOf<String>()) }
+    // State untuk melacak nama negara yang dipilih
+    var selectedCountries by remember { mutableStateOf(setOf<String>()) }
 
     Scaffold(
         topBar = {
@@ -102,7 +101,6 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp),
-//                    .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -190,21 +188,14 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
                             itemsIndexed(if (isSearching) searchedCountries else viewState.list) { index, country ->
                                 CountryItem(
                                     country = country,
-                                    isSelected = selectedItems.value.contains(index),
+                                    isSelected = selectedCountries.contains(country.name),
                                     onClick = {
-                                        // Menambah atau menghapus indeks item yang dipilih
-                                        selectedItems.value =
-                                            if (selectedItems.value.contains(index)) {
-                                                selectedItems.value - index
-                                            } else {
-                                                selectedItems.value + index
-                                            }
-                                        selectedCountries =
-                                            if (selectedCountries.contains(country.name)) {
-                                                selectedCountries - country.name
-                                            } else {
-                                                selectedCountries + country.name
-                                            }
+                                        // Menambah atau menghapus negara yang dipilih
+                                        selectedCountries = if (selectedCountries.contains(country.name)) {
+                                            selectedCountries - country.name
+                                        } else {
+                                            selectedCountries + country.name
+                                        }
                                     }
                                 )
                             }
@@ -221,7 +212,7 @@ fun FourthOnboarding(navController: NavController, viewModel: MainViewModel, use
             ) {
                 Button(
                     onClick = {
-                        viewModel.savePreferensiNegara(selectedCountries)
+                        viewModel.savePreferensiNegara(selectedCountries.toList())
                         if (userEmail != null) {
                             viewModel.saveUserPreferences(userEmail)
                         }
