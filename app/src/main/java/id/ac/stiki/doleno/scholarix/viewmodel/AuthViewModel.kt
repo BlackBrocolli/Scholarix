@@ -4,10 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,6 +27,30 @@ import kotlinx.coroutines.launch
 class AuthViewModel : ViewModel() {
 
     private val userRepository: UserRepository
+    private val _authResult = MutableLiveData<Result<Boolean>>()
+    val authResult: LiveData<Result<Boolean>> get() = _authResult
+
+    // == Variable edit profile ==
+    private val db = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+
+    private val _inputNamaLengkap = MutableLiveData<String>()
+    val inputNamaLengkap: LiveData<String> = _inputNamaLengkap
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+    // == End of Variable edit profile ==
+
+    private val _state = MutableStateFlow(SignInState())
+    val state = _state.asStateFlow()
+
+    // == Variable Login dan Register ==
+    private val _isLoadingLoginButton = MutableLiveData(false)
+    val isLoadingLoginButton: LiveData<Boolean> = _isLoadingLoginButton
+
+    private val _isLoadingRegisterButton = MutableLiveData(false)
+    val isLoadingRegisterButton: LiveData<Boolean> = _isLoadingRegisterButton
+    // == End of Variable Login dan Register ==
 
     init {
         userRepository = UserRepository(
@@ -38,9 +58,6 @@ class AuthViewModel : ViewModel() {
             Injection.instance()
         )
     }
-
-    private val _authResult = MutableLiveData<Result<Boolean>>()
-    val authResult: LiveData<Result<Boolean>> get() = _authResult
 
     fun signUp(
         email: String,
@@ -50,6 +67,7 @@ class AuthViewModel : ViewModel() {
         navController: NavController,
         context: Context
     ) {
+        _isLoadingRegisterButton.value = true
         viewModelScope.launch {
 //            _authResult.value = userRepository.signUp(email, password, namaLengkap, noHandphone)
             try {
@@ -79,20 +97,27 @@ class AuthViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Exception in sign up", e)
                 _authResult.postValue(Result.Error(e))
+            } finally {
+                _isLoadingRegisterButton.value =
+                    false  // Tambahkan untuk menandai bahwa proses pendaftaran telah selesai
             }
         }
     }
 
     fun login(email: String, password: String) {
+        _isLoadingLoginButton.value = true
         viewModelScope.launch {
-            _authResult.value = userRepository.login(email, password)
+            try {
+                val result = userRepository.login(email, password)
+                _authResult.value = result
+            } finally {
+                _isLoadingLoginButton.value = false
+            }
         }
     }
 
-    // == GOOGLE SIGN IN ==
-    private val _state = MutableStateFlow(SignInState())
-    val state = _state.asStateFlow()
 
+    // == GOOGLE SIGN IN ==
     fun onSignInResult(result: SignInResult) {
         _state.update {
             it.copy(
@@ -107,15 +132,6 @@ class AuthViewModel : ViewModel() {
     }
 
     // -------- Start of EDIT PROFILE --------
-    private val db = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
-
-    private val _inputNamaLengkap = MutableLiveData<String>()
-    val inputNamaLengkap: LiveData<String> = _inputNamaLengkap
-
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
-
     fun setInputNamaLengkap(nama: String) {
         _inputNamaLengkap.value = nama
     }
@@ -169,5 +185,4 @@ class AuthViewModel : ViewModel() {
         }
     }
     // -------- End of EDIT PROFILE --------
-
 }

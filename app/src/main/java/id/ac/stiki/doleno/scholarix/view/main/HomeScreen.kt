@@ -78,6 +78,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             viewModel.fetchIndonesiaScholarshipDetails()
         }
         viewModel.resetSorting()
+        viewModel.resetCurrentPage()
     }
 
     Column(
@@ -86,6 +87,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel, userEmail
             .verticalScroll(rememberScrollState())
 //            .padding(16.dp)
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,

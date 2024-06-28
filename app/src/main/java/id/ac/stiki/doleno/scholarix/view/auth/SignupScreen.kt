@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -75,6 +77,7 @@ fun SignupScreen(
     var nomorHPError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     var konfirmasiPasswordError by remember { mutableStateOf("") }
+    val isLoadingRegisterButton by authViewModel.isLoadingRegisterButton.observeAsState(initial = false)
 
     fun validateNama(nama: String) {
         namaError = if (nama.isBlank()) {
@@ -400,7 +403,15 @@ fun SignupScreen(
                     ),
                     enabled = isFormValid() // Memeriksa apakah formulir valid
                 ) {
-                    Text(text = "Daftar", color = Color.White)
+                    if (isLoadingRegisterButton) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text(text = "Daftar", color = Color.White)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

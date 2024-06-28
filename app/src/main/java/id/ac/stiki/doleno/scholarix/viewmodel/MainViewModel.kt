@@ -450,7 +450,7 @@ class MainViewModel : ViewModel() {
         _currentPage.value = _currentPage.value?.plus(value)
     }
 
-    private fun resetCurrentPage() {
+    fun resetCurrentPage() {
         _currentPage.value = 0
     }
     // ----------- End of PAGINATION ---------

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +70,7 @@ fun LoginScreen(
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     val result by authViewModel.authResult.observeAsState()
+    val isLoadingLoginButton by authViewModel.isLoadingLoginButton.observeAsState(initial = false)
 
     LaunchedEffect(result) {
         result?.let { authResult ->
@@ -247,10 +249,18 @@ fun LoginScreen(
                     ),
                     enabled = isFormValid() // Memeriksa apakah formulir valid
                 ) {
-                    Text(
-                        text = "Masuk",
-                        color = Color.White
-                    )
+                    if (isLoadingLoginButton) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text(
+                            text = "Masuk",
+                            color = Color.White
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
