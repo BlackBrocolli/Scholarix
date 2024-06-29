@@ -54,8 +54,6 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
     var inputEmail by remember { mutableStateOf("") }
     val inputNamaLengkap by viewModel.inputNamaLengkap.observeAsState(initial = "")
     var isInputValueChanged by remember { mutableStateOf(false) }
-    var usernameOrNama by remember { mutableStateOf("") }
-
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var profilePictureUrl by remember { mutableStateOf<String?>(null) }
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
@@ -88,13 +86,6 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
         if (userData.email != null) {
             inputEmail = userData.email.toString()
         }
-//        usernameOrNama = if (userData.username != null && userData.username != "") {
-//            viewModel.setInputNamaLengkap(userData.username.toString())
-//            "Username"
-//        } else {
-//            viewModel.setInputNamaLengkap(namaLengkap.value)
-//            "Nama Lengkap"
-//        }
     }
 
     Scaffold(

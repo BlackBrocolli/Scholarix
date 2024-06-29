@@ -121,21 +121,28 @@ class GoogleAuthUiClient(
     private val firestore = FirebaseFirestore.getInstance()
 
     private suspend fun saveUserToFirestore(user: UserData) {
-        val userMap = mapOf(
-            "namaLengkap" to user.username,
-            "email" to user.email,
-            "noHandphone" to "",
-            "profilePictureUrl" to user.profilePictureUrl,
-            "favorites" to emptyList<String>()
-        )
+
+        val userDocRef = firestore.collection("users").document(user.email!!)
 
         try {
-            firestore.collection("users").document(user.email!!).set(userMap).await()
-            // User data saved successfully
+            val document = userDocRef.get().await()
+
+            if (!document.exists()) {
+                val userMap = mapOf(
+                    "namaLengkap" to user.username,
+                    "email" to user.email,
+                    "noHandphone" to "",
+                    "profilePictureUrl" to user.profilePictureUrl,
+                    "favorites" to emptyList<String>()
+                )
+                // Dokumen belum ada, lakukan set untuk membuat dokumen baru.
+                userDocRef.set(userMap).await()
+                // User data saved successfully
+            }
+            // Jika dokumen sudah ada, tidak perlu melakukan apa-apa.
         } catch (e: Exception) {
             e.printStackTrace()
-            if (e is CancellationException) throw e
-            // Handle failure to save user data
+            // Handle failure to check document existence or to save user data
         }
     }
 }

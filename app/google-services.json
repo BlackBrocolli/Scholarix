@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "255285051449-4cnk56u7vv11t9b08jbc878ghp6qes90.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.ac.stiki.doleno.scholarix",
-            "certificate_hash": "60887ded7672ae0b8e35d84a7820f30e3988c8ba"
-          }
-        },
-        {
           "client_id": "255285051449-6fmipv0u91orrmd6hh6f67umsc7kh5sp.apps.googleusercontent.com",
           "client_type": 3
         }

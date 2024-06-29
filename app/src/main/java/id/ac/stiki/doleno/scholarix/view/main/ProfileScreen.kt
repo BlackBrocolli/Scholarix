@@ -97,11 +97,7 @@ fun ProfileScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-//            if (userData?.username != null && userData.username != "") {
-//                Text(text = userData.username, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-//            } else {
-                Text(text = namaLengkap.value, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-//            }
+            Text(text = namaLengkap.value, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(4.dp))
             if (userData?.email != null) {
                 Text(text = userData.email)
