@@ -411,7 +411,10 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                     if (type == "indonesia" && index > 0) {
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                        Divider(
+                            modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
+                            color = Color.Gray
+                        )
                     }
                     if (type == "indonesia") {
                         val beasiswaIndonesia = beasiswa as BeasiswaIndonesia

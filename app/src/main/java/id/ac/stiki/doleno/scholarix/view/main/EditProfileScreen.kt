@@ -77,6 +77,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
         if (it != null) {
             val retrievedNamaLengkap = it.data?.get("namaLengkap").toString()
             namaLengkap.value = retrievedNamaLengkap
+            viewModel.setInputNamaLengkap(namaLengkap.value)
             profilePictureUrl = it.data?.get("profilePictureUrl") as String?
         } else {
             Log.d("Nama Kosong", "Tidak berhasil")
@@ -87,13 +88,13 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
         if (userData.email != null) {
             inputEmail = userData.email.toString()
         }
-        usernameOrNama = if (userData.username != null && userData.username != "") {
-            viewModel.setInputNamaLengkap(userData.username.toString())
-            "Username"
-        } else {
-            viewModel.setInputNamaLengkap(namaLengkap.value)
-            "Nama Lengkap"
-        }
+//        usernameOrNama = if (userData.username != null && userData.username != "") {
+//            viewModel.setInputNamaLengkap(userData.username.toString())
+//            "Username"
+//        } else {
+//            viewModel.setInputNamaLengkap(namaLengkap.value)
+//            "Nama Lengkap"
+//        }
     }
 
     Scaffold(
@@ -186,7 +187,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, navController: NavController, us
                     viewModel.setInputNamaLengkap(it)
                     isInputValueChanged = true
                 },
-                label = { Text(text = usernameOrNama) }, // Ubah label
+                label = { Text(text = "Nama Lengkap") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
