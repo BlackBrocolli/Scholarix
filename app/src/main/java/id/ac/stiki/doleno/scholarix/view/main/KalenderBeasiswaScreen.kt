@@ -61,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -162,7 +163,10 @@ fun KalenderBeasiswaScreen(viewModel: MainViewModel, navController: NavControlle
                             modifier = Modifier
                                 .weight(1f)
                                 .height(56.dp),
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Search,

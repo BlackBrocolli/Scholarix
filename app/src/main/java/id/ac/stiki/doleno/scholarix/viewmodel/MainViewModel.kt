@@ -457,8 +457,11 @@ class MainViewModel : ViewModel() {
         _searchText.value = text
     }
 
+    // Fungsi ini adalah titik awal untuk melakukan pencarian beasiswa
     fun searchScholarshipsByName(name: String, type: String) {
         _isSearching.value = true
+        _isFiltering.value = false
+        resetCardSelections()
 
         when (type) {
             "luarnegeri" -> {
@@ -614,6 +617,8 @@ class MainViewModel : ViewModel() {
         toggleCardSelection(status)  // Toggle the card selection state
     }
 
+    // cek apakah ada filter yang aktif dan,
+    // jika ada, memanggil fungsi untuk melakukan penyaringan (performFiltering).
     fun checkAndSetFiltering(type: String) {
         val hasSelectedDegrees = _selectedDegrees.value?.isNotEmpty() == true
         val hasSelectedFundingStatus = _selectedFundingStatus.value?.isNotEmpty() == true
@@ -625,6 +630,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // Fungsi ini melakukan penyaringan pada daftar beasiswa berdasarkan filter yang dipilih.
     fun performFiltering(type: String) {
         val degrees = _selectedDegrees.value ?: emptyList()
         val fundingStatus = _selectedFundingStatus.value ?: emptyList()
