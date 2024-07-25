@@ -55,7 +55,7 @@ fun LupaPasswordScreen(navController: NavController) {
                 if (task.isSuccessful) {
                     Toast.makeText(
                         context,
-                        "Email reset password telah dikirim.",
+                        "Silahkan cek email anda.",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {

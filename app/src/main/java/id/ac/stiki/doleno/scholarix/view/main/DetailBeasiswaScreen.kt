@@ -476,8 +476,20 @@ private fun DetailBeasiswaContent(beasiswa: Beasiswa) {
                             modifier = Modifier.padding(start = 8.dp, end = 4.dp),
                             color = MaterialTheme.colors.onSurface
                         )
+                        val opportunities = beasiswa.opportunities
+                        val displayText = if (opportunities in listOf(
+                                "N/A",
+                                "Not specified.",
+                                "Limited",
+                                "Not specified"
+                            )
+                        ) {
+                            opportunities
+                        } else {
+                            "$opportunities beasiswa"
+                        }
                         Text(
-                            text = "${beasiswa.opportunities} beasiswa",
+                            text = displayText,
                             fontSize = 14.sp,
                             color = MaterialTheme.colors.onSurface
                         )
