@@ -3,6 +3,7 @@ package id.ac.stiki.doleno.scholarix.view.main
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
@@ -116,7 +118,7 @@ fun FavoritList(
                                                 .align(Alignment.Center)
                                                 .padding(16.dp),
                                             textAlign = TextAlign.Center,
-                                            color = androidx.compose.material.MaterialTheme.colors.onSurface
+                                            color = MaterialTheme.colors.onSurface
                                         )
                                     }
                                 }
@@ -138,7 +140,7 @@ fun FavoritList(
                                                 .align(Alignment.Center)
                                                 .padding(16.dp),
                                             textAlign = TextAlign.Center,
-                                            color = androidx.compose.material.MaterialTheme.colors.onSurface
+                                            color = MaterialTheme.colors.onSurface
                                         )
                                     }
                                 }
@@ -152,7 +154,7 @@ fun FavoritList(
                             .align(Alignment.Center)
                             .padding(16.dp),
                         textAlign = TextAlign.Center,
-                        color = androidx.compose.material.MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
             }
@@ -194,17 +196,20 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(vertical = 12.dp)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // BARIS DEGREE & LOKASI
                     Row {
+                        Spacer(modifier = Modifier.width(12.dp))
                         // Menampilkan setiap derajat dalam kartu terpisah
                         beasiswa.degrees.forEach { degree ->
                             val containerColor = when (degree) {
@@ -255,30 +260,13 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = androidx.compose.material.MaterialTheme.colors.onSurface
+                                    color = MaterialTheme.colors.onSurface
                                     //                        color = Color(0xCC17181A)
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
-
-                    // ICON FAVORITE
-//                    IconButton(modifier = Modifier
-////                                .background(
-////                                    MaterialTheme.colorScheme.primary,
-//                        .background(
-//                            color = Color(0xFF00AFEA),
-//                            RoundedCornerShape(percent = 15)
-//                        )
-//                        .size(32.dp),
-//                        onClick = { /*TODO*/ }
-//                    ) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.baseline_favorite_border_24),
-//                            contentDescription = null,
-//                            tint = Color.White
-//                        )
-//                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -289,20 +277,22 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     "Beasiswa ${beasiswa.amount}"
                 }
                 Text(
+                    modifier = Modifier.padding(start = 12.dp),
                     text = beasiswaText,
                     fontSize = 12.sp,
                     maxLines = 1, // Batasi jumlah baris menjadi 1
                     overflow = TextOverflow.Ellipsis, // Tambahkan elipsis jika teks terlalu panjang
-                    color = androidx.compose.material.MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colors.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // NAMA BEASISWA
                 Text(
+                    modifier = Modifier.padding(horizontal = 12.dp),
                     text = beasiswa.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 24.sp,
-                    color = androidx.compose.material.MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colors.onSurface
                 )
             }
 
@@ -310,7 +300,8 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .padding(horizontal = 12.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0x80D9D9D9),
                 )
@@ -324,7 +315,7 @@ fun FavoriteBeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     Text(
                         text = "Deadline",
                         fontSize = 12.sp,
-                        color = androidx.compose.material.MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colors.onSurface
                     )
                     beasiswa.deadline?.let {
                         Text(

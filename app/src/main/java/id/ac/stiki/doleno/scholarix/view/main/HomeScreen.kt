@@ -2,6 +2,7 @@ package id.ac.stiki.doleno.scholarix.view.main
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -282,12 +283,13 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
         ) {
             Column(
                 modifier = Modifier
-                    .padding(12.dp)
+                    .padding(vertical = 12.dp)
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Row {
+                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                        Spacer(modifier = Modifier.width(12.dp))
                         // Menampilkan setiap derajat dalam kartu terpisah
                         beasiswa.degrees.forEach { degree ->
                             val containerColor = when (degree) {
@@ -342,6 +344,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     val beasiswaText = if (beasiswa.fundingStatus != null) {
@@ -350,6 +353,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                         "Beasiswa ${beasiswa.amount}"
                     }
                     Text(
+                        modifier = Modifier.padding(start = 12.dp),
                         text = beasiswaText,
                         fontSize = 12.sp,
                         maxLines = 1, // Batasi jumlah baris menjadi 1
@@ -363,13 +367,16 @@ fun BeasiswaItem(beasiswa: Beasiswa, isFirstChild: Boolean, navController: NavCo
                         lineHeight = 18.sp,
                         color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
-                            .heightIn(32.dp) // Set tinggi minimum
+                            .heightIn(32.dp)
+                            .padding(horizontal = 12.dp) // Set tinggi minimum
                     )
                 }
                 Spacer(modifier = Modifier.heightIn(4.dp))
                 // Kartu Deadline
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = Color(0x80D9D9D9),
                     )

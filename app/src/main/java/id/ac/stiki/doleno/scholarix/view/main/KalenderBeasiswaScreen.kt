@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -499,17 +500,20 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(vertical = 12.dp)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // BARIS DEGREE & LOKASI
                     Row {
+                        Spacer(modifier = Modifier.width(12.dp))
                         // Menampilkan setiap derajat dalam kartu terpisah
                         beasiswa.degrees.forEach { degree ->
                             val containerColor = when (degree) {
@@ -558,11 +562,14 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                                     ),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                     color = MaterialTheme.colors.onSurface
                                     //                        color = Color(0xCC17181A)
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
                 }
 
@@ -573,6 +580,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                     "Beasiswa ${beasiswa.amount}"
                 }
                 androidx.compose.material3.Text(
+                    modifier = Modifier.padding(start = 12.dp),
                     text = beasiswaText,
                     fontSize = 12.sp,
                     color = MaterialTheme.colors.onSurface,
@@ -582,6 +590,7 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
                 // NAMA BEASISWA
                 androidx.compose.material3.Text(
+                    modifier = Modifier.padding(horizontal = 12.dp),
                     text = beasiswa.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -594,7 +603,8 @@ fun BeasiswaItem(beasiswa: Beasiswa, navController: NavController) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .padding(horizontal = 12.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0x80D9D9D9),
                 )
