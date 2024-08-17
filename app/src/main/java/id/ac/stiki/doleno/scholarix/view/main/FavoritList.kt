@@ -20,21 +20,35 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,13 +71,20 @@ fun FavoritList(
 
     val scholarships by viewModel.scholarships.observeAsState(initial = emptyList())
     val indonesiaScholarships by viewModel.indonesiaScholarships.observeAsState(initial = emptyList())
+    val favoriteScholarships by viewModel.favoriteScholarships.observeAsState(initial = emptyList())
     val favorites by viewModel.favorites.observeAsState(emptyList())
     val userEmail = userData.email
+
+    var dropdownExpanded by remember { mutableStateOf(false) }
+    var borderColor by remember { mutableStateOf(Color.Gray) }
+
+    val inputUrutkanBerdasarFavorit by viewModel.inputUrutkanBerdasarFavorit
 
     LaunchedEffect(userEmail) {
         if (userEmail != null) {
             viewModel.loadUserFavorites(userEmail)
         }
+        viewModel.resetSortingBeasiswa()
     }
 
     val favoriteBeasiswaList = scholarships.filter { beasiswa ->
@@ -94,16 +115,150 @@ fun FavoritList(
                     .padding(horizontal = 16.dp)
             ) {
                 if (favoriteBeasiswaList.isNotEmpty() || favoriteBeasiswaIndonesaList.isNotEmpty()) {
+
+                    viewModel.setFavoriteScholarships(favoriteBeasiswaList)
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
+                        if (title == "Beasiswa Luar Negeri") {
+                            // == Sorting ==
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            dropdownExpanded = true
+                                            borderColor = Color(0xFF8F79E8)
+                                        }
+                                ) {
+                                    OutlinedTextField(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        enabled = false,
+                                        value = inputUrutkanBerdasarFavorit,
+                                        onValueChange = {
+                                            viewModel.updateSortingPreferenceFavorit(
+                                                it,
+                                                type = "favorit"
+                                            )
+                                        },
+                                        label = {
+                                            Text(
+                                                text = "Urutkan Berdasarkan",
+                                                color = Color(0xFF8F79E8)
+                                            )
+                                        },
+                                        textStyle = TextStyle(fontSize = 14.sp),
+                                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                                        trailingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.ArrowDropDown,
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        readOnly = true,
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedTextColor = Color.Black,  // Warna teks ketika aktif
+                                            disabledTextColor = Color.Black, // Warna teks tetap hitam ketika dinonaktifkan
+                                            disabledBorderColor = borderColor, // Warna border tetap cerah saat dinonaktifkan
+                                            disabledLabelColor = Color(0xFF8F79E8),
+                                        )
+                                    )
+                                    DropdownMenu(
+                                        expanded = dropdownExpanded,
+                                        onDismissRequest = { dropdownExpanded = false },
+                                        modifier = Modifier
+                                            .verticalScroll(rememberScrollState())
+                                            .heightIn(max = 250.dp)
+                                            .background(Color.White),
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                androidx.compose.material.Text(
+                                                    "Nama A-Z",
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.updateSortingPreferenceFavorit(
+                                                    "Nama A-Z",
+                                                    type = "favorit"
+                                                )
+                                                dropdownExpanded = false
+                                            },
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                androidx.compose.material.Text(
+                                                    "Nama Z-A",
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.updateSortingPreferenceFavorit(
+                                                    "Nama Z-A",
+                                                    type = "favorit"
+                                                )
+                                                dropdownExpanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                androidx.compose.material.Text(
+                                                    "Terpopuler",
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.updateSortingPreferenceFavorit(
+                                                    "Terpopuler",
+                                                    type = "favorit"
+                                                )
+                                                dropdownExpanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                androidx.compose.material.Text(
+                                                    "Deadline Terdekat",
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.updateSortingPreferenceFavorit(
+                                                    "Deadline Terdekat",
+                                                    type = "favorit"
+                                                )
+                                                dropdownExpanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                androidx.compose.material.Text(
+                                                    "Deadline Terjauh",
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.updateSortingPreferenceFavorit(
+                                                    "Deadline Terjauh",
+                                                    type = "favorit"
+                                                )
+                                                dropdownExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
                         if (title == "Beasiswa Luar Negeri") {
-                            if (favoriteBeasiswaList.isNotEmpty()) {
-                                items(favoriteBeasiswaList) { beasiswa ->
+                            if (favoriteScholarships.isNotEmpty()) {
+                                items(favoriteScholarships) { beasiswa ->
                                     FavoriteBeasiswaItem(
                                         beasiswa = beasiswa,
                                         navController = navController

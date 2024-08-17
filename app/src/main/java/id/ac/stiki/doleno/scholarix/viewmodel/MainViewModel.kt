@@ -93,12 +93,20 @@ class MainViewModel : ViewModel() {
 
     // == Start of SORTING ==
     private val _inputUrutkanBerdasar: MutableState<String> = mutableStateOf("Nama A-Z")
+    private val _inputUrutkanBerdasarFavorit: MutableState<String> = mutableStateOf("Nama A-Z")
     val inputUrutkanBerdasar: MutableState<String>
         get() = _inputUrutkanBerdasar
+    val inputUrutkanBerdasarFavorit: MutableState<String>
+        get() = _inputUrutkanBerdasarFavorit
 
     fun updateSortingPreference(value: String, type: String) {
         _inputUrutkanBerdasar.value = value
         sortScholarships(type = type)
+    }
+
+    fun updateSortingPreferenceFavorit(value: String, type: String) {
+        _inputUrutkanBerdasarFavorit.value = value
+        sortScholarshipsFavorit(type = type)
     }
 
     private fun sortScholarships(type: String) {
@@ -158,10 +166,50 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private fun sortScholarshipsFavorit(type: String) {
+        val sortByDeadline: (Beasiswa) -> String? = { it.deadline }
+        val sortByName: (Any) -> String = {
+            when (it) {
+                is Beasiswa -> it.name
+                is BeasiswaIndonesia -> it.name
+                else -> "" // Menangani kasus tipe lain jika diperlukan
+            }
+        }
+
+        when (type) {
+            "favorit" -> {
+                _favoriteScholarships.value = _favoriteScholarships.value?.let { list ->
+                    when (_inputUrutkanBerdasarFavorit.value) {
+                        "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                        "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                        "Nama A-Z" -> list.sortedBy(sortByName)
+                        "Nama Z-A" -> list.sortedByDescending(sortByName)
+                        else -> list
+                    }
+                }
+            }
+        }
+
+        _favoriteScholarships.value = _favoriteScholarships.value?.let { list ->
+            when (_inputUrutkanBerdasarFavorit.value) {
+                "Deadline Terdekat" -> list.sortedBy(sortByDeadline)
+                "Deadline Terjauh" -> list.sortedByDescending(sortByDeadline)
+                "Nama A-Z" -> list.sortedBy(sortByName)
+                "Nama Z-A" -> list.sortedByDescending(sortByName)
+                else -> list
+            }
+        }
+    }
+
     fun resetSorting() {
         _inputUrutkanBerdasar.value = "Nama A-Z"
         sortScholarships("rekomendasi")
         sortScholarships("luarnegeri")
+    }
+
+    fun resetSortingBeasiswa() {
+        _inputUrutkanBerdasarFavorit.value = "Nama A-Z"
+        sortScholarshipsFavorit("favorit")
     }
     // == End of SORTING ==
 
@@ -732,6 +780,13 @@ class MainViewModel : ViewModel() {
     // ------ Start of FAVORITE SCHOLARSHIPS ------
     private val _favorites = MutableLiveData<List<String>>()
     val favorites: LiveData<List<String>> get() = _favorites
+
+    private val _favoriteScholarships = MutableLiveData<List<Beasiswa>>()
+    val favoriteScholarships: LiveData<List<Beasiswa>> = _favoriteScholarships
+
+    fun setFavoriteScholarships(beasiswaFavorit: List<Beasiswa>) {
+        _favoriteScholarships.value = beasiswaFavorit
+    }
 
     fun loadUserFavorites(userEmail: String) {
         db.collection("users").document(userEmail).get()
